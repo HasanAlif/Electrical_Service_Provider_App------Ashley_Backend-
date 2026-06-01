@@ -1,0 +1,88 @@
+{
+  "name": "ashley_apis",
+  "author": {
+    "name": "Khaled Siddique",
+    "email": "khaledssbd@gmail.com",
+    "url": "https://khaled-siddique.vercel.app"
+  },
+  "description": "ashley_apis is a set of RESTful APIs for managing electrical appliances.",
+  "keywords": [
+    "electrical-appliances",
+    "api",
+    "restful-apis",
+    "ashley_apis",
+    "nextjs-ecommerce",
+    "typescript",
+    "tailwind-css",
+    "nodejs",
+    "expressjs",
+    "mongodb-mongoose",
+    "order-tracking",
+    "service-booking-app",
+    "fullstack-javascript"
+  ],
+  "license": "ISC",
+  "main": "server.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sparktechagency/aliamin65_apis_backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sparktechagency/aliamin65_apis_backend/issues"
+  },
+  "homepage": "https://github.com/sparktechagency/aliamin65_apis_backend#readme",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node dist/server.js",
+    "dev": "ts-node-dev --respawn --transpile-only --poll src/server.ts",
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:all": "prettier --write .",
+    "generate": "node generate",
+    "create-module": "npx ts-node src/scripts/createModule.ts",
+    "deploy": "pnpm build && vercel && vercel --prod",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "axios": "^1.16.1",
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.10.0",
+    "colors": "^1.4.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "http-status": "^2.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.6.3",
+    "multer": "2.1.1",
+    "multer-storage-cloudinary": "^4.0.0",
+    "nodemailer": "^8.0.10",
+    "otp-generator": "^4.0.1",
+    "socket.io": "^4.8.3",
+    "stripe": "^22.2.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/multer": "^2.1.0",
+    "@types/nodemailer": "^8.0.0",
+    "@types/otp-generator": "^4.0.2",
+    "eslint": "^10.4.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-unused-imports": "^4.4.1",
+    "globals": "^17.6.0",
+    "morgan": "^1.10.1",
+    "prettier": "^3.8.3",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.60.0"
+  }
+}

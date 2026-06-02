@@ -20,14 +20,11 @@ import {
 } from './user.constant';
 import { UserValidation } from './user.validation';
 import jwt, { JwtPayload, SignOptions } from 'jsonwebtoken';
-import DriverModel from '../Driver/driver.model';
-import BackgroundCheckModel from '../BackgroundCheck/backgroundCheck.model';
 // import { startVerificationWithVERIFF } from '../BackgroundCheck/backgroundCheck.util';
 // import BookModel from '../Book/book.model';
 // import { OrderModel } from '../Order/order.model';
 import { deleteImageFromCloudinary, sendImageToCloudinary } from '../../lib';
 import { ClientSession, PipelineStage, startSession } from 'mongoose';
-import { TBackgroundProvider } from '../BackgroundCheck/backgroundCheck.interface';
 
 // 1. createUserIntoDB
 const createUserIntoDB = async (payload: IUser) => {
@@ -202,201 +199,7 @@ const verifySignupOtpIntoDB = async (userEmail: string, otp: string) => {
   };
 };
 
-// 4. createDriverProfileIntoDB
-const createDriverProfileIntoDB = async (
-  userData: IUser,
-  payload: Record<string, any>,
-  files: any,
-) => {
-  // if (user.role === ROLE.DRIVER) {
-  //   throw new AppError(httpStatus.BAD_REQUEST, 'You already applied for this!');
-  // }
-
-  const fileMap = (files ?? {}) as Record<string, Express.Multer.File[]>;
-  const { license, selfie, insuranceDocument } = fileMap;
-
-  // 1. Primary validation
-  if (!license?.[0] || !selfie?.[0] || !insuranceDocument?.[0]) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      'license, selfie, and insuranceDocument images are required!',
-    );
-  }
-
-  const uploadedUrls: string[] = [];
-  const session: ClientSession = await startSession();
-
-  try {
-    session.startTransaction();
-
-    // 2. Parallel image upload (Performance Boost)
-    const [licenseRes, selfieRes, insuranceRes] = await Promise.all([
-      sendImageToCloudinary(license[0]),
-      sendImageToCloudinary(selfie[0]),
-      sendImageToCloudinary(insuranceDocument[0]),
-    ]);
-
-    const uploaded = {
-      licenseUrl: licenseRes.secure_url,
-      selfieUrl: selfieRes.secure_url,
-      insuranceDocumentUrl: insuranceRes.secure_url,
-    };
-
-    // Track for deletion
-    uploadedUrls.push(...Object.values(uploaded));
-
-    // 3. Data preparation
-    const {
-      insuranceProvider,
-      insurancePolicyNumber,
-      insuranceExpiration,
-      vehicleMake,
-      vehicleModel,
-      vehicleYear,
-      vehiclePlate,
-      firstName,
-      lastName,
-      dateOfBirth,
-      idNumber,
-      documentType,
-      documentCountry,
-      fullAddress,
-    } = payload;
-
-    const driverData = {
-      licenseImageUrl: uploaded.licenseUrl,
-      selfieImageUrl: uploaded.selfieUrl,
-      identity: {
-        firstName: firstName ? String(firstName) : undefined,
-        lastName: lastName ? String(lastName) : undefined,
-        dateOfBirth: dateOfBirth ? new Date(String(dateOfBirth)) : undefined,
-        idNumber: idNumber ? String(idNumber) : undefined,
-        documentType: documentType ? String(documentType) : undefined,
-        documentCountry: documentCountry ? String(documentCountry) : undefined,
-        fullAddress: fullAddress ? String(fullAddress) : undefined,
-      },
-      insurance: {
-        provider: insuranceProvider,
-        policyNumber: insurancePolicyNumber,
-        expiration: insuranceExpiration
-          ? new Date(String(insuranceExpiration))
-          : undefined,
-        documentImageUrl: uploaded.insuranceDocumentUrl,
-      },
-      vehicle: {
-        make: vehicleMake,
-        model: vehicleModel,
-        year: vehicleYear ? Number(vehicleYear) : undefined,
-        plate: vehiclePlate,
-      },
-    };
-
-    // 4. Database update (Ensure atomicity)
-    const driver = await DriverModel.findOneAndUpdate(
-      { user: userData._id },
-      { $set: driverData },
-      {
-        upsert: true,
-        returnDocument: 'after',
-        setDefaultsOnInsert: true,
-        session,
-      },
-    );
-
-    const existingBackgroundCheck = await BackgroundCheckModel.findOne({
-      driver: driver._id,
-    }).session(session);
-
-    if (!existingBackgroundCheck) {
-      const createdDocs = await new BackgroundCheckModel({
-        driver: driver._id,
-        provider:
-          (config.status.default_background_provider as TBackgroundProvider) ||
-          ('VERIFF' as TBackgroundProvider),
-        status: 'PENDING',
-        startedAt: new Date(),
-      }).save({ session });
-      void createdDocs;
-
-      // NOTE: VERIFF auto-verification is temporarily disabled.
-      // We still create the BackgroundCheck doc in PENDING state, but we don't start
-      // an external provider session here.
-      //
-      // if (
-      //   created?.provider === 'VERIFF' &&
-      //   config.status.veriff_api_key &&
-      //   license?.[0]?.buffer &&
-      //   selfie?.[0]?.buffer
-      // ) {
-      //   try {
-      //     const { sessionId } = await startVerificationWithVERIFF({
-      //       vendorData: String(user._id),
-      //       endUserId: String(user._id),
-      //       person: {
-      //         firstName: driverData.identity.firstName,
-      //         lastName: driverData.identity.lastName,
-      //         idNumber: driverData.identity.idNumber,
-      //       },
-      //       document: {
-      //         number: driverData.identity.idNumber,
-      //         type: driverData.identity.documentType,
-      //         country: driverData.identity.documentCountry,
-      //       },
-      //       address: {
-      //         fullAddress: driverData.identity.fullAddress,
-      //       },
-      //       licenseImage: license[0].buffer,
-      //       selfieImage: selfie[0].buffer,
-      //     });
-      //
-      //     created.reportId = sessionId;
-      //     await created.save({ session });
-      //   } catch {
-      //     // If provider session start fails, we keep doc in PENDING state without reportId
-      //   }
-      // }
-    }
-
-    // Update user role
-    userData.role = 'DRIVER';
-    await userData.save({ session });
-
-    // Commit transaction
-    await session.commitTransaction();
-    await session.endSession();
-
-    // Generate token (low chance of failure outside session)
-    const accessTokenPayload = {
-      _id: userData?._id.toString(),
-      name: userData?.name,
-      address: userData?.address,
-      phone: userData?.phone,
-      email: userData?.email,
-      image: userData?.image || defaultUserImage,
-      role: userData?.role,
-    };
-
-    return {
-      accessToken: createAccessToken(accessTokenPayload),
-      refreshToken: createRefreshToken({ email: userData.email }),
-      user: accessTokenPayload,
-    };
-  } catch (error) {
-    // Transaction rollback
-    await session.abortTransaction();
-    await session.endSession();
-
-    // Delete uploaded images from cloudinary
-    if (uploadedUrls.length > 0) {
-      await Promise.all(
-        uploadedUrls.map(url => deleteImageFromCloudinary(url)),
-      );
-    }
-    throw error;
-  }
-};
-
-// 5. signinIntoDB
+// 4. signinIntoDB
 const signinIntoDB = async (payload: { email: string; password: string }) => {
   // const user = await UserModel.findOne({ email: payload.email }).select('+password');
   const user = await UserModel.isUserExistsByEmailWithPassword(payload.email);
@@ -474,7 +277,7 @@ const signinIntoDB = async (payload: { email: string; password: string }) => {
   };
 };
 
-// 6. updateProfilePhotoIntoDB
+// 5. updateProfilePhotoIntoDB
 const updateProfilePhotoIntoDB = async (
   userData: IUser,
   imageFile: Express.Multer.File | undefined,
@@ -528,7 +331,7 @@ const updateProfilePhotoIntoDB = async (
   };
 };
 
-// 7. updateUserDataIntoDB
+// 6. updateUserDataIntoDB
 const updateUserDataIntoDB = async (
   userData: IUser,
   payload: TUpdateUserPayload,
@@ -566,7 +369,7 @@ const updateUserDataIntoDB = async (
   };
 };
 
-// 8. changePasswordIntoDB
+// 7. changePasswordIntoDB
 const changePasswordIntoDB = async (
   userData: IUser,
   payload: z.infer<typeof UserValidation.changePasswordSchema.shape.body>,
@@ -623,7 +426,7 @@ const changePasswordIntoDB = async (
   };
 };
 
-// 9. forgotPasswordIntoDB
+// 8. forgotPasswordIntoDB
 const forgotPasswordIntoDB = async (email: string) => {
   const user = await UserModel.findOne({ email, isActive: true });
 
@@ -666,7 +469,7 @@ const forgotPasswordIntoDB = async (email: string) => {
   return { token };
 };
 
-// 10. sendForgotPasswordOtpAgainIntoDB
+// 9. sendForgotPasswordOtpAgainIntoDB
 const sendForgotPasswordOtpAgainIntoDB = async (forgotPassToken: string) => {
   let decoded: JwtPayload;
   try {
@@ -719,7 +522,7 @@ const sendForgotPasswordOtpAgainIntoDB = async (forgotPassToken: string) => {
   return null;
 };
 
-// 11. verifyOtpForForgotPasswordIntoDB
+// 10. verifyOtpForForgotPasswordIntoDB
 const verifyOtpForForgotPasswordIntoDB = async (payload: {
   token: string;
   otp: string;
@@ -777,7 +580,7 @@ const verifyOtpForForgotPasswordIntoDB = async (payload: {
   return { resetPasswordToken };
 };
 
-// 12. resetPasswordIntoDB
+// 11. resetPasswordIntoDB
 const resetPasswordIntoDB = async (
   payload: z.infer<typeof UserValidation.resetPasswordSchema.shape.body>,
 ) => {
@@ -817,7 +620,7 @@ const resetPasswordIntoDB = async (
   return null;
 };
 
-// 13. fetchProfileFromDB
+// 12. fetchProfileFromDB
 const fetchProfileFromDB = async (userData: IUser) => {
   const user = await UserModel.findById(userData._id).select(
     '-password -passwordChangedAt -otp -otpExpiry -isActive -isDeleted -deactivationReason -createdAt -updatedAt',
@@ -826,7 +629,7 @@ const fetchProfileFromDB = async (userData: IUser) => {
   return user;
 };
 
-// 14. getNewAccessTokenFromDB
+// 13. getNewAccessTokenFromDB
 const getNewAccessTokenFromDB = async (refreshToken: string) => {
   // checking if the given token is valid
   const decoded = verifyToken(
@@ -879,7 +682,7 @@ const getNewAccessTokenFromDB = async (refreshToken: string) => {
   };
 };
 
-// 15. deactivateAccountIntoDB
+// 14. deactivateAccountIntoDB
 const deactivateAccountIntoDB = async (
   userData: IUser,
   payload: TDeactiveAccountPayload,
@@ -918,7 +721,7 @@ const deactivateAccountIntoDB = async (
   return result;
 };
 
-// 16. deleteSpecificUserAccountIntoDB
+// 15. deleteSpecificUserAccountIntoDB
 const deleteSpecificUserAccountIntoDB = async (userData: IUser) => {
   const result = await UserModel.findByIdAndUpdate(
     userData._id,
@@ -933,7 +736,7 @@ const deleteSpecificUserAccountIntoDB = async (userData: IUser) => {
   return result;
 };
 
-// 17. adminGetAllUsersFromDB (using MongoDB aggregation)
+// 16. adminGetAllUsersFromDB (using MongoDB aggregation)
 // const adminGetAllUsersFromDB = async (query: Record<string, unknown>) => {
 //   const {
 //     searchTerm,
@@ -1027,7 +830,7 @@ const deleteSpecificUserAccountIntoDB = async (userData: IUser) => {
 //   return { data: facetResult.data, meta };
 // };
 
-// 18. adminGetAllUsersFromDB (using MongoDB aggregation)
+// 17. adminGetAllUsersFromDB (using MongoDB aggregation)
 const adminGetAllUsersFromDB = async (query: Record<string, unknown>) => {
   const {
     searchTerm,
@@ -1136,7 +939,7 @@ const adminGetAllUsersFromDB = async (query: Record<string, unknown>) => {
   return { data: facetResult.data, meta };
 };
 
-// 19. adminGetAllMetaDataFromDB (dashboard meta aggregation)
+// 18. adminGetAllMetaDataFromDB (dashboard meta aggregation)
 // const adminGetAllMetaDataFromDB = async () => {
 //   const [
 //     totalBooks,
@@ -1482,7 +1285,6 @@ export const UserService = {
   createUserIntoDB,
   sendSignupOtpAgainIntoDB,
   verifySignupOtpIntoDB,
-  createDriverProfileIntoDB,
   signinIntoDB,
   updateProfilePhotoIntoDB,
   updateUserDataIntoDB,

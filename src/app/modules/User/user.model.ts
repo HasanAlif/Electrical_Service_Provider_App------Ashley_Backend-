@@ -18,18 +18,6 @@ const userSchema = new Schema<IUser, IUserModel>(
       trim: true,
       default: 'N/A',
     },
-    currentLocation: {
-      type: {
-        type: String,
-        enum: ['Point'],
-      },
-      coordinates: {
-        type: [Number],
-      },
-      updatedAt: {
-        type: Date,
-      },
-    },
     phone: {
       type: String,
       trim: true,
@@ -90,7 +78,6 @@ const userSchema = new Schema<IUser, IUserModel>(
   { timestamps: true, versionKey: false },
 );
 
-userSchema.index({ currentLocation: '2dsphere' });
 
 // Custom hooks/methods
 

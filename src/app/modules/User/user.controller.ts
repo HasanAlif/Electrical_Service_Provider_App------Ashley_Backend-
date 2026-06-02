@@ -40,22 +40,7 @@ const verifySignupOtp = asyncHandler(async (req, res) => {
   });
 });
 
-// 4. createDriverProfile
-const createDriverProfile = asyncHandler(async (req, res) => {
-  const result = await UserService.createDriverProfileIntoDB(
-    req.user,
-    req.body,
-    req.files,
-  );
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    message: 'Driver account created successfully!',
-    data: result,
-  });
-});
-
-// 5. signin
+// 4. signin
 const signin = asyncHandler(async (req, res) => {
   const result = await UserService.signinIntoDB(req.body);
 
@@ -66,7 +51,7 @@ const signin = asyncHandler(async (req, res) => {
   });
 });
 
-// 6. updateProfilePhoto
+// 5. updateProfilePhoto
 const updateProfilePhoto = asyncHandler(async (req, res) => {
   const result = await UserService.updateProfilePhotoIntoDB(req.user, req.file);
 
@@ -77,7 +62,7 @@ const updateProfilePhoto = asyncHandler(async (req, res) => {
   });
 });
 
-// 7. updateUserData
+// 6. updateUserData
 const updateUserData = asyncHandler(async (req, res) => {
   const result = await UserService.updateUserDataIntoDB(req.user, req.body);
 
@@ -88,7 +73,7 @@ const updateUserData = asyncHandler(async (req, res) => {
   });
 });
 
-// 8. changePassword
+// 7. changePassword
 const changePassword = asyncHandler(async (req, res) => {
   const result = await UserService.changePasswordIntoDB(req.user, req.body);
 
@@ -99,7 +84,7 @@ const changePassword = asyncHandler(async (req, res) => {
   });
 });
 
-// 9. forgotPassword
+// 8. forgotPassword
 const forgotPassword = asyncHandler(async (req, res) => {
   const email = req.body.email;
   const result = await UserService.forgotPasswordIntoDB(email);
@@ -112,7 +97,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   });
 });
 
-// 10. sendForgotPasswordOtpAgain
+// 9. sendForgotPasswordOtpAgain
 const sendForgotPasswordOtpAgain = asyncHandler(async (req, res) => {
   const token = req.body.token;
   const result = await UserService.sendForgotPasswordOtpAgainIntoDB(token);
@@ -124,7 +109,7 @@ const sendForgotPasswordOtpAgain = asyncHandler(async (req, res) => {
   });
 });
 
-// 11. verifyOtpForForgotPassword
+// 10. verifyOtpForForgotPassword
 const verifyOtpForForgotPassword = asyncHandler(async (req, res) => {
   const result = await UserService.verifyOtpForForgotPasswordIntoDB(req.body);
 
@@ -135,7 +120,7 @@ const verifyOtpForForgotPassword = asyncHandler(async (req, res) => {
   });
 });
 
-// 12. resetPassword
+// 11. resetPassword
 const resetPassword = asyncHandler(async (req, res) => {
   const result = await UserService.resetPasswordIntoDB(req.body);
 
@@ -146,7 +131,7 @@ const resetPassword = asyncHandler(async (req, res) => {
   });
 });
 
-// 13. fetchProfile
+// 12. fetchProfile
 const fetchProfile = asyncHandler(async (req, res) => {
   const result = await UserService.fetchProfileFromDB(req.user);
 
@@ -157,7 +142,7 @@ const fetchProfile = asyncHandler(async (req, res) => {
   });
 });
 
-// 14. getNewAccessToken
+// 13. getNewAccessToken
 const getNewAccessToken = asyncHandler(async (req, res) => {
   const refreshToken = req.headers.authorization?.replace('Bearer ', '');
 
@@ -174,7 +159,7 @@ const getNewAccessToken = asyncHandler(async (req, res) => {
   });
 });
 
-// 15. deactivateUserAccount
+// 14. deactivateUserAccount
 const deactivateUserAccount = asyncHandler(async (req, res) => {
   const result = await UserService.deactivateAccountIntoDB(req.user, req.body);
 
@@ -185,7 +170,7 @@ const deactivateUserAccount = asyncHandler(async (req, res) => {
   });
 });
 
-// 16. deleteSpecificAccount
+// 15. deleteSpecificAccount
 const deleteSpecificUserAccount = asyncHandler(async (req, res) => {
   const result = await UserService.deleteSpecificUserAccountIntoDB(req.user);
 
@@ -196,7 +181,7 @@ const deleteSpecificUserAccount = asyncHandler(async (req, res) => {
   });
 });
 
-// 17. adminGetAllUsers
+// 16. adminGetAllUsers
 const adminGetAllUsers = asyncHandler(async (req, res) => {
   const result = await UserService.adminGetAllUsersFromDB(req.query);
 
@@ -208,7 +193,7 @@ const adminGetAllUsers = asyncHandler(async (req, res) => {
   });
 });
 
-// 18. adminGetAllMetaData
+// 17. adminGetAllMetaData
 // const adminGetAllMetaData = asyncHandler(async (req, res) => {
 //   const result = await UserService.adminGetAllMetaDataFromDB();
 
@@ -219,7 +204,7 @@ const adminGetAllUsers = asyncHandler(async (req, res) => {
 //   });
 // });
 
-// 19. getAllUser
+// 18. getAllUser
 // const getAllUser = asyncHandler(async (req, res) => {
 //   const result = await UserService.getAllUserFromDB(req.query);
 
@@ -235,7 +220,6 @@ export const UserController = {
   createUser,
   sendSignupOtpAgain,
   verifySignupOtp,
-  createDriverProfile,
   signin,
   updateProfilePhoto,
   updateUserData,

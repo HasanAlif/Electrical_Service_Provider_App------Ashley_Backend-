@@ -1,9 +1,5 @@
 import { Router } from 'express';
-import {
-  auth,
-  validateRequest,
-  validateRequestFromFormData,
-} from '../../middlewares';
+import { auth, validateRequest } from '../../middlewares';
 import { UserValidation } from './user.validation';
 import { UserController } from './user.controller';
 import { multerUpload } from '../../lib';
@@ -35,24 +31,12 @@ router
     UserController.verifySignupOtp,
   );
 
-// 4. registerDriverSchema
-router.route('/create-driver-profile').post(
-  auth(ROLE.CUSTOMER),
-  multerUpload.fields([
-    { name: 'license', maxCount: 1 },
-    { name: 'selfie', maxCount: 1 },
-    { name: 'insuranceDocument', maxCount: 1 },
-  ]),
-  validateRequestFromFormData(UserValidation.createDriverAccountSchema),
-  UserController.createDriverProfile,
-);
-
-// 5. signin
+// 4. signin
 router
   .route('/signin')
   .post(validateRequest(UserValidation.signinSchema), UserController.signin);
 
-// 6. updateProfilePhoto
+// 5. updateProfilePhoto
 router
   .route('/update-profile-photo')
   .put(
@@ -61,7 +45,7 @@ router
     UserController.updateProfilePhoto,
   );
 
-// 7. updateUserData
+// 6. updateUserData
 router
   .route('/update-user-data')
   .patch(
@@ -70,7 +54,7 @@ router
     UserController.updateUserData,
   );
 
-// 8. changePassword
+// 7. changePassword
 router
   .route('/change-password')
   .patch(
@@ -79,7 +63,7 @@ router
     UserController.changePassword,
   );
 
-// 9. forgotPassword
+// 8. forgotPassword
 router
   .route('/forgot-password')
   .post(
@@ -87,7 +71,7 @@ router
     UserController.forgotPassword,
   );
 
-// 10. sendForgotPasswordOtpAgain
+// 9. sendForgotPasswordOtpAgain
 router
   .route('/send-forgot-password-otp-again')
   .post(
@@ -95,7 +79,7 @@ router
     UserController.sendForgotPasswordOtpAgain,
   );
 
-// 11. verifyOtpForForgotPassword
+// 10. verifyOtpForForgotPassword
 router
   .route('/verify-forgot-password-otp')
   .post(
@@ -103,7 +87,7 @@ router
     UserController.verifyOtpForForgotPassword,
   );
 
-// 12. resetPassword
+// 11. resetPassword
 router
   .route('/reset-password')
   .post(
@@ -111,7 +95,7 @@ router
     UserController.resetPassword,
   );
 
-// 13. fetchProfile
+// 12. fetchProfile
 router
   .route('/profile')
   .get(
@@ -119,13 +103,13 @@ router
     UserController.fetchProfile,
   );
 
-// 14. getNewAccessToken
+// 13. getNewAccessToken
 router.route('/access-token').get(
   // validateRequest(UserValidation.getNewAccessTokenSchema),
   UserController.getNewAccessToken,
 );
 
-// 15. deactivateUserAccount
+// 14. deactivateUserAccount
 router
   .route('/deactive-account')
   .patch(
@@ -134,7 +118,7 @@ router
     UserController.deactivateUserAccount,
   );
 
-// 16. deleteSpecificUserAccount
+// 15. deleteSpecificUserAccount
 router
   .route('/delete-account')
   .delete(
@@ -142,17 +126,17 @@ router
     UserController.deleteSpecificUserAccount,
   );
 
-// 17. adminGetAllUsers
+// 16. adminGetAllUsers
 router
   .route('/admin-get-all')
   .get(auth(ROLE.ADMIN, ROLE.SUPER_ADMIN), UserController.adminGetAllUsers);
 
-// 18. adminGetAllMetaData
+// 17. adminGetAllMetaData
 // router
 //   .route('/meta-data')
 //   .get(auth(ROLE.ADMIN, ROLE.SUPER_ADMIN), UserController.adminGetAllMetaData);
 
-// 19. getAllUser
+// 18. getAllUser
 // router.route('/users').get(UserController.getAllUser);
 
 export const UserRoutes = router;

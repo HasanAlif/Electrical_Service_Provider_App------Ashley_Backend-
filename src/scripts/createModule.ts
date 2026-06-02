@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import fs from 'fs';
+import readline from 'readline';
 import path from 'path';
 
 // Function to create a module with dynamic files
@@ -26,7 +27,7 @@ const createModule = (moduleName: string): void => {
   }
 
   // Create each file with basic content
-  files.forEach((file) => {
+  files.forEach(file => {
     const filePath = path.join(baseDir, file);
     if (!fs.existsSync(filePath)) {
       let content = '';
@@ -71,11 +72,29 @@ const capitalize = (str: string): string =>
   str.charAt(0).toUpperCase() + str.slice(1);
 
 // Get the module name from command-line arguments
+const askForModuleName = async (): Promise<string> => {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
 
-const moduleName = process.argv[2];
-if (!moduleName) {
-  console.error('Please provide a module name while running the script!');
-  process.exit(1);
-}
+  return await new Promise(resolve => {
+    rl.question('Please enter a module name: ', answer => {
+      rl.close();
+      resolve(answer.trim());
+    });
+  });
+};
 
-createModule(moduleName);
+const main = async (): Promise<void> => {
+  const moduleName = process.argv[2]?.trim() || (await askForModuleName());
+
+  if (!moduleName) {
+    console.error('Please provide a module name while running the script!');
+    process.exit(1);
+  }
+
+  createModule(moduleName);
+};
+
+void main();

@@ -1,8 +1,7 @@
 import config from '../../config';
 
 export const ROLE = {
-  CUSTOMER: 'CUSTOMER',
-  DRIVER: 'DRIVER',
+  USER: 'USER',
   ADMIN: 'ADMIN',
   SUPER_ADMIN: 'SUPER_ADMIN',
 } as const;

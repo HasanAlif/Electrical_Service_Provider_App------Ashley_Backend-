@@ -21,9 +21,9 @@ const createUserSchema = z.object({
         error: 'Email is required!',
       })
       .email({ message: 'Invalid email format!' }) // Ensure it's a valid email
-      .transform((email) => email.toLowerCase()) // Convert email to lowercase
-      .refine((email) => email !== '', { message: 'Email is required!' }) // Check that email is not empty
-      .refine((value) => typeof value === 'string', {
+      .transform(email => email.toLowerCase()) // Convert email to lowercase
+      .refine(email => email !== '', { message: 'Email is required!' }) // Check that email is not empty
+      .refine(value => typeof value === 'string', {
         message: 'Email must be string!', // Check that email is string
       }),
 
@@ -46,9 +46,9 @@ const sendSignupOtpAgainSchema = z.object({
         error: 'Email is required!',
       })
       .email({ message: 'Invalid email format!' }) // Ensure it's a valid email
-      .transform((email) => email.toLowerCase()) // Convert email to lowercase
-      .refine((email) => email !== '', { message: 'Email is required!' }) // Check that email is not empty
-      .refine((value) => typeof value === 'string', {
+      .transform(email => email.toLowerCase()) // Convert email to lowercase
+      .refine(email => email !== '', { message: 'Email is required!' }) // Check that email is not empty
+      .refine(value => typeof value === 'string', {
         message: 'Email must be string!', // Check that email is string
       }),
   }),
@@ -62,9 +62,9 @@ const verifySignupOtpSchema = z.object({
         error: 'Email is required!',
       })
       .email({ message: 'Invalid email format!' }) // Ensure it's a valid email
-      .transform((email) => email.toLowerCase()) // Convert email to lowercase
-      .refine((email) => email !== '', { message: 'Email is required!' }) // Check that email is not empty
-      .refine((value) => typeof value === 'string', {
+      .transform(email => email.toLowerCase()) // Convert email to lowercase
+      .refine(email => email !== '', { message: 'Email is required!' }) // Check that email is not empty
+      .refine(value => typeof value === 'string', {
         message: 'Email must be string!', // Check that email is string
       }),
 
@@ -131,9 +131,9 @@ const signinSchema = z.object({
         error: 'Email is required!',
       })
       .email({ message: 'Invalid email format!' }) // Ensure it's a valid email
-      .transform((email) => email.toLowerCase()) // Convert email to lowercase
-      .refine((email) => email !== '', { message: 'Email is required!' }) // Check that email is not empty
-      .refine((value) => typeof value === 'string', {
+      .transform(email => email.toLowerCase()) // Convert email to lowercase
+      .refine(email => email !== '', { message: 'Email is required!' }) // Check that email is not empty
+      .refine(value => typeof value === 'string', {
         message: 'Email must be string!', // Check that email is string
       }),
 
@@ -184,9 +184,9 @@ const forgotPasswordSchema = z.object({
         error: 'Email is required!',
       })
       .email({ message: 'Invalid email format!' }) // Ensure it's a valid email
-      .transform((email) => email.toLowerCase()) // Convert email to lowercase
-      .refine((email) => email !== '', { message: 'Email is required!' }) // Check that email is not empty
-      .refine((value) => typeof value === 'string', {
+      .transform(email => email.toLowerCase()) // Convert email to lowercase
+      .refine(email => email !== '', { message: 'Email is required!' }) // Check that email is not empty
+      .refine(value => typeof value === 'string', {
         message: 'Email must be string!', // Check that email is string
       }),
   }),
@@ -246,9 +246,9 @@ const deactivateUserAccountSchema = z.object({
           error: 'Email is required!',
         })
         .email('Invalid email format!')
-        .transform((email) => email.toLowerCase())
-        .refine((email) => email !== '', { message: 'Email is required!' })
-        .refine((value) => typeof value === 'string', {
+        .transform(email => email.toLowerCase())
+        .refine(email => email !== '', { message: 'Email is required!' })
+        .refine(value => typeof value === 'string', {
           message: 'Email must be string!',
         }),
 
@@ -269,6 +269,15 @@ const deactivateUserAccountSchema = z.object({
     .strict(),
 });
 
+// 16. deleteImageSchema
+const deleteImageSchema = z.object({
+  body: z.object({
+    imageUrl: z.string({
+      error: 'Image URL is required!',
+    }),
+  }),
+});
+
 export const UserValidation = {
   createUserSchema,
   sendSignupOtpAgainSchema,
@@ -283,4 +292,5 @@ export const UserValidation = {
   resetPasswordSchema,
   getNewAccessTokenSchema,
   deactivateUserAccountSchema,
+  deleteImageSchema,
 };

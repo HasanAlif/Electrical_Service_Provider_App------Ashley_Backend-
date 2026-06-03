@@ -143,6 +143,15 @@ router
     auth(ROLE.USER, ROLE.ADMIN, ROLE.SUPER_ADMIN),
     multerUpload.array('images', 5),
     UserController.uploadImages,
+);
+
+// 20. deleteImage
+router
+  .route('/delete-image')
+  .delete(
+    auth(ROLE.USER, ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    validateRequest(UserValidation.deleteImageSchema),
+    UserController.deleteImage,
   );
 
 export const UserRoutes = router;

@@ -1313,6 +1313,16 @@ const uploadImagesIntoDB = async (
   return imageUrls;
 };
 
+// 20. deleteImageFromDB
+const deleteImageFromDB = async (imageUrl: string) => {
+  try {
+    await deleteImageFromCloudinary(imageUrl);
+  } catch (error) {
+    console.error('Failed to delete image from Cloudinary:', error);
+    // Not throwing error to avoid breaking user flow, but logging for debugging
+  }
+};
+
 export const UserService = {
   createUserIntoDB,
   sendSignupOtpAgainIntoDB,
@@ -1333,4 +1343,5 @@ export const UserService = {
   // adminGetAllMetaDataFromDB,
   // getAllUserFromDB,
   uploadImagesIntoDB,
+  deleteImageFromDB,
 };

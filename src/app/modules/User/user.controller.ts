@@ -231,6 +231,19 @@ const uploadImages = asyncHandler(async (req, res) => {
   });
 });
 
+// 20. deleteImage
+const deleteImage = asyncHandler(async (req, res) => {
+  const result = await UserService.deleteImageFromDB(
+    req.body.imageUrl as string,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Image deleted successfully!',
+    data: result,
+  });
+});
+
 export const UserController = {
   createUser,
   sendSignupOtpAgain,
@@ -251,4 +264,5 @@ export const UserController = {
   // adminGetAllMetaData,
   // getAllUser,
   uploadImages,
+  deleteImage,
 };

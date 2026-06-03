@@ -8,6 +8,14 @@ export const ROLE = {
 
 export type TRole = keyof typeof ROLE;
 
+export const AUTH_PROVIDER = {
+  EMAIL: 'EMAIL',
+  GOOGLE: 'GOOGLE',
+  APPLE: 'APPLE',
+} as const;
+
+export type TAuthProvider = (typeof AUTH_PROVIDER)[keyof typeof AUTH_PROVIDER];
+
 export type ValueOf<T> = T[keyof T];
 
 export const defaultUserImage: string =

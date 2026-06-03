@@ -26,6 +26,8 @@ export default {
   otp_expiry_minutes: process.env.OTP_EXPIRY_MINUTES,
   stripe_secret_key: process.env.STRIPE_SECRET_KEY,
   stripe_webhook_secret: process.env.STRIPE_WEBHOOK_SECRET,
+  google_client_ids: process.env.GOOGLE_CLIENT_IDS,
+  apple_client_ids: process.env.APPLE_CLIENT_IDS,
   // stripe_connect_return_url: process.env.STRIPE_CONNECT_RETURN_URL,
   // stripe_connect_refresh_url: process.env.STRIPE_CONNECT_REFRESH_URL,
 

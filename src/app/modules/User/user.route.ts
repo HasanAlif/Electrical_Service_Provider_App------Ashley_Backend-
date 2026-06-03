@@ -36,7 +36,15 @@ router
   .route('/signin')
   .post(validateRequest(UserValidation.signinSchema), UserController.signin);
 
-// 5. updateProfilePhoto
+// 5. social signin
+router
+  .route('/social-signin')
+  .post(
+    validateRequest(UserValidation.socialSigninSchema),
+    UserController.socialSignin,
+  );
+
+// 6. updateProfilePhoto
 router
   .route('/update-profile-photo')
   .put(
@@ -143,7 +151,7 @@ router
     auth(ROLE.USER, ROLE.ADMIN, ROLE.SUPER_ADMIN),
     multerUpload.array('images', 5),
     UserController.uploadImages,
-);
+  );
 
 // 20. deleteImage
 router

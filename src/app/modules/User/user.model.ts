@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { Aggregate, model, Query, Schema } from 'mongoose';
 import config from '../../config';
-import { defaultUserImage, ROLE } from './user.constant';
+import { AUTH_PROVIDER, defaultUserImage, ROLE } from './user.constant';
 import { IUser, IUserModel } from './user.interface';
 import { AppError } from '../../utils';
 import httpStatus from 'http-status';
@@ -38,7 +38,9 @@ const userSchema = new Schema<IUser, IUserModel>(
     },
     password: {
       type: String,
-      required: [true, 'Password is required!'],
+      required: function (this: IUser) {
+        return this.authProvider === AUTH_PROVIDER.EMAIL;
+      },
       select: 0, //  works for all normal Mongoose queries (find, findOne, findById, etc.) Does NOT work for aggregation.
     },
     passwordChangedAt: {
@@ -47,21 +49,33 @@ const userSchema = new Schema<IUser, IUserModel>(
 
     otp: {
       type: String,
-      required: [true, 'OTP is required!'],
     },
     otpExpiry: {
       type: Date,
-      required: [true, 'OTP Expiry is required!'],
     },
     isVerifiedByOTP: {
       type: Boolean,
       default: false,
     },
 
+    authProvider: {
+      type: String,
+      enum: Object.values(AUTH_PROVIDER),
+      default: AUTH_PROVIDER.EMAIL,
+    },
+    googleId: {
+      type: String,
+      sparse: true,
+    },
+    appleId: {
+      type: String,
+      sparse: true,
+    },
+
     role: {
       type: String,
       enum: Object.values(ROLE),
-      default: ROLE.CUSTOMER,
+      default: ROLE.USER,
     },
     isActive: {
       type: Boolean,
@@ -78,16 +92,17 @@ const userSchema = new Schema<IUser, IUserModel>(
   { timestamps: true, versionKey: false },
 );
 
-
 // Custom hooks/methods
 
 // Hash password before saving
 userSchema.pre('save', async function (this: IUser) {
   // only hash if new user OR password modified
   if (this.isNew || this.isModified('password')) {
-    if (!this.password) {
+    if (!this.password && this.authProvider === AUTH_PROVIDER.EMAIL) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Password is required!');
     }
+
+    if (!this.password) return;
 
     // 🔑 hash password
     this.password = await bcrypt.hash(

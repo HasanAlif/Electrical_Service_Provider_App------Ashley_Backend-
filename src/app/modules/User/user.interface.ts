@@ -1,5 +1,5 @@
 import { Document, Model, Types } from 'mongoose';
-import { TRole } from './user.constant';
+import { TAuthProvider, TRole } from './user.constant';
 
 // Instance methods
 export interface IUser extends Document {
@@ -11,12 +11,16 @@ export interface IUser extends Document {
   image: string;
 
   email: string;
-  password: string;
+  password?: string;
   passwordChangedAt?: Date;
 
-  otp: string;
-  otpExpiry: Date;
+  otp?: string;
+  otpExpiry?: Date;
   isVerifiedByOTP: boolean;
+
+  authProvider: TAuthProvider;
+  googleId?: string;
+  appleId?: string;
 
   role: TRole;
   isActive: boolean;

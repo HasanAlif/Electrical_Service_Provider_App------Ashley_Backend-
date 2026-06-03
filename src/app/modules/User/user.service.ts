@@ -12,9 +12,11 @@ import { AppError, sendOtpEmail } from '../../utils';
 import { IUser } from './user.interface';
 import UserModel from './user.model';
 import {
+  AUTH_PROVIDER,
   defaultUserImage,
   otpExpiryMinutes,
   ROLE,
+  TAuthProvider,
   TDeactiveAccountPayload,
   TUpdateUserPayload,
 } from './user.constant';
@@ -25,6 +27,170 @@ import jwt, { JwtPayload, SignOptions } from 'jsonwebtoken';
 // import { OrderModel } from '../Order/order.model';
 import { deleteImageFromCloudinary, sendImageToCloudinary } from '../../lib';
 import { ClientSession, PipelineStage, startSession } from 'mongoose';
+import { createPublicKey } from 'crypto';
+
+type TSocialSigninPayload = {
+  provider: Exclude<TAuthProvider, 'EMAIL'>;
+  idToken: string;
+  name?: string;
+};
+
+type TJwksKey = {
+  kid: string;
+  kty: string;
+  alg?: string;
+  use?: string;
+  n?: string;
+  e?: string;
+  crv?: string;
+  x?: string;
+  y?: string;
+};
+
+type TSocialTokenPayload = JwtPayload & {
+  sub: string;
+  email?: string;
+  email_verified?: boolean | string;
+  name?: string;
+  picture?: string;
+};
+
+const jwksCache = new Map<string, TJwksKey[]>();
+
+const getConfiguredClientIds = (
+  value: string | undefined,
+  provider: string,
+) => {
+  const clientIds = value
+    ?.split(',')
+    .map(clientId => clientId.trim())
+    .filter(Boolean);
+
+  if (!clientIds?.length) {
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      `${provider} client ID is not configured!`,
+    );
+  }
+
+  return clientIds as [string, ...string[]];
+};
+
+const getJwks = async (jwksUrl: string) => {
+  const cachedKeys = jwksCache.get(jwksUrl);
+  if (cachedKeys) return cachedKeys;
+
+  const response = await fetch(jwksUrl);
+
+  if (!response.ok) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Failed to verify social ID token!',
+    );
+  }
+
+  const data = (await response.json()) as { keys: TJwksKey[] };
+  jwksCache.set(jwksUrl, data.keys);
+
+  return data.keys;
+};
+
+const verifySocialIdToken = async (
+  idToken: string,
+  provider: Exclude<TAuthProvider, 'EMAIL'>,
+): Promise<TSocialTokenPayload> => {
+  const decodedHeader = jwt.decode(idToken, { complete: true });
+
+  if (!decodedHeader || typeof decodedHeader === 'string') {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Invalid social ID token!');
+  }
+
+  const jwksUrl =
+    provider === AUTH_PROVIDER.GOOGLE
+      ? 'https://www.googleapis.com/oauth2/v3/certs'
+      : 'https://appleid.apple.com/auth/keys';
+
+  const issuer =
+    provider === AUTH_PROVIDER.GOOGLE
+      ? (['accounts.google.com', 'https://accounts.google.com'] as [
+          string,
+          ...string[],
+        ])
+      : 'https://appleid.apple.com';
+
+  const audience = getConfiguredClientIds(
+    provider === AUTH_PROVIDER.GOOGLE
+      ? config.google_client_ids
+      : config.apple_client_ids,
+    provider,
+  );
+
+  const keys = await getJwks(jwksUrl);
+  const key = keys.find(item => item.kid === decodedHeader.header.kid);
+
+  if (!key) {
+    jwksCache.delete(jwksUrl);
+    throw new AppError(httpStatus.BAD_REQUEST, 'Invalid social ID token!');
+  }
+
+  const publicKey = createPublicKey({
+    key: key as JsonWebKey,
+    format: 'jwk',
+  }).export({
+    format: 'pem',
+    type: 'spki',
+  });
+
+  const decoded = jwt.verify(idToken, publicKey, {
+    algorithms: ['RS256'],
+    audience,
+    issuer,
+  }) as TSocialTokenPayload;
+
+  if (!decoded.sub || !decoded.email) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Social ID token must include email!',
+    );
+  }
+
+  const isEmailVerified =
+    decoded.email_verified === true || decoded.email_verified === 'true';
+
+  if (!isEmailVerified) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Social account email is not verified!',
+    );
+  }
+
+  return decoded;
+};
+
+const buildAuthResponse = (user: IUser) => {
+  const accessTokenPayload = {
+    _id: user._id.toString(),
+    name: user.name,
+    address: user.address,
+    phone: user.phone,
+    email: user.email,
+    image: user.image || defaultUserImage,
+    role: user.role,
+  };
+
+  const refreshTokenPayload = {
+    email: user.email,
+  };
+
+  const accessToken = createAccessToken(accessTokenPayload);
+  const refreshToken = createRefreshToken(refreshTokenPayload);
+
+  return {
+    accessToken,
+    refreshToken,
+    user: accessTokenPayload,
+  };
+};
 
 // 1. createUserIntoDB
 const createUserIntoDB = async (payload: IUser) => {
@@ -275,6 +441,53 @@ const signinIntoDB = async (payload: { email: string; password: string }) => {
     refreshToken,
     user: accessTokenPayload,
   };
+};
+
+// 5. socialSigninIntoDB
+const socialSigninIntoDB = async (payload: TSocialSigninPayload) => {
+  const decoded = await verifySocialIdToken(payload.idToken, payload.provider);
+  const email = decoded.email!.toLowerCase();
+  const providerId = decoded.sub;
+  const providerIdField =
+    payload.provider === AUTH_PROVIDER.GOOGLE ? 'googleId' : 'appleId';
+
+  let user = await UserModel.findOne({ email }).select('+password');
+
+  if (user) {
+    if (!user.isActive) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'User is not active!');
+    }
+
+    user.authProvider =
+      user.authProvider === AUTH_PROVIDER.EMAIL
+        ? user.authProvider
+        : payload.provider;
+    user[providerIdField] = providerId;
+    user.isVerifiedByOTP = true;
+
+    if (decoded.picture && user.image === defaultUserImage) {
+      user.image = decoded.picture;
+    }
+
+    await user.save();
+
+    return buildAuthResponse(user);
+  }
+
+  const fallbackName = email.split('@')[0];
+
+  user = await UserModel.create({
+    name: payload.name || decoded.name || fallbackName,
+    phone: 'N/A',
+    address: 'N/A',
+    email,
+    image: decoded.picture || defaultUserImage,
+    authProvider: payload.provider,
+    [providerIdField]: providerId,
+    isVerifiedByOTP: true,
+  });
+
+  return buildAuthResponse(user);
 };
 
 // 5. updateProfilePhotoIntoDB
@@ -1328,6 +1541,7 @@ export const UserService = {
   sendSignupOtpAgainIntoDB,
   verifySignupOtpIntoDB,
   signinIntoDB,
+  socialSigninIntoDB,
   updateProfilePhotoIntoDB,
   updateUserDataIntoDB,
   changePasswordIntoDB,

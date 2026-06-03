@@ -146,6 +146,19 @@ const signinSchema = z.object({
   }),
 });
 
+// 6. socialSigninSchema
+const socialSigninSchema = z.object({
+  body: z.object({
+    provider: z.enum(['GOOGLE', 'APPLE'], {
+      error: 'Provider must be GOOGLE or APPLE!',
+    }),
+    idToken: z.string({
+      error: 'ID token is required!',
+    }),
+    name: z.string().optional(),
+  }),
+});
+
 // 7. updateUserDataSchema
 const updateUserDataSchema = z.object({
   body: z.object({
@@ -284,6 +297,7 @@ export const UserValidation = {
   verifySignupOtpSchema,
   createDriverAccountSchema,
   signinSchema,
+  socialSigninSchema,
   updateUserDataSchema,
   changePasswordSchema,
   forgotPasswordSchema,

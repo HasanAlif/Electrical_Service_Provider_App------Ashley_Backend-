@@ -51,7 +51,18 @@ const signin = asyncHandler(async (req, res) => {
   });
 });
 
-// 5. updateProfilePhoto
+// 5. socialSignin
+const socialSignin = asyncHandler(async (req, res) => {
+  const result = await UserService.socialSigninIntoDB(req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Social signin successful!',
+    data: result,
+  });
+});
+
+// 6. updateProfilePhoto
 const updateProfilePhoto = asyncHandler(async (req, res) => {
   const result = await UserService.updateProfilePhotoIntoDB(req.user, req.file);
 
@@ -249,6 +260,7 @@ export const UserController = {
   sendSignupOtpAgain,
   verifySignupOtp,
   signin,
+  socialSignin,
   updateProfilePhoto,
   updateUserData,
   changePassword,

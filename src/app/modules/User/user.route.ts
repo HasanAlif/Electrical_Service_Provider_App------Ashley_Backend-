@@ -40,7 +40,7 @@ router
 router
   .route('/update-profile-photo')
   .put(
-    auth(ROLE.CUSTOMER, ROLE.DRIVER, ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    auth(ROLE.USER, ROLE.ADMIN, ROLE.SUPER_ADMIN),
     multerUpload.single('user'),
     UserController.updateProfilePhoto,
   );
@@ -49,7 +49,7 @@ router
 router
   .route('/update-user-data')
   .patch(
-    auth(ROLE.CUSTOMER, ROLE.DRIVER, ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    auth(ROLE.USER, ROLE.ADMIN, ROLE.SUPER_ADMIN),
     validateRequest(UserValidation.updateUserDataSchema),
     UserController.updateUserData,
   );
@@ -58,7 +58,7 @@ router
 router
   .route('/change-password')
   .patch(
-    auth(ROLE.CUSTOMER, ROLE.DRIVER, ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    auth(ROLE.USER, ROLE.ADMIN, ROLE.SUPER_ADMIN),
     validateRequest(UserValidation.changePasswordSchema),
     UserController.changePassword,
   );
@@ -99,7 +99,7 @@ router
 router
   .route('/profile')
   .get(
-    auth(ROLE.CUSTOMER, ROLE.DRIVER, ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    auth(ROLE.USER, ROLE.ADMIN, ROLE.SUPER_ADMIN),
     UserController.fetchProfile,
   );
 
@@ -113,7 +113,7 @@ router.route('/access-token').get(
 router
   .route('/deactive-account')
   .patch(
-    auth(ROLE.CUSTOMER, ROLE.DRIVER),
+    auth(ROLE.USER),
     validateRequest(UserValidation.deactivateUserAccountSchema),
     UserController.deactivateUserAccount,
   );
@@ -121,10 +121,7 @@ router
 // 15. deleteSpecificUserAccount
 router
   .route('/delete-account')
-  .delete(
-    auth(ROLE.CUSTOMER, ROLE.DRIVER),
-    UserController.deleteSpecificUserAccount,
-  );
+  .delete(auth(ROLE.USER), UserController.deleteSpecificUserAccount);
 
 // 16. adminGetAllUsers
 router
@@ -138,5 +135,14 @@ router
 
 // 18. getAllUser
 // router.route('/users').get(UserController.getAllUser);
+
+// 19. uploadImages
+router
+  .route('/upload-images')
+  .post(
+    auth(ROLE.USER, ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    multerUpload.array('images', 5),
+    UserController.uploadImages,
+  );
 
 export const UserRoutes = router;

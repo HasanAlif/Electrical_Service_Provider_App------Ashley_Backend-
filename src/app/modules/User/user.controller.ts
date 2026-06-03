@@ -216,6 +216,21 @@ const adminGetAllUsers = asyncHandler(async (req, res) => {
 //   });
 // });
 
+// 19. uploadImages
+const uploadImages = asyncHandler(async (req, res) => {
+  const files = Array.isArray(req.files)
+    ? req.files
+    : (req.files && Object.values(req.files).flat()) || undefined;
+
+  const result = await UserService.uploadImagesIntoDB(files);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Images uploaded successfully!',
+    data: result,
+  });
+});
+
 export const UserController = {
   createUser,
   sendSignupOtpAgain,
@@ -235,4 +250,5 @@ export const UserController = {
   adminGetAllUsers,
   // adminGetAllMetaData,
   // getAllUser,
+  uploadImages,
 };

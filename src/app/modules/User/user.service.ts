@@ -1281,6 +1281,38 @@ const adminGetAllUsersFromDB = async (query: Record<string, unknown>) => {
 //   return { data: facetResult.data, meta };
 // };
 
+// 19. uploadImagesIntoDB
+const uploadImagesIntoDB = async (
+  imageFiles: Express.Multer.File[] | undefined,
+): Promise<string[]> => {
+  if (!imageFiles || imageFiles.length === 0) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'No images provided!');
+  }
+
+  const results = await Promise.allSettled(
+    imageFiles.map(file => sendImageToCloudinary(file)),
+  );
+
+  const imageUrls: string[] = [];
+
+  for (const result of results) {
+    if (result.status === 'fulfilled') {
+      imageUrls.push(result.value.secure_url);
+    } else {
+      console.error('Cloudinary upload failed for a file:', result.reason);
+    }
+  }
+
+  if (imageUrls.length === 0) {
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'All image uploads failed. Please try again!',
+    );
+  }
+
+  return imageUrls;
+};
+
 export const UserService = {
   createUserIntoDB,
   sendSignupOtpAgainIntoDB,
@@ -1300,4 +1332,5 @@ export const UserService = {
   adminGetAllUsersFromDB,
   // adminGetAllMetaDataFromDB,
   // getAllUserFromDB,
+  uploadImagesIntoDB,
 };

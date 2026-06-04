@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { UserRoutes } from '../modules/User/user.route';
-import { ServiceCallRoutes } from '../modules/ServiceCall/ServiceCall.routes';
 import { AddressRoutes } from '../modules/Address/address.route';
+import { ServiceCallRoutes } from '../modules/ServiceCall/ServiceCall.routes';
+import { EVChargerInstallationRoutes } from '../modules/EVChargerInstallation/EVChargerInstallation.routes';
 
 const router = Router();
 
@@ -17,6 +18,10 @@ const moduleRoutes = [
   {
     path: '/service-calls',
     route: ServiceCallRoutes,
+  },
+  {
+    path: '/ev-charger-installations',
+    route: EVChargerInstallationRoutes,
   },
 ];
 

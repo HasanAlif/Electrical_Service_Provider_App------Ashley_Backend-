@@ -1,14 +1,16 @@
 import { z } from 'zod';
-
-const statusValues = [
-  'draft',
-  'submitted',
-  'in_review',
-  'quoted',
-  'scheduled',
-  'completed',
-  'cancelled',
-] as const;
+import {
+  EV_CHARGER_CONTACT_METHODS,
+  EV_CHARGER_CONNECTION_TYPES,
+  EV_CHARGER_DISTANCES,
+  EV_CHARGER_INSTALLATION_LOCATIONS,
+  EV_CHARGER_OWNERSHIP_STATUSES,
+  EV_CHARGER_PANEL_LOCATIONS,
+  EV_CHARGER_PROPERTY_TYPES,
+  EV_CHARGER_STATUSES,
+  EV_CHARGER_TIMELINE_URGENCIES,
+} from './EVChargerInstallation.interface';
+import { Service_STATUSES } from '../../constants';
 
 export const EVChargerInstallationValidation = {
   createSchema: z.object({
@@ -17,7 +19,7 @@ export const EVChargerInstallationValidation = {
         fullName: z.string({ error: 'Full name is required!' }).min(1),
         phoneNumber: z.string({ error: 'Phone number is required!' }).min(1),
         emailAddress: z.string().email('Invalid email format!').optional(),
-        preferredContactMethod: z.enum(['Call', 'Text', 'Email']).optional(),
+        preferredContactMethod: z.enum(EV_CHARGER_CONTACT_METHODS).optional(),
 
         streetAddress: z
           .string({ error: 'Street address is required!' })
@@ -27,56 +29,18 @@ export const EVChargerInstallationValidation = {
         state: z.string({ error: 'State is required!' }).min(1),
         zipCode: z.string({ error: 'ZIP code is required!' }).min(1),
 
-        propertyType: z.enum(['House', 'Condo', 'Apartment', 'Commercial']),
-        ownershipStatus: z.enum([
-          'Owner',
-          'Tenant',
-          'Property Manager',
-          'Other',
-        ]),
-        timelineUrgency: z.enum([
-          'As soon as possible',
-          'This week',
-          'This month',
-          'Flexible',
-        ]),
+        propertyType: z.enum(EV_CHARGER_PROPERTY_TYPES),
+        ownershipStatus: z.enum(EV_CHARGER_OWNERSHIP_STATUSES),
+        timelineUrgency: z.enum(EV_CHARGER_TIMELINE_URGENCIES),
 
-        chargerConnectionType: z.enum([
-          'Plug-in',
-          'Hardwired',
-          'I want help deciding',
-        ]),
+        chargerConnectionType: z.enum(EV_CHARGER_CONNECTION_TYPES),
         nemaConfiguration: z.string().optional(),
         chargerProvidedByUser: z.boolean().optional(),
-        chargerStatus: z
-          .enum([
-            'Currently have the charger',
-            'Ordered and waiting on delivery',
-            'Need to place order',
-            'Need help choosing a charger',
-          ])
-          .optional(),
+        chargerStatus: z.enum(EV_CHARGER_STATUSES).optional(),
 
-        installationLocation: z.enum([
-          'Garage',
-          'Carport',
-          'Driveway',
-          'Other',
-        ]),
-        panelLocation: z.enum([
-          'Basement (Finished)',
-          'Basement (Unfinished)',
-          'Garage (Finished)',
-          'Garage (Unfinished)',
-          'Other (please specify)',
-        ]),
-        panelDistance: z.enum([
-          'Less than 25 ft',
-          '25-50 ft',
-          '50-100 ft',
-          'More than 100 ft',
-          'Unsure',
-        ]),
+        installationLocation: z.enum(EV_CHARGER_INSTALLATION_LOCATIONS),
+        panelLocation: z.enum(EV_CHARGER_PANEL_LOCATIONS),
+        panelDistance: z.enum(EV_CHARGER_DISTANCES),
 
         environment: z.string().optional(),
         budget: z.string().optional(),
@@ -86,7 +50,6 @@ export const EVChargerInstallationValidation = {
         additionalInformation: z.string().optional(),
         areaPhoto: z.string().optional(),
         panelPhotos: z.array(z.string()).optional(),
-        notes: z.string().optional(),
       })
       .superRefine((data, ctx) => {
         if (
@@ -139,7 +102,7 @@ export const EVChargerInstallationValidation = {
         fullName: z.string().optional(),
         phoneNumber: z.string().optional(),
         emailAddress: z.string().email('Invalid email format!').optional(),
-        preferredContactMethod: z.enum(['Call', 'Text', 'Email']).optional(),
+        preferredContactMethod: z.enum(EV_CHARGER_CONTACT_METHODS).optional(),
 
         streetAddress: z.string().optional(),
         apartmentUnit: z.string().optional(),
@@ -147,51 +110,20 @@ export const EVChargerInstallationValidation = {
         state: z.string().optional(),
         zipCode: z.string().optional(),
 
-        propertyType: z
-          .enum(['House', 'Condo', 'Apartment', 'Commercial'])
-          .optional(),
-        ownershipStatus: z
-          .enum(['Owner', 'Tenant', 'Property Manager', 'Other'])
-          .optional(),
-        timelineUrgency: z
-          .enum(['As soon as possible', 'This week', 'This month', 'Flexible'])
-          .optional(),
+        propertyType: z.enum(EV_CHARGER_PROPERTY_TYPES).optional(),
+        ownershipStatus: z.enum(EV_CHARGER_OWNERSHIP_STATUSES).optional(),
+        timelineUrgency: z.enum(EV_CHARGER_TIMELINE_URGENCIES).optional(),
 
-        chargerConnectionType: z
-          .enum(['Plug-in', 'Hardwired', 'I want help deciding'])
-          .optional(),
+        chargerConnectionType: z.enum(EV_CHARGER_CONNECTION_TYPES).optional(),
         nemaConfiguration: z.string().optional(),
         chargerProvidedByUser: z.boolean().optional(),
-        chargerStatus: z
-          .enum([
-            'Currently have the charger',
-            'Ordered and waiting on delivery',
-            'Need to place order',
-            'Need help choosing a charger',
-          ])
-          .optional(),
+        chargerStatus: z.enum(EV_CHARGER_STATUSES).optional(),
 
         installationLocation: z
-          .enum(['Garage', 'Carport', 'Driveway', 'Other'])
+          .enum(EV_CHARGER_INSTALLATION_LOCATIONS)
           .optional(),
-        panelLocation: z
-          .enum([
-            'Basement (Finished)',
-            'Basement (Unfinished)',
-            'Garage (Finished)',
-            'Garage (Unfinished)',
-            'Other (please specify)',
-          ])
-          .optional(),
-        panelDistance: z
-          .enum([
-            'Less than 25 ft',
-            '25-50 ft',
-            '50-100 ft',
-            'More than 100 ft',
-            'Unsure',
-          ])
-          .optional(),
+        panelLocation: z.enum(EV_CHARGER_PANEL_LOCATIONS).optional(),
+        panelDistance: z.enum(EV_CHARGER_DISTANCES).optional(),
 
         environment: z.string().optional(),
         budget: z.string().optional(),
@@ -201,8 +133,7 @@ export const EVChargerInstallationValidation = {
         additionalInformation: z.string().optional(),
         areaPhoto: z.string().optional(),
         panelPhotos: z.array(z.string()).optional(),
-        notes: z.string().optional(),
-        status: z.enum(statusValues).optional(),
+        status: z.enum(Service_STATUSES).optional(),
       })
       .refine(
         data =>

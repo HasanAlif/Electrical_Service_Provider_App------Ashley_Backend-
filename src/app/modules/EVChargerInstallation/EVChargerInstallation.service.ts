@@ -2,6 +2,7 @@ import httpStatus from 'http-status';
 import { AppError } from '../../utils';
 import { IEVChargerInstallation } from './EVChargerInstallation.interface';
 import EVChargerInstallationModel from './EVChargerInstallation.model';
+import { DEFAULT_REQUEST_STATUS } from '../../constants';
 
 const createEVChargerInstallationIntoDB = async (
   userId: string,
@@ -13,7 +14,7 @@ const createEVChargerInstallationIntoDB = async (
     serviceType: 'EV Charger Installation',
     // chargerProvidedByUser: payload.chargerProvidedByUser ?? false,
     panelPhotos: payload.panelPhotos ?? [],
-    status: payload.status ?? 'submitted',
+    status: payload.status ?? DEFAULT_REQUEST_STATUS,
   });
 };
 

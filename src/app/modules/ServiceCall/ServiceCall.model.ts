@@ -1,5 +1,13 @@
 import { model, Schema } from 'mongoose';
-import { IServiceCall } from './ServiceCall.interface';
+import {
+  IServiceCall,
+  SERVICE_CALL_CONTACT_METHODS,
+  SERVICE_CALL_OWNERSHIP_STATUSES,
+  SERVICE_CALL_PREFERRED_TIMES,
+  SERVICE_CALL_PROPERTY_TYPES,
+  SERVICE_CALL_TIMELINE_URGENCIES,
+} from './ServiceCall.interface';
+import { DEFAULT_REQUEST_STATUS, Service_STATUSES } from '../../constants';
 
 const serviceCallSchema = new Schema<IServiceCall>(
   {
@@ -31,7 +39,7 @@ const serviceCallSchema = new Schema<IServiceCall>(
     },
     preferredContactMethod: {
       type: String,
-      enum: ['Call', 'Text', 'Email'],
+      enum: SERVICE_CALL_CONTACT_METHODS,
       default: 'Call',
     },
     streetAddress: {
@@ -60,17 +68,17 @@ const serviceCallSchema = new Schema<IServiceCall>(
     },
     propertyType: {
       type: String,
-      enum: ['House', 'Condo', 'Apartment', 'Commercial'],
+      enum: SERVICE_CALL_PROPERTY_TYPES,
       required: [true, 'Property type is required!'],
     },
     ownershipStatus: {
       type: String,
-      enum: ['Owner', 'Tenant', 'Property Manager', 'Other'],
+      enum: SERVICE_CALL_OWNERSHIP_STATUSES,
       required: [true, 'Ownership status is required!'],
     },
     timelineUrgency: {
       type: String,
-      enum: ['As soon as possible', 'This week', 'This month', 'Flexible'],
+      enum: SERVICE_CALL_TIMELINE_URGENCIES,
       required: [true, 'Timeline/urgency is required!'],
     },
     issueDescription: {
@@ -80,7 +88,7 @@ const serviceCallSchema = new Schema<IServiceCall>(
     },
     preferredTime: {
       type: String,
-      enum: ['AM (8-11)', 'PM (12-2)', 'Anytime'],
+      enum: SERVICE_CALL_PREFERRED_TIMES,
     },
     schedulingPreference: {
       type: [String],
@@ -128,16 +136,8 @@ const serviceCallSchema = new Schema<IServiceCall>(
     },
     status: {
       type: String,
-      enum: [
-        'draft',
-        'submitted',
-        'in_review',
-        'quoted',
-        'scheduled',
-        'completed',
-        'cancelled',
-      ],
-      default: 'submitted',
+      enum: Service_STATUSES,
+      default: DEFAULT_REQUEST_STATUS,
     },
   },
   {

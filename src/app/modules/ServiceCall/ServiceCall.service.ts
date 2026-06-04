@@ -1,7 +1,8 @@
 import httpStatus from 'http-status';
 import { AppError } from '../../utils';
-import { IServiceCall, TServiceCallStatus } from './ServiceCall.interface';
+import { IServiceCall } from './ServiceCall.interface';
 import ServiceCallModel from './ServiceCall.model';
+import { TServiceStatus } from '../../constants';
 
 // createServiceCallIntoDB
 const createServiceCallIntoDB = async (payload: Partial<IServiceCall>) => {
@@ -37,7 +38,7 @@ const getSingleServiceCallFromDB = async (id: string) => {
 // updateServiceCallStatusIntoDB
 const updateServiceCallStatusIntoDB = async (
   id: string,
-  status: TServiceCallStatus,
+  status: TServiceStatus,
 ) => {
   const serviceCall = await ServiceCallModel.findByIdAndUpdate(
     id,

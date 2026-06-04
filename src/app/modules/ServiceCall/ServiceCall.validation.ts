@@ -1,14 +1,12 @@
 import { z } from 'zod';
-
-const serviceCallStatusValues = [
-  'draft',
-  'submitted',
-  'in_review',
-  'quoted',
-  'scheduled',
-  'completed',
-  'cancelled',
-] as const;
+import {
+  SERVICE_CALL_CONTACT_METHODS,
+  SERVICE_CALL_OWNERSHIP_STATUSES,
+  SERVICE_CALL_PREFERRED_TIMES,
+  SERVICE_CALL_PROPERTY_TYPES,
+  SERVICE_CALL_TIMELINE_URGENCIES,
+} from './ServiceCall.interface';
+import { Service_STATUSES } from '../../constants';
 
 export const ServiceCallValidation = {
   createServiceCallSchema: z.object({
@@ -18,7 +16,7 @@ export const ServiceCallValidation = {
       fullName: z.string({ error: 'Full name is required!' }).min(1),
       phoneNumber: z.string({ error: 'Phone number is required!' }).min(1),
       emailAddress: z.string().email('Invalid email format!').optional(),
-      preferredContactMethod: z.enum(['Call', 'Text', 'Email']).optional(),
+      preferredContactMethod: z.enum(SERVICE_CALL_CONTACT_METHODS).optional(),
 
       streetAddress: z.string({ error: 'Street address is required!' }).min(1),
       apartmentUnit: z.string().optional(),
@@ -26,19 +24,14 @@ export const ServiceCallValidation = {
       state: z.string({ error: 'State is required!' }).min(1),
       zipCode: z.string({ error: 'ZIP code is required!' }).min(1),
 
-      propertyType: z.enum(['House', 'Condo', 'Apartment', 'Commercial']),
-      ownershipStatus: z.enum(['Owner', 'Tenant', 'Property Manager', 'Other']),
-      timelineUrgency: z.enum([
-        'As soon as possible',
-        'This week',
-        'This month',
-        'Flexible',
-      ]),
+      propertyType: z.enum(SERVICE_CALL_PROPERTY_TYPES),
+      ownershipStatus: z.enum(SERVICE_CALL_OWNERSHIP_STATUSES),
+      timelineUrgency: z.enum(SERVICE_CALL_TIMELINE_URGENCIES),
 
       issueDescription: z
         .string({ error: 'Issue description is required!' })
         .min(1),
-      preferredTime: z.enum(['AM (8-11)', 'PM (12-2)', 'Anytime']).optional(),
+      preferredTime: z.enum(SERVICE_CALL_PREFERRED_TIMES).optional(),
       schedulingPreference: z.array(z.string()).optional(),
 
       installationLocation: z.string().optional(),
@@ -66,7 +59,7 @@ export const ServiceCallValidation = {
       id: z.string({ error: 'Service call ID is required!' }).min(1),
     }),
     body: z.object({
-      status: z.enum(serviceCallStatusValues),
+      status: z.enum(Service_STATUSES),
     }),
   }),
 };

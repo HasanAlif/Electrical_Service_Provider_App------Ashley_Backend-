@@ -1,5 +1,16 @@
 import { model, Schema } from 'mongoose';
-import { IPanelUpgradeReplacement } from './PanelUpgradeReplacement.interface';
+import {
+  PANEL_CONTACT_METHODS,
+  IPanelUpgradeReplacement,
+  PANEL_AMPERAGES,
+  PANEL_LOCATIONS,
+  PANEL_OWNERSHIP_STATUSES,
+  PANEL_POWER_FEEDS,
+  PANEL_PROPERTY_TYPES,
+  PANEL_SERVICE_TYPES,
+  PANEL_TIMELINE_URGENCIES,
+} from './PanelUpgradeReplacement.interface';
+import { DEFAULT_REQUEST_STATUS, Service_STATUSES } from '../../constants';
 
 const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
   {
@@ -31,7 +42,7 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
     },
     preferredContactMethod: {
       type: String,
-      enum: ['Call', 'Text', 'Email'],
+      enum: PANEL_CONTACT_METHODS,
       default: 'Call',
     },
     streetAddress: {
@@ -60,47 +71,41 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
     },
     propertyType: {
       type: String,
-      enum: ['House', 'Condo', 'Apartment', 'Commercial'],
+      enum: PANEL_PROPERTY_TYPES,
       required: [true, 'Property type is required!'],
     },
     ownershipStatus: {
       type: String,
-      enum: ['Owner', 'Tenant', 'Property Manager', 'Other'],
+      enum: PANEL_OWNERSHIP_STATUSES,
       required: [true, 'Ownership status is required!'],
     },
     timelineUrgency: {
       type: String,
-      enum: ['As soon as possible', 'This week', 'This month', 'Flexible'],
+      enum: PANEL_TIMELINE_URGENCIES,
       required: [true, 'Timeline/urgency is required!'],
     },
     panelServiceType: {
       type: String,
-      enum: ['Replacement', 'Upgrade'],
+      enum: PANEL_SERVICE_TYPES,
       required: [true, 'Service type is required!'],
     },
     desiredPanelAmperage: {
       type: String,
-      enum: ['50', '60', '100', '150', '200', '300', '350', '400', 'Unsure'],
+      enum: PANEL_AMPERAGES,
     },
     currentPanelAmperage: {
       type: String,
-      enum: ['50', '60', '100', '150', '200', '300', '350', '400', 'Unsure'],
+      enum: PANEL_AMPERAGES,
       required: [true, 'Current panel amperage is required!'],
     },
     panelLocation: {
       type: String,
-      enum: [
-        'Basement (Finished)',
-        'Basement (Unfinished)',
-        'Garage (Finished)',
-        'Garage (Unfinished)',
-        'Other (please specify)',
-      ],
+      enum: PANEL_LOCATIONS,
       required: [true, 'Panel location is required!'],
     },
     powerFeedType: {
       type: String,
-      enum: ['Overhead', 'Underground', 'Unsure'],
+      enum: PANEL_POWER_FEEDS,
       required: [true, 'Power feed type is required!'],
     },
     meterPhotos: {
@@ -118,16 +123,8 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
 
     status: {
       type: String,
-      enum: [
-        'draft',
-        'submitted',
-        'in_review',
-        'quoted',
-        'scheduled',
-        'completed',
-        'cancelled',
-      ],
-      default: 'submitted',
+      enum: Service_STATUSES,
+      default: DEFAULT_REQUEST_STATUS,
     },
   },
   {

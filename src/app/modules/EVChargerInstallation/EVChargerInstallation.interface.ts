@@ -1,46 +1,79 @@
 import { Document, Types } from 'mongoose';
+import { TServiceStatus } from '../../constants';
 
+export const EV_CHARGER_CONTACT_METHODS = ['Call', 'Text', 'Email'] as const;
+export type TEVChargerPreferredContactMethod =
+  (typeof EV_CHARGER_CONTACT_METHODS)[number];
+
+export const EV_CHARGER_CONNECTION_TYPES = [
+  'Plug-in',
+  'Hardwired',
+  'I want help deciding',
+] as const;
 export type TEVChargerConnectionType =
-  | 'Plug-in'
-  | 'Hardwired'
-  | 'I want help deciding';
-export type TEVChargerStatus =
-  | 'Currently have the charger'
-  | 'Ordered and waiting on delivery'
-  | 'Need to place order'
-  | 'Need help choosing a charger';
+  (typeof EV_CHARGER_CONNECTION_TYPES)[number];
+
+export const EV_CHARGER_STATUSES = [
+  'Currently have the charger',
+  'Ordered and waiting on delivery',
+  'Need to place order',
+  'Need help choosing a charger',
+] as const;
+export type TEVChargerStatus = (typeof EV_CHARGER_STATUSES)[number];
+
+export const EV_CHARGER_INSTALLATION_LOCATIONS = [
+  'Garage',
+  'Carport',
+  'Driveway',
+  'Other',
+] as const;
 export type TEVChargerInstallationLocation =
-  | 'Garage'
-  | 'Carport'
-  | 'Driveway'
-  | 'Other';
+  (typeof EV_CHARGER_INSTALLATION_LOCATIONS)[number];
+
+export const EV_CHARGER_PANEL_LOCATIONS = [
+  'Basement (Finished)',
+  'Basement (Unfinished)',
+  'Garage (Finished)',
+  'Garage (Unfinished)',
+  'Other (please specify)',
+] as const;
 export type TEVChargerPanelLocation =
-  | 'Basement (Finished)'
-  | 'Basement (Unfinished)'
-  | 'Garage (Finished)'
-  | 'Garage (Unfinished)'
-  | 'Other (please specify)';
-export type TEVChargerDistance =
-  | 'Less than 25 ft'
-  | '25-50 ft'
-  | '50-100 ft'
-  | 'More than 100 ft'
-  | 'Unsure';
-export type TEVChargerPropertyType =
-  | 'House'
-  | 'Condo'
-  | 'Apartment'
-  | 'Commercial';
+  (typeof EV_CHARGER_PANEL_LOCATIONS)[number];
+
+export const EV_CHARGER_DISTANCES = [
+  'Less than 25 ft',
+  '25-50 ft',
+  '50-100 ft',
+  'More than 100 ft',
+  'Unsure',
+] as const;
+export type TEVChargerDistance = (typeof EV_CHARGER_DISTANCES)[number];
+
+export const EV_CHARGER_PROPERTY_TYPES = [
+  'House',
+  'Condo',
+  'Apartment',
+  'Commercial',
+] as const;
+export type TEVChargerPropertyType = (typeof EV_CHARGER_PROPERTY_TYPES)[number];
+
+export const EV_CHARGER_OWNERSHIP_STATUSES = [
+  'Owner',
+  'Tenant',
+  'Property Manager',
+  'Other',
+] as const;
 export type TEVChargerOwnershipStatus =
-  | 'Owner'
-  | 'Tenant'
-  | 'Property Manager'
-  | 'Other';
+  (typeof EV_CHARGER_OWNERSHIP_STATUSES)[number];
+
+export const EV_CHARGER_TIMELINE_URGENCIES = [
+  'As soon as possible',
+  'This week',
+  'This month',
+  'Flexible',
+] as const;
 export type TEVChargerTimelineUrgency =
-  | 'As soon as possible'
-  | 'This week'
-  | 'This month'
-  | 'Flexible';
+  (typeof EV_CHARGER_TIMELINE_URGENCIES)[number];
 
 export interface IEVChargerInstallation extends Document {
   _id: Types.ObjectId;
@@ -51,7 +84,7 @@ export interface IEVChargerInstallation extends Document {
   fullName: string;
   phoneNumber: string;
   emailAddress?: string;
-  preferredContactMethod: 'Call' | 'Text' | 'Email';
+  preferredContactMethod: TEVChargerPreferredContactMethod;
 
   streetAddress: string;
   apartmentUnit?: string;
@@ -81,15 +114,7 @@ export interface IEVChargerInstallation extends Document {
   areaPhoto?: string;
   panelPhotos: string[];
 
-  notes?: string;
-  status:
-    | 'draft'
-    | 'submitted'
-    | 'in_review'
-    | 'quoted'
-    | 'scheduled'
-    | 'completed'
-    | 'cancelled';
+  status: TServiceStatus;
 
   createdAt: Date;
   updatedAt: Date;

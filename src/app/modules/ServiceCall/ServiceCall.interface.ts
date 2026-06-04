@@ -1,30 +1,44 @@
 import { Document, Types } from 'mongoose';
+import { TServiceStatus } from '../../constants';
 
-export type TServiceCallPreferredContactMethod = 'Call' | 'Text' | 'Email';
+export const SERVICE_CALL_CONTACT_METHODS = ['Call', 'Text', 'Email'] as const;
+export type TServiceCallPreferredContactMethod =
+  (typeof SERVICE_CALL_CONTACT_METHODS)[number];
+
+export const SERVICE_CALL_PROPERTY_TYPES = [
+  'House',
+  'Condo',
+  'Apartment',
+  'Commercial',
+] as const;
 export type TServiceCallPropertyType =
-  | 'House'
-  | 'Condo'
-  | 'Apartment'
-  | 'Commercial';
+  (typeof SERVICE_CALL_PROPERTY_TYPES)[number];
+
+export const SERVICE_CALL_OWNERSHIP_STATUSES = [
+  'Owner',
+  'Tenant',
+  'Property Manager',
+  'Other',
+] as const;
 export type TServiceCallOwnershipStatus =
-  | 'Owner'
-  | 'Tenant'
-  | 'Property Manager'
-  | 'Other';
+  (typeof SERVICE_CALL_OWNERSHIP_STATUSES)[number];
+
+export const SERVICE_CALL_TIMELINE_URGENCIES = [
+  'As soon as possible',
+  'This week',
+  'This month',
+  'Flexible',
+] as const;
 export type TServiceCallTimelineUrgency =
-  | 'As soon as possible'
-  | 'This week'
-  | 'This month'
-  | 'Flexible';
-export type TServiceCallPreferredTime = 'AM (8-11)' | 'PM (12-2)' | 'Anytime';
-export type TServiceCallStatus =
-  | 'draft'
-  | 'submitted'
-  | 'in_review'
-  | 'quoted'
-  | 'scheduled'
-  | 'completed'
-  | 'cancelled';
+  (typeof SERVICE_CALL_TIMELINE_URGENCIES)[number];
+
+export const SERVICE_CALL_PREFERRED_TIMES = [
+  'AM (8-11)',
+  'PM (12-2)',
+  'Anytime',
+] as const;
+export type TServiceCallPreferredTime =
+  (typeof SERVICE_CALL_PREFERRED_TIMES)[number];
 
 export interface IServiceCall extends Document {
   _id: Types.ObjectId;
@@ -63,7 +77,7 @@ export interface IServiceCall extends Document {
   photos: string[];
   notes?: string;
 
-  status: TServiceCallStatus;
+  status: TServiceStatus;
 
   createdAt: Date;
   updatedAt: Date;

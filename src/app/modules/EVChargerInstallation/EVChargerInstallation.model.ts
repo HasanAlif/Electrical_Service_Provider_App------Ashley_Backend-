@@ -1,5 +1,17 @@
 import { model, Schema } from 'mongoose';
+import { DEFAULT_REQUEST_STATUS, Service_STATUSES } from '../../constants';
 import { IEVChargerInstallation } from './EVChargerInstallation.interface';
+import {
+  EV_CHARGER_CONTACT_METHODS,
+  EV_CHARGER_CONNECTION_TYPES,
+  EV_CHARGER_DISTANCES,
+  EV_CHARGER_INSTALLATION_LOCATIONS,
+  EV_CHARGER_OWNERSHIP_STATUSES,
+  EV_CHARGER_PANEL_LOCATIONS,
+  EV_CHARGER_PROPERTY_TYPES,
+  EV_CHARGER_STATUSES,
+  EV_CHARGER_TIMELINE_URGENCIES,
+} from './EVChargerInstallation.interface';
 
 const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
   {
@@ -31,7 +43,7 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
     },
     preferredContactMethod: {
       type: String,
-      enum: ['Call', 'Text', 'Email'],
+      enum: EV_CHARGER_CONTACT_METHODS,
       default: 'Call',
     },
     streetAddress: {
@@ -60,22 +72,22 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
     },
     propertyType: {
       type: String,
-      enum: ['House', 'Condo', 'Apartment', 'Commercial'],
+      enum: EV_CHARGER_PROPERTY_TYPES,
       required: [true, 'Property type is required!'],
     },
     ownershipStatus: {
       type: String,
-      enum: ['Owner', 'Tenant', 'Property Manager', 'Other'],
+      enum: EV_CHARGER_OWNERSHIP_STATUSES,
       required: [true, 'Ownership status is required!'],
     },
     timelineUrgency: {
       type: String,
-      enum: ['As soon as possible', 'This week', 'This month', 'Flexible'],
+      enum: EV_CHARGER_TIMELINE_URGENCIES,
       required: [true, 'Timeline/urgency is required!'],
     },
     chargerConnectionType: {
       type: String,
-      enum: ['Plug-in', 'Hardwired', 'I want help deciding'],
+      enum: EV_CHARGER_CONNECTION_TYPES,
       required: [true, 'Charger connection type is required!'],
     },
     nemaConfiguration: {
@@ -87,38 +99,21 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
     },
     chargerStatus: {
       type: String,
-      enum: [
-        'Currently have the charger',
-        'Ordered and waiting on delivery',
-        'Need to place order',
-        'Need help choosing a charger',
-      ],
+      enum: EV_CHARGER_STATUSES,
     },
     installationLocation: {
       type: String,
-      enum: ['Garage', 'Carport', 'Driveway', 'Other'],
+      enum: EV_CHARGER_INSTALLATION_LOCATIONS,
       required: [true, 'Installation location is required!'],
     },
     panelLocation: {
       type: String,
-      enum: [
-        'Basement (Finished)',
-        'Basement (Unfinished)',
-        'Garage (Finished)',
-        'Garage (Unfinished)',
-        'Other (please specify)',
-      ],
+      enum: EV_CHARGER_PANEL_LOCATIONS,
       required: [true, 'Panel location is required!'],
     },
     panelDistance: {
       type: String,
-      enum: [
-        'Less than 25 ft',
-        '25-50 ft',
-        '50-100 ft',
-        'More than 100 ft',
-        'Unsure',
-      ],
+      enum: EV_CHARGER_DISTANCES,
       required: [true, 'Distance is required!'],
     },
     environment: {
@@ -148,22 +143,10 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
       type: [String],
       default: [],
     },
-    notes: {
-      type: String,
-      trim: true,
-    },
     status: {
       type: String,
-      enum: [
-        'draft',
-        'submitted',
-        'in_review',
-        'quoted',
-        'scheduled',
-        'completed',
-        'cancelled',
-      ],
-      default: 'submitted',
+      enum: Service_STATUSES,
+      default: DEFAULT_REQUEST_STATUS,
     },
   },
   {

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { AUTH_PROVIDER } from './user.constant';
 
 // Reusable validators
 export const zodEnumFromObject = <T extends Record<string, string>>(obj: T) =>
@@ -118,8 +119,8 @@ const createDriverAccountSchema = z.object({
     documentCountry: z.string().optional(),
     fullAddress: z.string().optional(),
 
-    // role: zodEnumFromObject({ DRIVER: 'DRIVER' }),
-    role: z.enum(['DRIVER']),
+    // role: zodEnumFromObject({ USER: 'USER' }),
+    // role: z.enum([ROLE.USER]),
   }),
 });
 
@@ -149,9 +150,7 @@ const signinSchema = z.object({
 // 6. socialSigninSchema
 const socialSigninSchema = z.object({
   body: z.object({
-    provider: z.enum(['GOOGLE', 'APPLE'], {
-      error: 'Provider must be GOOGLE or APPLE!',
-    }),
+    provider: zodEnumFromObject(AUTH_PROVIDER),
     idToken: z.string({
       error: 'ID token is required!',
     }),

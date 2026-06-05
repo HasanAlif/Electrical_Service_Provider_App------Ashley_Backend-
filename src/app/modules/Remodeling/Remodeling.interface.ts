@@ -67,7 +67,7 @@ export interface IRemodeling extends Document {
   remodelingAreas: string;
 
   hasPlansDrawings: boolean;
-  plansDrawings: string[];
+  plansDrawings?: string[];
   electricalNeeds: string;
 
   permitApplied: boolean;

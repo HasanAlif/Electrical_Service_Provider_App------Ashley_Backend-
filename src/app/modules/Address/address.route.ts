@@ -6,6 +6,7 @@ import { AddressValidation } from './address.validation';
 
 const router = Router();
 
+// createAddress
 router
   .route('/')
   .post(
@@ -14,10 +15,12 @@ router
     AddressController.createAddress,
   );
 
+// getMyAllAddresses
 router
   .route('/my-all')
   .get(auth(ROLE.USER), AddressController.getMyAllAddresses);
 
+// getSingleAddress
 router
   .route('/:id')
   .get(
@@ -25,6 +28,7 @@ router
     validateRequest(AddressValidation.addressIdParamsSchema),
     AddressController.getSingleAddress,
   )
+  // updateSingleAddress
   .patch(
     auth(ROLE.USER),
     validateRequest(AddressValidation.updateAddressSchema),

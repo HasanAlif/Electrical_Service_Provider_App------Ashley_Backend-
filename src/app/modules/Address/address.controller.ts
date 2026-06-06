@@ -5,11 +5,11 @@ import { AddressService } from './address.service';
 import { IAddress } from './address.interface';
 
 export const AddressController = {
+  // createAddress
   createAddress: asyncHandler(async (req: Request, res: Response) => {
-    const payload = req.body as Partial<IAddress>;
     const data = await AddressService.createAddressIntoDB(
       req.user._id.toString(),
-      payload,
+      req.body,
     );
 
     sendResponse(res, {
@@ -19,6 +19,7 @@ export const AddressController = {
     });
   }),
 
+  // getMyAllAddresses
   getMyAllAddresses: asyncHandler(async (req: Request, res: Response) => {
     const data = await AddressService.getMyAllAddressesFromDB(
       req.user._id.toString(),
@@ -31,6 +32,7 @@ export const AddressController = {
     });
   }),
 
+  // getSingleAddress
   getSingleAddress: asyncHandler(async (req: Request, res: Response) => {
     const data = await AddressService.getSingleAddressFromDB(
       req.user._id.toString(),
@@ -44,6 +46,7 @@ export const AddressController = {
     });
   }),
 
+  // updateSingleAddress
   updateSingleAddress: asyncHandler(async (req: Request, res: Response) => {
     const data = await AddressService.updateSingleAddressIntoDB(
       req.user._id.toString(),

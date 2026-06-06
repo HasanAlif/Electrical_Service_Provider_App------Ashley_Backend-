@@ -3,6 +3,7 @@ import { IAddress } from './address.interface';
 import httpStatus from 'http-status';
 import { AppError } from '../../utils';
 
+// createAddressIntoDB
 const createAddressIntoDB = async (
   userId: string,
   payload: Partial<IAddress>,
@@ -21,6 +22,7 @@ const createAddressIntoDB = async (
   });
 };
 
+// getMyAllAddressesFromDB
 const getMyAllAddressesFromDB = async (userId: string) => {
   return await AddressModel.find({ user: userId }).sort({
     isDefault: -1,
@@ -28,6 +30,7 @@ const getMyAllAddressesFromDB = async (userId: string) => {
   });
 };
 
+// getSingleAddressFromDB
 const getSingleAddressFromDB = async (userId: string, id: string) => {
   const address = await AddressModel.findOne({ _id: id, user: userId });
 
@@ -38,6 +41,7 @@ const getSingleAddressFromDB = async (userId: string, id: string) => {
   return address;
 };
 
+// updateSingleAddressIntoDB
 const updateSingleAddressIntoDB = async (
   userId: string,
   id: string,

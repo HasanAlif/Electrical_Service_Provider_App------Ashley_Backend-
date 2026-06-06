@@ -8,9 +8,12 @@ export const zodEnumFromObject = <T extends Record<string, string>>(obj: T) =>
 // 1. createUserSchema
 const createUserSchema = z.object({
   body: z.object({
-    name: z.string({
-      error: 'Name is required',
-    }),
+    name: z
+      .string({
+        error: 'Name is required',
+      })
+      .min(3, { message: 'Name must be at least 3 characters long' })
+      .max(20, { message: 'Name cannot exceed 20 characters' }),
     // address: z.string({
     //   error: 'Address is required',
     // }),
@@ -32,7 +35,7 @@ const createUserSchema = z.object({
       .string({
         error: 'Password is required',
       })
-      .min(6, { message: 'Password must be at least 6 characters long' })
+      .min(8, { message: 'Password must be at least 8 characters long' })
       .max(20, { message: 'Password cannot exceed 20 characters' }),
 
     // role: zodEnumFromObject(ROLE),

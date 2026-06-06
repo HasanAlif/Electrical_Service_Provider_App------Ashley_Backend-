@@ -1,0 +1,990 @@
+{
+  "info": {
+    "_postman_id": "1f23d83f-2a4d-4a8c-b4d7-ashleyapis0001",
+    "name": "Ashley APIs",
+    "description": "Postman collection for Ashley API endpoints. Set `baseUrl` first, then use auth requests to populate `accessToken` and `refreshToken`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "addressId",
+      "value": ""
+    },
+    {
+      "key": "serviceCallId",
+      "value": ""
+    },
+    {
+      "key": "evChargerInstallationId",
+      "value": ""
+    },
+    {
+      "key": "panelUpgradeReplacementId",
+      "value": ""
+    },
+    {
+      "key": "remodelingId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Root",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Signup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Smith\",\n  \"phone\": \"(555) 123-4567\",\n  \"email\": \"john@example.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/user/signup"
+          }
+        },
+        {
+          "name": "Send Signup OTP Again",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userEmail\": \"john@example.com\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/user/send-signup-otp-again"
+          }
+        },
+        {
+          "name": "Verify Signup OTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json?.data?.accessToken) pm.collectionVariables.set('accessToken', json.data.accessToken);",
+                  "if (json?.data?.refreshToken) pm.collectionVariables.set('refreshToken', json.data.refreshToken);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userEmail\": \"john@example.com\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/user/verify-signup-otp"
+          }
+        },
+        {
+          "name": "Signin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json?.data?.accessToken) pm.collectionVariables.set('accessToken', json.data.accessToken);",
+                  "if (json?.data?.refreshToken) pm.collectionVariables.set('refreshToken', json.data.refreshToken);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/user/signin"
+          }
+        },
+        {
+          "name": "Social Signin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json?.data?.accessToken) pm.collectionVariables.set('accessToken', json.data.accessToken);",
+                  "if (json?.data?.refreshToken) pm.collectionVariables.set('refreshToken', json.data.refreshToken);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"provider\": \"GOOGLE\",\n  \"idToken\": \"google-or-apple-id-token\",\n  \"name\": \"John Smith\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/user/social-signin"
+          }
+        },
+        {
+          "name": "Update Profile Photo",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "user",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": "{{baseUrl}}/api/v1/user/update-profile-photo"
+          }
+        },
+        {
+          "name": "Update User Data",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Smith Updated\",\n  \"address\": \"123 Main Street\",\n  \"phone\": \"(555) 999-0000\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/user/update-user-data"
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oldPassword\": \"123456\",\n  \"newPassword\": \"1234567\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/user/change-password"
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/user/forgot-password"
+          }
+        },
+        {
+          "name": "Send Forgot Password OTP Again",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"forgot-password-token\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/user/send-forgot-password-otp-again"
+          }
+        },
+        {
+          "name": "Verify Forgot Password OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"forgot-password-token\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/user/verify-forgot-password-otp"
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resetPasswordToken\": \"reset-password-token\",\n  \"newPassword\": \"1234567\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/user/reset-password"
+          }
+        },
+        {
+          "name": "Profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/user/profile"
+          }
+        },
+        {
+          "name": "Get New Access Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json?.data?.accessToken) pm.collectionVariables.set('accessToken', json.data.accessToken);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{refreshToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/user/access-token"
+          }
+        },
+        {
+          "name": "Deactivate Account",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"123456\",\n  \"deactivationReason\": \"No longer needed\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/user/deactive-account"
+          }
+        },
+        {
+          "name": "Delete Account",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/user/delete-account"
+          }
+        },
+        {
+          "name": "Admin Get All Users",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/user/admin-get-all?page=1&limit=10&searchTerm=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "user",
+                "admin-get-all"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "searchTerm",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Upload Images",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": "{{baseUrl}}/api/v1/user/upload-images"
+          }
+        },
+        {
+          "name": "Delete Image",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"imageUrl\": \"https://res.cloudinary.com/demo/image/upload/sample.jpg\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/user/delete-image"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Address",
+      "item": [
+        {
+          "name": "Create Address",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"addressName\": \"Home\",\n  \"streetAddress\": \"123 Main Street\",\n  \"apartmentUnit\": \"Apt 4B\",\n  \"city\": \"San Francisco\",\n  \"state\": \"CA\",\n  \"zipCode\": \"94102\",\n  \"isDefault\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/addresses"
+          }
+        },
+        {
+          "name": "My All Addresses",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/addresses/my-all"
+          }
+        },
+        {
+          "name": "Get Single Address",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/addresses/{{addressId}}"
+          }
+        },
+        {
+          "name": "Update Address",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"city\": \"San Jose\",\n  \"isDefault\": false\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/addresses/{{addressId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Service Calls",
+      "item": [
+        {
+          "name": "Create Service Call",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"serviceType\": \"Service Call\",\n  \"fullName\": \"John Smith\",\n  \"phoneNumber\": \"(555) 123-4567\",\n  \"emailAddress\": \"john@example.com\",\n  \"preferredContactMethod\": \"Call\",\n  \"streetAddress\": \"123 Main Street\",\n  \"apartmentUnit\": \"Apt 4B\",\n  \"city\": \"San Francisco\",\n  \"state\": \"CA\",\n  \"zipCode\": \"94102\",\n  \"propertyType\": \"House\",\n  \"ownershipStatus\": \"Owner\",\n  \"timelineUrgency\": \"This week\",\n  \"issueDescription\": \"Outlet is not working in the kitchen.\",\n  \"preferredTime\": \"AM (8-11)\",\n  \"schedulingPreference\": [\"Weekday\"],\n  \"quickTags\": [\"Outlet\", \"Troubleshooting\"],\n  \"photos\": [],\n  \"notes\": \"Please call before arrival.\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/service-calls"
+          }
+        },
+        {
+          "name": "Get All Service Calls",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/service-calls"
+          }
+        },
+        {
+          "name": "Get My Service Calls",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/service-calls/my"
+          }
+        },
+        {
+          "name": "Get Single Service Call",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/service-calls/{{serviceCallId}}"
+          }
+        },
+        {
+          "name": "Update Service Call Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"in_review\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/service-calls/{{serviceCallId}}/status"
+          }
+        }
+      ]
+    },
+    {
+      "name": "EV Charger Installations",
+      "item": [
+        {
+          "name": "Create EV Charger Installation",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Smith\",\n  \"phoneNumber\": \"(555) 123-4567\",\n  \"emailAddress\": \"john@example.com\",\n  \"preferredContactMethod\": \"Call\",\n  \"streetAddress\": \"123 Main Street\",\n  \"apartmentUnit\": \"Apt 4B\",\n  \"city\": \"San Francisco\",\n  \"state\": \"CA\",\n  \"zipCode\": \"94102\",\n  \"propertyType\": \"House\",\n  \"ownershipStatus\": \"Owner\",\n  \"timelineUrgency\": \"This week\",\n  \"chargerConnectionType\": \"Plug-in\",\n  \"nemaConfiguration\": \"NEMA 14-50\",\n  \"chargerProvidedByUser\": true,\n  \"chargerStatus\": \"Currently have the charger\",\n  \"installationLocation\": \"Garage\",\n  \"panelLocation\": \"Garage (Unfinished)\",\n  \"panelDistance\": \"Less than 25 ft\",\n  \"environment\": \"Indoor garage\",\n  \"budget\": \"Flexible\",\n  \"accessibility\": \"Panel is accessible\",\n  \"schedule\": \"Weekdays\",\n  \"additionalInformation\": \"Please include permit details.\",\n  \"areaPhoto\": \"https://example.com/area.jpg\",\n  \"panelPhotos\": [\"https://example.com/panel.jpg\"]\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/ev-charger-installations"
+          }
+        },
+        {
+          "name": "Get My EV Charger Installations",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/ev-charger-installations"
+          }
+        },
+        {
+          "name": "Get Single EV Charger Installation",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/ev-charger-installations/{{evChargerInstallationId}}"
+          }
+        },
+        {
+          "name": "Update EV Charger Installation",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"timelineUrgency\": \"This month\",\n  \"additionalInformation\": \"Updated note\",\n  \"status\": \"in_review\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/ev-charger-installations/{{evChargerInstallationId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Panel Upgrade Replacements",
+      "item": [
+        {
+          "name": "Create Panel Upgrade Replacement",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Smith\",\n  \"phoneNumber\": \"(555) 123-4567\",\n  \"emailAddress\": \"john@example.com\",\n  \"preferredContactMethod\": \"Call\",\n  \"streetAddress\": \"123 Main Street\",\n  \"apartmentUnit\": \"Apt 4B\",\n  \"city\": \"San Francisco\",\n  \"state\": \"CA\",\n  \"zipCode\": \"94102\",\n  \"propertyType\": \"House\",\n  \"ownershipStatus\": \"Owner\",\n  \"timelineUrgency\": \"This month\",\n  \"panelServiceType\": \"Upgrade\",\n  \"currentPanelAmperage\": \"100\",\n  \"desiredPanelAmperage\": \"200\",\n  \"panelLocation\": \"Garage (Unfinished)\",\n  \"powerFeedType\": \"Overhead\",\n  \"meterPhotos\": [\"https://example.com/meter.jpg\"],\n  \"panelPhotos\": [\"https://example.com/panel.jpg\"],\n  \"additionalInformation\": \"Need more capacity for remodel.\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/panel-upgrade-replacements"
+          }
+        },
+        {
+          "name": "Get My Panel Upgrade Replacements",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/panel-upgrade-replacements"
+          }
+        },
+        {
+          "name": "Get Single Panel Upgrade Replacement",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/panel-upgrade-replacements/{{panelUpgradeReplacementId}}"
+          }
+        },
+        {
+          "name": "Update Panel Upgrade Replacement",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"desiredPanelAmperage\": \"200\",\n  \"additionalInformation\": \"Updated panel note\",\n  \"status\": \"quoted\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/panel-upgrade-replacements/{{panelUpgradeReplacementId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Remodeling",
+      "item": [
+        {
+          "name": "Create Remodeling",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Smith\",\n  \"phoneNumber\": \"(555) 123-4567\",\n  \"emailAddress\": \"john@example.com\",\n  \"preferredContactMethod\": \"Call\",\n  \"streetAddress\": \"123 Main Street\",\n  \"apartmentUnit\": \"Apt 4B\",\n  \"city\": \"San Francisco\",\n  \"state\": \"CA\",\n  \"zipCode\": \"94102\",\n  \"propertyType\": \"House\",\n  \"ownershipStatus\": \"Owner\",\n  \"timelineUrgency\": \"This month\",\n  \"panelLocation\": \"Garage (Unfinished)\",\n  \"remodelingAreas\": \"Kitchen and bathroom\",\n  \"hasPlansDrawings\": true,\n  \"plansDrawings\": [\"https://example.com/plans.pdf\"],\n  \"electricalNeeds\": \"Add recessed lights, outlets, switches, and dedicated appliance circuits.\",\n  \"permitApplied\": true,\n  \"permitNumber\": \"PERMIT-12345\",\n  \"additionalInformation\": \"Please coordinate with the general contractor.\",\n  \"existingSpacePhotos\": [\"https://example.com/existing-space.jpg\"],\n  \"panelPhotos\": [\"https://example.com/panel.jpg\"]\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/remodelings"
+          }
+        },
+        {
+          "name": "Get My Remodelings",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/remodelings"
+          }
+        },
+        {
+          "name": "Get Single Remodeling",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/remodelings/{{remodelingId}}"
+          }
+        },
+        {
+          "name": "Update Remodeling",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hasPlansDrawings\": false,\n  \"plansDrawings\": [],\n  \"additionalInformation\": \"Updated remodeling note\",\n  \"status\": \"in_review\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/remodelings/{{remodelingId}}"
+          }
+        }
+      ]
+    }
+  ]
+}

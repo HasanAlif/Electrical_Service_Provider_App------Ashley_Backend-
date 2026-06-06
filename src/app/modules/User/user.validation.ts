@@ -172,6 +172,7 @@ const sendForgotPasswordOtpAgainSchema = z.object({
 const verifyOtpForForgotPasswordSchema = z.object({
   body: z.object({
     token: z.string({ error: 'Token is required!' }),
+
     otp: z
       .string({
         error: 'OTP is required!',

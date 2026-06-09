@@ -414,7 +414,7 @@ const signinIntoDB = async (payload: { email: string; password: string }) => {
   const isPasswordCorrect = await user.isPasswordMatched(payload.password);
 
   if (!isPasswordCorrect) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Invalid credentials!');
+    throw new AppError(httpStatus.BAD_REQUEST, 'Password not matched!');
   }
 
   // Prepare user data for token generation
@@ -914,7 +914,7 @@ const deactivateAccountIntoDB = async (
   const isPasswordCorrect = currentUser.isPasswordMatched(password);
 
   if (!isPasswordCorrect) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Invalid credentials');
+    throw new AppError(httpStatus.BAD_REQUEST, 'Password not matched!');
   }
 
   const result = await UserModel.findByIdAndUpdate(

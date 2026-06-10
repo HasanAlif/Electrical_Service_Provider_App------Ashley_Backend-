@@ -11,6 +11,7 @@ import {
 import { AppError, sendOtpEmail } from '../../utils';
 import { IUser } from './user.interface';
 import UserModel from './user.model';
+import AddressModel from '../Address/address.model';
 import {
   AUTH_PROVIDER,
   defaultUserImage,
@@ -549,37 +550,69 @@ const updateUserDataIntoDB = async (
   userData: IUser,
   payload: TUpdateUserPayload,
 ) => {
-  const user = await UserModel.findByIdAndUpdate(
-    userData._id,
-    {
-      name: payload.name,
-      address: payload.address,
-      phone: payload.phone,
-    },
-    { returnDocument: 'after' },
-  );
+  const session = await startSession();
 
-  if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
+  try {
+    session.startTransaction();
+
+    const user = await UserModel.findByIdAndUpdate(
+      userData._id,
+      {
+        name: payload.name,
+        address: payload.address,
+        phone: payload.phone,
+      },
+      { returnDocument: 'after', session },
+    );
+
+    if (!user) {
+      throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
+    }
+
+    if (payload.addresses && payload.addresses.length > 0) {
+      // If any address in the payload is set as default, we should unset others in the DB
+      const hasDefault = payload.addresses.some(addr => addr.isDefault);
+      if (hasDefault) {
+        await AddressModel.updateMany(
+          { user: userData._id },
+          { $set: { isDefault: false } },
+          { session },
+        );
+      }
+
+      const addressesWithUser = payload.addresses.map(addr => ({
+        ...addr,
+        user: userData._id,
+      }));
+
+      await AddressModel.create(addressesWithUser, { session });
+    }
+
+    await session.commitTransaction();
+    await session.endSession();
+
+    // Prepare user data for tokens
+    const accessTokenPayload = {
+      _id: user._id.toString(),
+      name: user.name,
+      address: user.address,
+      phone: user.phone,
+      email: user.email,
+      image: user.image || defaultUserImage,
+      role: user.role,
+    };
+
+    const accessToken = createAccessToken(accessTokenPayload);
+
+    return {
+      accessToken,
+      user: accessTokenPayload,
+    };
+  } catch (error: any) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new AppError(httpStatus.BAD_REQUEST, error.message);
   }
-
-  // Prepare user data for tokens
-  const accessTokenPayload = {
-    _id: user._id.toString(),
-    name: user.name,
-    address: user.address,
-    phone: user.phone,
-    email: user.email,
-    image: user.image || defaultUserImage,
-    role: user.role,
-  };
-
-  const accessToken = createAccessToken(accessTokenPayload);
-
-  return {
-    accessToken,
-    user: accessTokenPayload,
-  };
 };
 
 // 7. changePasswordIntoDB

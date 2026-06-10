@@ -1,5 +1,5 @@
 import config from '../../config';
-import { IAddress } from '../Address/address.interface';
+import { TUserAddress } from './user.interface';
 
 export const ROLE = {
   USER: 'USER',
@@ -35,5 +35,5 @@ export type TUpdateUserPayload = {
   address?: string;
   phone: string;
   dateOfBirth?: string;
-  addresses?: Partial<IAddress>[];
+  addresses?: Partial<TUserAddress>[];
 };

@@ -127,6 +127,7 @@ const updateUserDataSchema = z.object({
     addresses: z
       .array(
         z.object({
+          _id: z.string().optional(),
           addressName: z.string({ error: 'Address name is required!' }).min(1),
           streetAddress: z
             .string({ error: 'Street address is required!' })

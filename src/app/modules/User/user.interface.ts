@@ -1,6 +1,16 @@
 import { Document, Model, Types } from 'mongoose';
 import { TAuthProvider, TRole } from './user.constant';
 
+export type TUserAddress = {
+  addressName: string;
+  streetAddress: string;
+  apartmentUnit?: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  isDefault: boolean;
+};
+
 // Instance methods
 export interface IUser extends Document {
   _id: Types.ObjectId;
@@ -9,6 +19,7 @@ export interface IUser extends Document {
   address: string;
   phone: string;
   image: string;
+  addresses?: TUserAddress[];
 
   email: string;
   password?: string;

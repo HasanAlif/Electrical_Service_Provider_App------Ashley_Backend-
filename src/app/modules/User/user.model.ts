@@ -2,9 +2,22 @@ import bcrypt from 'bcryptjs';
 import { Aggregate, model, Query, Schema } from 'mongoose';
 import config from '../../config';
 import { AUTH_PROVIDER, defaultUserImage, ROLE } from './user.constant';
-import { IUser, IUserModel } from './user.interface';
+import { IUser, IUserModel, TUserAddress } from './user.interface';
 import { AppError } from '../../utils';
 import httpStatus from 'http-status';
+
+const userAddressSchema = new Schema<TUserAddress>(
+  {
+    addressName: { type: String, required: true },
+    streetAddress: { type: String, required: true },
+    apartmentUnit: { type: String },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    zipCode: { type: String, required: true },
+    isDefault: { type: Boolean, default: false },
+  },
+  { _id: true },
+);
 
 const userSchema = new Schema<IUser, IUserModel>(
   {
@@ -17,6 +30,10 @@ const userSchema = new Schema<IUser, IUserModel>(
       type: String,
       trim: true,
       default: 'N/A',
+    },
+    addresses: {
+      type: [userAddressSchema],
+      default: [],
     },
     phone: {
       type: String,

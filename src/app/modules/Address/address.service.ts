@@ -1,70 +1,82 @@
-import AddressModel from './address.model';
-import { IAddress } from './address.interface';
-import httpStatus from 'http-status';
-import { AppError } from '../../utils';
+// import AddressModel from './address.model';
+// import { IAddress } from './address.interface';
+// import httpStatus from 'http-status';
+// import { AppError } from '../../utils';
 
-// getMyAllAddressesFromDB
-const getMyAllAddressesFromDB = async (userId: string) => {
-  return await AddressModel.find({ user: userId }).sort({
-    isDefault: -1,
-    createdAt: -1,
-  });
-};
+// // createAddressIntoDB
+// const createAddressIntoDB = async (userId: string, payload: IAddress) => {
+//   if (payload.isDefault) {
+//     await AddressModel.updateMany(
+//       { user: userId },
+//       { $set: { isDefault: false } },
+//     );
+//   }
+//   return await AddressModel.create({ ...payload, user: userId });
+// };
 
-// getSingleAddressFromDB
-const getSingleAddressFromDB = async (userId: string, id: string) => {
-  const address = await AddressModel.findOne({ _id: id, user: userId });
+// // getMyAllAddressesFromDB
+// const getMyAllAddressesFromDB = async (userId: string) => {
+//   return await AddressModel.find({ user: userId }).sort({
+//     isDefault: -1,
+//     createdAt: -1,
+//   });
+// };
 
-  if (!address) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Address not found!');
-  }
+// // getSingleAddressFromDB
+// const getSingleAddressFromDB = async (userId: string, id: string) => {
+//   const address = await AddressModel.findOne({ _id: id, user: userId });
 
-  return address;
-};
+//   if (!address) {
+//     throw new AppError(httpStatus.NOT_FOUND, 'Address not found!');
+//   }
 
-// updateSingleAddressIntoDB
-const updateSingleAddressIntoDB = async (
-  userId: string,
-  id: string,
-  payload: Partial<IAddress>,
-) => {
-  const address = await AddressModel.findOne({ _id: id, user: userId });
+//   return address;
+// };
 
-  if (!address) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Address not found!');
-  }
+// // updateSingleAddressIntoDB
+// const updateSingleAddressIntoDB = async (
+//   userId: string,
+//   id: string,
+//   payload: Partial<IAddress>,
+// ) => {
+//   const address = await AddressModel.findOne({ _id: id, user: userId });
 
-  if (payload.isDefault) {
-    await AddressModel.updateMany(
-      { user: userId, _id: { $ne: id } },
-      { $set: { isDefault: false } },
-    );
-  }
+//   if (!address) {
+//     throw new AppError(httpStatus.NOT_FOUND, 'Address not found!');
+//   }
 
-  Object.assign(address, payload);
+//   if (payload.isDefault) {
+//     await AddressModel.updateMany(
+//       { user: userId, _id: { $ne: id } },
+//       { $set: { isDefault: false } },
+//     );
+//   }
 
-  if (payload.isDefault !== undefined) {
-    address.isDefault = payload.isDefault;
-  }
+//   Object.assign(address, payload);
 
-  const updatedAddress = await address.save();
+//   if (payload.isDefault !== undefined) {
+//     address.isDefault = payload.isDefault;
+//   }
 
-  return updatedAddress;
-};
+//   const updatedAddress = await address.save();
 
-// deleteSingleAddressFromDB
-const deleteSingleAddressFromDB = async (userId: string, id: string) => {
-  const address = await AddressModel.findOneAndDelete({
-    _id: id,
-    user: userId,
-  });
+//   return updatedAddress;
+// };
 
-  return address;
-};
+// // deleteSingleAddressFromDB
+// const deleteSingleAddressFromDB = async (userId: string, id: string) => {
+//   const address = await AddressModel.findOneAndDelete({
+//     _id: id,
+//     user: userId,
+//   });
 
-export const AddressService = {
-  getMyAllAddressesFromDB,
-  getSingleAddressFromDB,
-  updateSingleAddressIntoDB,
-  deleteSingleAddressFromDB,
-};
+//   return address;
+// };
+
+// export const AddressService = {
+//   createAddressIntoDB,
+//   getMyAllAddressesFromDB,
+//   getSingleAddressFromDB,
+//   updateSingleAddressIntoDB,
+//   deleteSingleAddressFromDB,
+// };

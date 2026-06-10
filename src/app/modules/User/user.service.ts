@@ -11,7 +11,6 @@ import {
 import { AppError, sendOtpEmail } from '../../utils';
 import { IUser } from './user.interface';
 import UserModel from './user.model';
-import AddressModel from '../Address/address.model';
 import {
   AUTH_PROVIDER,
   defaultUserImage,
@@ -27,7 +26,7 @@ import jwt, { JwtPayload, SignOptions } from 'jsonwebtoken';
 // import BookModel from '../Book/book.model';
 // import { OrderModel } from '../Order/order.model';
 import { deleteImageFromCloudinary, sendImageToCloudinary } from '../../lib';
-import { ClientSession, PipelineStage, startSession } from 'mongoose';
+import { PipelineStage } from 'mongoose';
 import { createPublicKey } from 'crypto';
 
 type TSocialSigninPayload = {
@@ -550,69 +549,55 @@ const updateUserDataIntoDB = async (
   userData: IUser,
   payload: TUpdateUserPayload,
 ) => {
-  const session = await startSession();
+  const updateData: Record<string, any> = {};
 
-  try {
-    session.startTransaction();
+  if (payload.name) updateData.name = payload.name;
+  if (payload.address) updateData.address = payload.address;
+  if (payload.phone) updateData.phone = payload.phone;
 
-    const user = await UserModel.findByIdAndUpdate(
-      userData._id,
-      {
-        name: payload.name,
-        address: payload.address,
-        phone: payload.phone,
-      },
-      { returnDocument: 'after', session },
-    );
-
-    if (!user) {
-      throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
-    }
-
-    if (payload.addresses && payload.addresses.length > 0) {
-      // If any address in the payload is set as default, we should unset others in the DB
-      const hasDefault = payload.addresses.some(addr => addr.isDefault);
-      if (hasDefault) {
-        await AddressModel.updateMany(
-          { user: userData._id },
-          { $set: { isDefault: false } },
-          { session },
-        );
+  if (payload.addresses) {
+    // Enforce only one isDefault: true in the incoming array
+    let defaultFound = false;
+    const syncedAddresses = payload.addresses.map(addr => {
+      if (addr.isDefault) {
+        if (defaultFound) {
+          return { ...addr, isDefault: false };
+        }
+        defaultFound = true;
+        return addr;
       }
+      return addr;
+    });
 
-      const addressesWithUser = payload.addresses.map(addr => ({
-        ...addr,
-        user: userData._id,
-      }));
-
-      await AddressModel.create(addressesWithUser, { session });
-    }
-
-    await session.commitTransaction();
-    await session.endSession();
-
-    // Prepare user data for tokens
-    const accessTokenPayload = {
-      _id: user._id.toString(),
-      name: user.name,
-      address: user.address,
-      phone: user.phone,
-      email: user.email,
-      image: user.image || defaultUserImage,
-      role: user.role,
-    };
-
-    const accessToken = createAccessToken(accessTokenPayload);
-
-    return {
-      accessToken,
-      user: accessTokenPayload,
-    };
-  } catch (error: any) {
-    await session.abortTransaction();
-    await session.endSession();
-    throw new AppError(httpStatus.BAD_REQUEST, error.message);
+    updateData.addresses = syncedAddresses;
   }
+
+  const user = await UserModel.findByIdAndUpdate(userData._id, updateData, {
+    returnDocument: 'after',
+    runValidators: true,
+  });
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
+  }
+
+  // Prepare user data for tokens
+  const accessTokenPayload = {
+    _id: user._id.toString(),
+    name: user.name,
+    address: user.address,
+    phone: user.phone,
+    email: user.email,
+    image: user.image || defaultUserImage,
+    role: user.role,
+  };
+
+  const accessToken = createAccessToken(accessTokenPayload);
+
+  return {
+    accessToken,
+    user: accessTokenPayload,
+  };
 };
 
 // 7. changePasswordIntoDB
@@ -872,12 +857,7 @@ const fetchProfileFromDB = async (userData: IUser) => {
     '-password -passwordChangedAt -otp -otpExpiry -isActive -isDeleted -deactivationReason -createdAt -updatedAt',
   );
 
-  const addresses = await AddressModel.find({ user: userData._id }).sort({
-    isDefault: -1,
-    createdAt: -1,
-  });
-
-  return { user, addresses };
+  return user;
 };
 
 // 13. getNewAccessTokenFromDB

@@ -6,15 +6,6 @@ import { AddressValidation } from './address.validation';
 
 const router = Router();
 
-// createAddress
-router
-  .route('/')
-  .post(
-    auth(ROLE.USER),
-    validateRequest(AddressValidation.createAddressSchema),
-    AddressController.createAddress,
-  );
-
 // getMyAllAddresses
 router
   .route('/my-all')

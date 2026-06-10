@@ -5,20 +5,6 @@ import { AddressService } from './address.service';
 import { IAddress } from './address.interface';
 
 export const AddressController = {
-  // createAddress
-  createAddress: asyncHandler(async (req: Request, res: Response) => {
-    const data = await AddressService.createAddressIntoDB(
-      req.user._id.toString(),
-      req.body,
-    );
-
-    sendResponse(res, {
-      statusCode: httpStatus.CREATED,
-      message: 'Address created successfully!',
-      data,
-    });
-  }),
-
   // getMyAllAddresses
   getMyAllAddresses: asyncHandler(async (req: Request, res: Response) => {
     const data = await AddressService.getMyAllAddressesFromDB(

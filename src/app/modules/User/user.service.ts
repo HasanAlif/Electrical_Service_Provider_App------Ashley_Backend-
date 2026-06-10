@@ -872,7 +872,12 @@ const fetchProfileFromDB = async (userData: IUser) => {
     '-password -passwordChangedAt -otp -otpExpiry -isActive -isDeleted -deactivationReason -createdAt -updatedAt',
   );
 
-  return user;
+  const addresses = await AddressModel.find({ user: userData._id }).sort({
+    isDefault: -1,
+    createdAt: -1,
+  });
+
+  return { user, addresses };
 };
 
 // 13. getNewAccessTokenFromDB

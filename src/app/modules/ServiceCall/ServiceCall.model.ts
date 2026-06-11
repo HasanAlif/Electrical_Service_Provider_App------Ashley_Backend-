@@ -22,6 +22,7 @@ const serviceCallSchema = new Schema<IServiceCall>(
       required: true,
       index: true,
     },
+
     fullName: {
       type: String,
       trim: true,
@@ -42,6 +43,7 @@ const serviceCallSchema = new Schema<IServiceCall>(
       enum: SERVICE_CALL_CONTACT_METHODS,
       default: 'Call',
     },
+
     streetAddress: {
       type: String,
       trim: true,
@@ -66,6 +68,7 @@ const serviceCallSchema = new Schema<IServiceCall>(
       trim: true,
       required: [true, 'ZIP code is required!'],
     },
+
     propertyType: {
       type: String,
       enum: SERVICE_CALL_PROPERTY_TYPES,
@@ -81,6 +84,7 @@ const serviceCallSchema = new Schema<IServiceCall>(
       enum: SERVICE_CALL_TIMELINE_URGENCIES,
       required: [true, 'Timeline/urgency is required!'],
     },
+
     issueDescription: {
       type: String,
       trim: true,
@@ -94,39 +98,45 @@ const serviceCallSchema = new Schema<IServiceCall>(
       type: [String],
       default: [],
     },
-    installationLocation: {
-      type: String,
-      trim: true,
-    },
-    chargerOwnership: {
-      type: String,
-      trim: true,
-    },
-    chargerLevel: {
-      type: String,
-      trim: true,
-    },
-    panelLocation: {
-      type: String,
-      trim: true,
-    },
-    distance: {
-      type: String,
-      trim: true,
-    },
-    environment: {
-      type: String,
-      trim: true,
-    },
-    accessibility: {
-      type: String,
-      trim: true,
-    },
-    quickTags: {
+
+    // installationLocation: {
+    //   type: String,
+    //   trim: true,
+    // },
+    // chargerOwnership: {
+    //   type: String,
+    //   trim: true,
+    // },
+    // chargerLevel: {
+    //   type: String,
+    //   trim: true,
+    // },
+    // panelLocation: {
+    //   type: String,
+    //   trim: true,
+    // },
+    // distance: {
+    //   type: String,
+    //   trim: true,
+    // },
+    // environment: {
+    //   type: String,
+    //   trim: true,
+    // },
+    // accessibility: {
+    //   type: String,
+    //   trim: true,
+    // },
+
+    panelPhotos: {
       type: [String],
       default: [],
     },
-    photos: {
+    workAreaPhotos: {
+      type: [String],
+      default: [],
+    },
+    extraReferencePhotos: {
       type: [String],
       default: [],
     },
@@ -134,6 +144,11 @@ const serviceCallSchema = new Schema<IServiceCall>(
       type: String,
       trim: true,
     },
+    quickTags: {
+      type: [String],
+      default: [],
+    },
+
     status: {
       type: String,
       enum: Service_STATUSES,

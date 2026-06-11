@@ -1,0 +1,200 @@
+import { model, Schema } from 'mongoose';
+import { DEFAULT_REQUEST_STATUS, Service_STATUSES } from '../../constants';
+import {
+  DOCK_POWER_CIRCUIT_AMP_RATINGS,
+  DOCK_POWER_CIRCUIT_COUNTS,
+  DOCK_POWER_CONTACT_METHODS,
+  DOCK_POWER_NEW_SERVICE_SIZES,
+  DOCK_POWER_OWNERSHIP_STATUSES,
+  DOCK_POWER_PANEL_LOCATIONS,
+  DOCK_POWER_PROPERTY_TYPES,
+  DOCK_POWER_SERVICE_TYPES,
+  DOCK_POWER_SUB_PANEL_SIZES,
+  DOCK_POWER_TIMELINE_URGENCIES,
+  IDockPower,
+} from './DockPower.interface';
+
+const dockPowerSchema = new Schema<IDockPower>(
+  {
+    serviceType: {
+      type: String,
+      trim: true,
+      default: 'Dock Power',
+    },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true,
+    },
+
+    fullName: {
+      type: String,
+      trim: true,
+      required: [true, 'Full name is required!'],
+    },
+    phoneNumber: {
+      type: String,
+      trim: true,
+      required: [true, 'Phone number is required!'],
+    },
+    emailAddress: {
+      type: String,
+      trim: true,
+      lowercase: true,
+    },
+    preferredContactMethod: {
+      type: String,
+      enum: DOCK_POWER_CONTACT_METHODS,
+      default: 'Call',
+    },
+
+    streetAddress: {
+      type: String,
+      trim: true,
+      required: [true, 'Street address is required!'],
+    },
+    apartmentUnit: {
+      type: String,
+      trim: true,
+    },
+    city: {
+      type: String,
+      trim: true,
+      required: [true, 'City is required!'],
+    },
+    state: {
+      type: String,
+      trim: true,
+      required: [true, 'State is required!'],
+    },
+    zipCode: {
+      type: String,
+      trim: true,
+      required: [true, 'ZIP code is required!'],
+    },
+
+    propertyType: {
+      type: String,
+      enum: DOCK_POWER_PROPERTY_TYPES,
+      required: [true, 'Property type is required!'],
+    },
+    ownershipStatus: {
+      type: String,
+      enum: DOCK_POWER_OWNERSHIP_STATUSES,
+      required: [true, 'Ownership status is required!'],
+    },
+    timelineUrgency: {
+      type: String,
+      enum: DOCK_POWER_TIMELINE_URGENCIES,
+      required: [true, 'Timeline/urgency is required!'],
+    },
+
+    isDockBuilt: {
+      type: Boolean,
+      required: [true, 'Please choose whether your dock is already built!'],
+    },
+    electricalNeedsDetails: {
+      type: String,
+      trim: true,
+      required: [true, 'Electrical need details are required!'],
+    },
+    receptacleCount: {
+      type: Number,
+      required: [true, 'Receptacle count is required!'],
+    },
+
+    electricalServiceType: {
+      type: String,
+      enum: DOCK_POWER_SERVICE_TYPES,
+      required: [true, 'Electrical service type is required!'],
+    },
+
+    newServiceSize: {
+      type: String,
+      enum: DOCK_POWER_NEW_SERVICE_SIZES,
+    },
+    serviceSizeOther: {
+      type: String,
+      trim: true,
+    },
+
+    subPanelSize: {
+      type: String,
+      enum: DOCK_POWER_SUB_PANEL_SIZES,
+    },
+
+    dedicatedCircuitsCount: {
+      type: String,
+      enum: DOCK_POWER_CIRCUIT_COUNTS,
+    },
+    dedicatedCircuitAmpRating: {
+      type: String,
+      enum: DOCK_POWER_CIRCUIT_AMP_RATINGS,
+    },
+
+    panelLocation: {
+      type: String,
+      enum: DOCK_POWER_PANEL_LOCATIONS,
+      required: [true, 'Panel location is required!'],
+    },
+    panelLocationOther: {
+      type: String,
+      trim: true,
+    },
+    panelPhotos: {
+      type: [String],
+      default: [],
+    },
+
+    privateUtilitiesDetails: {
+      type: String,
+      trim: true,
+    },
+    routeDistanceDetails: {
+      type: String,
+      trim: true,
+    },
+    existingSpacePhotos: {
+      type: [String],
+      default: [],
+    },
+
+    hasPlansDrawings: {
+      type: Boolean,
+      required: [true, 'Please choose whether you have plans/drawings!'],
+    },
+    plansDrawingsPhotos: {
+      type: [String],
+      default: [],
+    },
+
+    permitApplied: {
+      type: Boolean,
+      required: [true, 'Please choose whether a permit has been applied for!'],
+    },
+    permitNumber: {
+      type: String,
+      trim: true,
+    },
+
+    additionalInformation: {
+      type: String,
+      trim: true,
+    },
+
+    status: {
+      type: String,
+      enum: Service_STATUSES,
+      default: DEFAULT_REQUEST_STATUS,
+    },
+  },
+  {
+    timestamps: true,
+    versionKey: false,
+  },
+);
+
+const DockPowerModel = model<IDockPower>('DockPower', dockPowerSchema);
+
+export default DockPowerModel;

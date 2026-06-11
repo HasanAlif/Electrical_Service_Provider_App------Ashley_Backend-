@@ -1,0 +1,140 @@
+import { Document, Types } from 'mongoose';
+import { TServiceStatus } from '../../constants';
+
+export const DOCK_POWER_CONTACT_METHODS = ['Call', 'Text', 'Email'] as const;
+export type TDockPowerPreferredContactMethod =
+  (typeof DOCK_POWER_CONTACT_METHODS)[number];
+
+export const DOCK_POWER_PROPERTY_TYPES = [
+  'House',
+  'Condo',
+  'Apartment',
+  'Commercial',
+] as const;
+export type TDockPowerPropertyType = (typeof DOCK_POWER_PROPERTY_TYPES)[number];
+
+export const DOCK_POWER_OWNERSHIP_STATUSES = [
+  'Owner',
+  'Tenant',
+  'Property Manager',
+  'Other',
+] as const;
+export type TDockPowerOwnershipStatus =
+  (typeof DOCK_POWER_OWNERSHIP_STATUSES)[number];
+
+export const DOCK_POWER_TIMELINE_URGENCIES = [
+  'As soon as possible',
+  'This week',
+  'This month',
+  'Flexible',
+] as const;
+export type TDockPowerTimelineUrgency =
+  (typeof DOCK_POWER_TIMELINE_URGENCIES)[number];
+
+export const DOCK_POWER_SERVICE_TYPES = [
+  'New service',
+  'Sub-panel',
+  '1-2 dedicated circuits',
+] as const;
+export type TDockPowerElectricalServiceType =
+  (typeof DOCK_POWER_SERVICE_TYPES)[number];
+
+export const DOCK_POWER_NEW_SERVICE_SIZES = [
+  '100 amp',
+  '125 amp',
+  '150 amp',
+  '200 amp',
+  '300 amp',
+  '350 amp',
+  '400 amp',
+  'Unsure',
+  'Other',
+] as const;
+export type TDockPowerNewServiceSize =
+  (typeof DOCK_POWER_NEW_SERVICE_SIZES)[number];
+
+export const DOCK_POWER_SUB_PANEL_SIZES = [
+  '30 amp',
+  '50 amp',
+  '60 amp',
+  '100 amp',
+  '125 amp',
+  'Unsure',
+  'Other',
+] as const;
+export type TDockPowerSubPanelSize =
+  (typeof DOCK_POWER_SUB_PANEL_SIZES)[number];
+
+export const DOCK_POWER_CIRCUIT_COUNTS = ['1', '2'] as const;
+export type TDockPowerCircuitCount = (typeof DOCK_POWER_CIRCUIT_COUNTS)[number];
+
+export const DOCK_POWER_CIRCUIT_AMP_RATINGS = ['15', '20'] as const;
+export type TDockPowerCircuitAmpRating =
+  (typeof DOCK_POWER_CIRCUIT_AMP_RATINGS)[number];
+
+export const DOCK_POWER_PANEL_LOCATIONS = [
+  'Basement (Finished)',
+  'Basement (Unfinished)',
+  'Garage (Finished)',
+  'Garage (Unfinished)',
+  'Other (please specify)',
+] as const;
+export type TDockPowerPanelLocation =
+  (typeof DOCK_POWER_PANEL_LOCATIONS)[number];
+
+export interface IDockPower extends Document {
+  _id: Types.ObjectId;
+
+  serviceType: string;
+  createdBy: Types.ObjectId;
+
+  fullName: string;
+  phoneNumber: string;
+  emailAddress?: string;
+  preferredContactMethod: TDockPowerPreferredContactMethod;
+
+  streetAddress: string;
+  apartmentUnit?: string;
+  city: string;
+  state: string;
+  zipCode: string;
+
+  propertyType: TDockPowerPropertyType;
+  ownershipStatus: TDockPowerOwnershipStatus;
+  timelineUrgency: TDockPowerTimelineUrgency;
+
+  isDockBuilt: boolean;
+  electricalNeedsDetails: string;
+  receptacleCount: number;
+
+  electricalServiceType: TDockPowerElectricalServiceType;
+
+  newServiceSize?: TDockPowerNewServiceSize;
+  serviceSizeOther?: string;
+
+  subPanelSize?: TDockPowerSubPanelSize;
+
+  dedicatedCircuitsCount?: TDockPowerCircuitCount;
+  dedicatedCircuitAmpRating?: TDockPowerCircuitAmpRating;
+
+  panelLocation: TDockPowerPanelLocation;
+  panelLocationOther?: string;
+  panelPhotos: string[];
+
+  privateUtilitiesDetails?: string;
+  routeDistanceDetails?: string;
+  existingSpacePhotos: string[];
+
+  hasPlansDrawings: boolean;
+  plansDrawingsPhotos?: string[];
+
+  permitApplied: boolean;
+  permitNumber?: string;
+
+  additionalInformation?: string;
+
+  status: TServiceStatus;
+
+  createdAt: Date;
+  updatedAt: Date;
+}

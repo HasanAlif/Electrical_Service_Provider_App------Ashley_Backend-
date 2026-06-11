@@ -7,6 +7,7 @@ import { PanelUpgradeReplacementRoutes } from '../modules/PanelUpgradeReplacemen
 import { RemodelingRoutes } from '../modules/Remodeling/Remodeling.routes';
 import { AccessoryBuildingPowerRoutes } from '../modules/AccessoryBuildingPower/AccessoryBuildingPower.routes';
 import { HotTubRoutes } from '../modules/HotTub/HotTub.routes';
+import { DockPowerRoutes } from '../modules/DockPower/DockPower.routes';
 
 const router = Router();
 
@@ -42,6 +43,10 @@ const moduleRoutes = [
   {
     path: '/hot-tub-installations',
     route: HotTubRoutes,
+  },
+  {
+    path: '/dock-powers',
+    route: DockPowerRoutes,
   },
 ];
 

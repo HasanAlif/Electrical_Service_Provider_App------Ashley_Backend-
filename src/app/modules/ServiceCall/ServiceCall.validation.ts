@@ -47,6 +47,8 @@ export const ServiceCallValidation = {
       extraReferencePhotos: z.array(z.string()).optional(),
       notes: z.string().optional(),
       quickTags: z.array(z.string()).optional(),
+      status: z.enum(Service_STATUSES).optional(),
+      completionPercentage: z.number().optional(),
     }),
   }),
 
@@ -56,12 +58,34 @@ export const ServiceCallValidation = {
     }),
   }),
 
-  updateServiceCallStatusSchema: z.object({
+  updateServiceCallSchema: z.object({
     params: z.object({
       id: z.string({ error: 'Service call ID is required!' }).min(1),
     }),
     body: z.object({
-      status: z.enum(Service_STATUSES),
+      serviceType: z.string().optional(),
+      fullName: z.string().optional(),
+      phoneNumber: z.string().optional(),
+      emailAddress: z.string().email('Invalid email format!').optional(),
+      preferredContactMethod: z.enum(SERVICE_CALL_CONTACT_METHODS).optional(),
+      streetAddress: z.string().optional(),
+      apartmentUnit: z.string().optional(),
+      city: z.string().optional(),
+      state: z.string().optional(),
+      zipCode: z.string().optional(),
+      propertyType: z.enum(SERVICE_CALL_PROPERTY_TYPES).optional(),
+      ownershipStatus: z.enum(SERVICE_CALL_OWNERSHIP_STATUSES).optional(),
+      timelineUrgency: z.enum(SERVICE_CALL_TIMELINE_URGENCIES).optional(),
+      issueDescription: z.string().optional(),
+      preferredTime: z.enum(SERVICE_CALL_PREFERRED_TIMES).optional(),
+      schedulingPreference: z.array(z.string()).optional(),
+      panelPhotos: z.array(z.string()).optional(),
+      workAreaPhotos: z.array(z.string()).optional(),
+      extraReferencePhotos: z.array(z.string()).optional(),
+      notes: z.string().optional(),
+      quickTags: z.array(z.string()).optional(),
+      status: z.enum(Service_STATUSES).optional(),
+      completionPercentage: z.number().optional(),
     }),
   }),
 };

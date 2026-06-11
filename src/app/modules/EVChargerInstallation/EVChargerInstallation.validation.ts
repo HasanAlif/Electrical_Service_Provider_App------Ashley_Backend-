@@ -50,6 +50,8 @@ export const EVChargerInstallationValidation = {
         additionalInformation: z.string().optional(),
         areaPhoto: z.string().optional(),
         panelPhotos: z.array(z.string()).optional(),
+        status: z.enum(Service_STATUSES).optional(),
+        completionPercentage: z.number().optional(),
       })
       .superRefine((data, ctx) => {
         if (

@@ -148,6 +148,10 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
       enum: Service_STATUSES,
       default: DEFAULT_REQUEST_STATUS,
     },
+    completionPercentage: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

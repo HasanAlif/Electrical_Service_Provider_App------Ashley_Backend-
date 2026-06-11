@@ -41,6 +41,8 @@ const remodelingBodySchema = z.object({
 
   existingSpacePhotos: z.array(z.string()).optional(),
   panelPhotos: z.array(z.string()).optional(),
+  status: z.enum(Service_STATUSES).optional(),
+  completionPercentage: z.number().optional(),
 });
 
 const remodelingCreateBodySchema = remodelingBodySchema.extend({

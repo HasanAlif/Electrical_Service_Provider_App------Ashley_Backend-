@@ -187,6 +187,10 @@ const accessoryBuildingPowerSchema = new Schema<IAccessoryBuildingPower>(
       enum: Service_STATUSES,
       default: DEFAULT_REQUEST_STATUS,
     },
+    completionPercentage: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

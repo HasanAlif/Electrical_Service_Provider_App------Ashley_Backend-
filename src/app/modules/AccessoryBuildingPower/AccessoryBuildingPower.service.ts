@@ -7,7 +7,7 @@ const createAccessoryBuildingPowerIntoDB = async (
   userId: string,
   payload: Partial<IAccessoryBuildingPower>,
 ) => {
-  return await AccessoryBuildingPowerModel.create({
+  const newDoc = await AccessoryBuildingPowerModel.create({
     ...payload,
     createdBy: userId,
     serviceType: 'Accessory Building / Shed Power',
@@ -16,6 +16,9 @@ const createAccessoryBuildingPowerIntoDB = async (
     plansDrawings: payload.plansDrawings ?? [],
     status: payload.status ?? 'submitted',
   });
+
+  const { createdAt, updatedAt, ...sanitizedData } = newDoc.toObject();
+  return sanitizedData;
 };
 
 const getMyAllAccessoryBuildingPowersFromDB = async (userId: string) => {
@@ -31,7 +34,7 @@ const getSingleAccessoryBuildingPowerFromDB = async (
   const data = await AccessoryBuildingPowerModel.findOne({
     _id: id,
     createdBy: userId,
-  });
+  }).select('-createdAt -updatedAt');
 
   if (!data) {
     throw new AppError(
@@ -48,22 +51,20 @@ const updateSingleAccessoryBuildingPowerIntoDB = async (
   id: string,
   payload: Partial<IAccessoryBuildingPower>,
 ) => {
-  const data = await AccessoryBuildingPowerModel.findOne({
-    _id: id,
-    createdBy: userId,
-  });
+  const updatedData = await AccessoryBuildingPowerModel.findOneAndUpdate(
+    { _id: id, createdBy: userId },
+    payload,
+    { new: true, runValidators: true },
+  ).select('-createdAt -updatedAt');
 
-  if (!data) {
+  if (!updatedData) {
     throw new AppError(
       httpStatus.NOT_FOUND,
       'Accessory building power request not found!',
     );
   }
 
-  Object.assign(data, payload);
-
-  const updated = await data.save();
-  return updated;
+  return updatedData;
 };
 
 export const AccessoryBuildingPowerService = {

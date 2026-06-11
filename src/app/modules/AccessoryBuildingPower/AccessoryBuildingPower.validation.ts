@@ -67,6 +67,8 @@ const accessoryBuildingPowerBodySchema = z.object({
   }),
   permitNumber: z.string().optional(),
   additionalInformation: z.string().optional(),
+  status: z.enum(Service_STATUSES).optional(),
+  completionPercentage: z.number().optional(),
 });
 
 const accessoryBuildingPowerCreateBodySchema =

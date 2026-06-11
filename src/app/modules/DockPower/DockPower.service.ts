@@ -7,7 +7,7 @@ const createDockPowerIntoDB = async (
   userId: string,
   payload: Partial<IDockPower>,
 ) => {
-  return await DockPowerModel.create({
+  const newDoc = await DockPowerModel.create({
     ...payload,
     createdBy: userId,
     serviceType: 'Dock Power',
@@ -16,6 +16,9 @@ const createDockPowerIntoDB = async (
     plansDrawingsPhotos: payload.plansDrawingsPhotos ?? [],
     status: payload.status ?? 'submitted',
   });
+
+  const { createdAt, updatedAt, ...sanitizedData } = newDoc.toObject();
+  return sanitizedData;
 };
 
 const getMyAllDockPowersFromDB = async (userId: string) => {
@@ -42,19 +45,17 @@ const updateSingleDockPowerIntoDB = async (
   id: string,
   payload: Partial<IDockPower>,
 ) => {
-  const data = await DockPowerModel.findOne({
-    _id: id,
-    createdBy: userId,
-  });
+  const updatedData = await DockPowerModel.findOneAndUpdate(
+    { _id: id, createdBy: userId },
+    payload,
+    { new: true, runValidators: true },
+  ).select('-createdAt -updatedAt');
 
-  if (!data) {
+  if (!updatedData) {
     throw new AppError(httpStatus.NOT_FOUND, 'Dock power request not found!');
   }
 
-  Object.assign(data, payload);
-
-  const updated = await data.save();
-  return updated;
+  return updatedData;
 };
 
 export const DockPowerService = {

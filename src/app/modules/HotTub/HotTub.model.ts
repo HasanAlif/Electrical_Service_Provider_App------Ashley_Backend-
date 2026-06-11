@@ -138,6 +138,10 @@ const hotTubSchema = new Schema<IHotTub>(
       enum: Service_STATUSES,
       default: DEFAULT_REQUEST_STATUS,
     },
+    completionPercentage: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

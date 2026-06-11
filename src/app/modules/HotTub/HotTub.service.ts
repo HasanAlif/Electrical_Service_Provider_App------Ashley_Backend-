@@ -7,7 +7,7 @@ const createHotTubIntoDB = async (
   userId: string,
   payload: Partial<IHotTub>,
 ) => {
-  return await HotTubModel.create({
+  const newDoc = await HotTubModel.create({
     ...payload,
     createdBy: userId,
     serviceType: 'Hot tub installation',
@@ -16,16 +16,24 @@ const createHotTubIntoDB = async (
     receptaclePhotos: payload.receptaclePhotos ?? [],
     status: payload.status ?? 'submitted',
   });
+
+  const { createdAt, updatedAt, ...sanitizedData } = newDoc.toObject();
+  return sanitizedData;
 };
 
 const getMyAllHotTubsFromDB = async (userId: string) => {
-  return await HotTubModel.find({ createdBy: userId }).sort({
-    createdAt: -1,
-  });
+  return await HotTubModel.find({ createdBy: userId })
+    .sort({
+      createdAt: -1,
+    })
+    .select('-createdAt -updatedAt');
 };
 
 const getSingleHotTubFromDB = async (userId: string, id: string) => {
-  const data = await HotTubModel.findOne({ _id: id, createdBy: userId });
+  const data = await HotTubModel.findOne({
+    _id: id,
+    createdBy: userId,
+  }).select('-createdAt -updatedAt');
 
   if (!data) {
     throw new AppError(httpStatus.NOT_FOUND, 'Hot tub request not found!');
@@ -39,16 +47,17 @@ const updateSingleHotTubIntoDB = async (
   id: string,
   payload: Partial<IHotTub>,
 ) => {
-  const data = await HotTubModel.findOne({ _id: id, createdBy: userId });
+  const updatedData = await HotTubModel.findOneAndUpdate(
+    { _id: id, createdBy: userId },
+    payload,
+    { new: true, runValidators: true },
+  ).select('-createdAt -updatedAt');
 
-  if (!data) {
+  if (!updatedData) {
     throw new AppError(httpStatus.NOT_FOUND, 'Hot tub request not found!');
   }
 
-  Object.assign(data, payload);
-
-  const updated = await data.save();
-  return updated;
+  return updatedData;
 };
 
 export const HotTubService = {

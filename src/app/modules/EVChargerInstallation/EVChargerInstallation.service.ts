@@ -8,7 +8,7 @@ const createEVChargerInstallationIntoDB = async (
   userId: string,
   payload: Partial<IEVChargerInstallation>,
 ) => {
-  return await EVChargerInstallationModel.create({
+  const newDoc = await EVChargerInstallationModel.create({
     ...payload,
     createdBy: userId,
     serviceType: 'EV Charger Installation',
@@ -16,12 +16,17 @@ const createEVChargerInstallationIntoDB = async (
     panelPhotos: payload.panelPhotos ?? [],
     status: payload.status ?? DEFAULT_REQUEST_STATUS,
   });
+
+  const { createdAt, updatedAt, ...sanitizedData } = newDoc.toObject();
+  return sanitizedData;
 };
 
 const getMyAllEVChargerInstallationsFromDB = async (userId: string) => {
-  return await EVChargerInstallationModel.find({ createdBy: userId }).sort({
-    createdAt: -1,
-  });
+  return await EVChargerInstallationModel.find({ createdBy: userId })
+    .sort({
+      createdAt: -1,
+    })
+    .select('-createdAt -updatedAt');
 };
 
 const getSingleEVChargerInstallationFromDB = async (
@@ -31,7 +36,7 @@ const getSingleEVChargerInstallationFromDB = async (
   const data = await EVChargerInstallationModel.findOne({
     _id: id,
     createdBy: userId,
-  });
+  }).select('-createdAt -updatedAt');
 
   if (!data) {
     throw new AppError(
@@ -48,22 +53,20 @@ const updateSingleEVChargerInstallationIntoDB = async (
   id: string,
   payload: Partial<IEVChargerInstallation>,
 ) => {
-  const data = await EVChargerInstallationModel.findOne({
-    _id: id,
-    createdBy: userId,
-  });
+  const updatedData = await EVChargerInstallationModel.findOneAndUpdate(
+    { _id: id, createdBy: userId },
+    payload,
+    { new: true, runValidators: true },
+  ).select('-createdAt -updatedAt');
 
-  if (!data) {
+  if (!updatedData) {
     throw new AppError(
       httpStatus.NOT_FOUND,
       'EV charger installation not found!',
     );
   }
 
-  Object.assign(data, payload);
-
-  const updated = await data.save();
-  return updated;
+  return updatedData;
 };
 
 export const EVChargerInstallationService = {

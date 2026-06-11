@@ -55,11 +55,12 @@ export const ServiceCallController = {
     });
   }),
 
-  // updateServiceCallStatus
-  updateServiceCallStatus: asyncHandler(async (req: Request, res: Response) => {
-    const data = await ServiceCallService.updateServiceCallStatusIntoDB(
+  // updateServiceCall
+  updateServiceCall: asyncHandler(async (req: Request, res: Response) => {
+    const data = await ServiceCallService.updateServiceCallIntoDB(
+      req.user._id.toString(),
       req.params.id as string,
-      req.body.status,
+      req.body as Partial<IServiceCall>,
     );
 
     sendResponse(res, {

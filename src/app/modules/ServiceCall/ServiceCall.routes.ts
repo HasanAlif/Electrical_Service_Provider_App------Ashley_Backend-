@@ -12,8 +12,14 @@ router
     auth(ROLE.USER),
     validateRequest(ServiceCallValidation.createServiceCallSchema),
     ServiceCallController.createServiceCall,
-  )
-  .get(ServiceCallController.getAllServiceCalls);
+  );
+
+router
+  .route('/')
+  .get(
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    ServiceCallController.getAllServiceCalls,
+  );
 
 router
   .route('/my')
@@ -24,13 +30,11 @@ router
   .get(
     validateRequest(ServiceCallValidation.serviceCallIdParamsSchema),
     ServiceCallController.getSingleServiceCall,
-  );
-
-router
-  .route('/:id/status')
+  )
   .patch(
-    validateRequest(ServiceCallValidation.updateServiceCallStatusSchema),
-    ServiceCallController.updateServiceCallStatus,
+    auth(ROLE.USER),
+    validateRequest(ServiceCallValidation.updateServiceCallSchema),
+    ServiceCallController.updateServiceCall,
   );
 
 export const ServiceCallRoutes = router;

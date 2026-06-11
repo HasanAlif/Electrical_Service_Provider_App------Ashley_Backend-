@@ -134,6 +134,7 @@ export interface IDockPower extends Document {
   additionalInformation?: string;
 
   status: TServiceStatus;
+  completionPercentage: number;
 
   createdAt: Date;
   updatedAt: Date;

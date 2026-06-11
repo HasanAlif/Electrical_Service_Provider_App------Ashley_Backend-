@@ -80,6 +80,7 @@ export interface IServiceCall extends Document {
   quickTags: string[];
 
   status: TServiceStatus;
+  completionPercentage: number;
 
   createdAt: Date;
   updatedAt: Date;

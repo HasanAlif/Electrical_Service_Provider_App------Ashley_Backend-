@@ -7,7 +7,7 @@ const createRemodelingIntoDB = async (
   userId: string,
   payload: Partial<IRemodeling>,
 ) => {
-  return await RemodelingModel.create({
+  const newDoc = await RemodelingModel.create({
     ...payload,
     createdBy: userId,
     serviceType: 'Remodeling',
@@ -16,16 +16,24 @@ const createRemodelingIntoDB = async (
     panelPhotos: payload.panelPhotos ?? [],
     status: payload.status ?? 'submitted',
   });
+
+  const { createdAt, updatedAt, ...sanitizedData } = newDoc.toObject();
+  return sanitizedData;
 };
 
 const getMyAllRemodelingsFromDB = async (userId: string) => {
-  return await RemodelingModel.find({ createdBy: userId }).sort({
-    createdAt: -1,
-  });
+  return await RemodelingModel.find({ createdBy: userId })
+    .sort({
+      createdAt: -1,
+    })
+    .select('-createdAt -updatedAt');
 };
 
 const getSingleRemodelingFromDB = async (userId: string, id: string) => {
-  const data = await RemodelingModel.findOne({ _id: id, createdBy: userId });
+  const data = await RemodelingModel.findOne({
+    _id: id,
+    createdBy: userId,
+  }).select('-createdAt -updatedAt');
 
   if (!data) {
     throw new AppError(httpStatus.NOT_FOUND, 'Remodeling request not found!');
@@ -39,16 +47,17 @@ const updateSingleRemodelingIntoDB = async (
   id: string,
   payload: Partial<IRemodeling>,
 ) => {
-  const data = await RemodelingModel.findOne({ _id: id, createdBy: userId });
+  const updatedData = await RemodelingModel.findOneAndUpdate(
+    { _id: id, createdBy: userId },
+    payload,
+    { new: true, runValidators: true },
+  ).select('-createdAt -updatedAt');
 
-  if (!data) {
+  if (!updatedData) {
     throw new AppError(httpStatus.NOT_FOUND, 'Remodeling request not found!');
   }
 
-  Object.assign(data, payload);
-
-  const updated = await data.save();
-  return updated;
+  return updatedData;
 };
 
 export const RemodelingService = {

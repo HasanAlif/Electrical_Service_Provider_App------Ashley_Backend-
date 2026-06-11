@@ -41,6 +41,8 @@ export const PanelUpgradeReplacementValidation = {
         meterPhotos: z.array(z.string()).optional(),
         panelPhotos: z.array(z.string()).optional(),
         additionalInformation: z.string().optional(),
+        status: z.enum(Service_STATUSES).optional(),
+        completionPercentage: z.number().optional(),
       })
       .superRefine((data, ctx) => {
         if (data.panelServiceType === 'Upgrade' && !data.desiredPanelAmperage) {
@@ -90,6 +92,7 @@ export const PanelUpgradeReplacementValidation = {
         panelPhotos: z.array(z.string()).optional(),
         additionalInformation: z.string().optional(),
         status: z.enum(Service_STATUSES).optional(),
+        completionPercentage: z.number().optional(),
       })
       .refine(
         data =>

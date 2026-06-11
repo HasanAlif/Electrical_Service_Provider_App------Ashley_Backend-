@@ -7,7 +7,7 @@ const createPanelUpgradeReplacementIntoDB = async (
   userId: string,
   payload: Partial<IPanelUpgradeReplacement>,
 ) => {
-  return await PanelUpgradeReplacementModel.create({
+  const newDoc = await PanelUpgradeReplacementModel.create({
     ...payload,
     createdBy: userId,
     serviceType: 'Panel Upgrade / Replacement',
@@ -15,19 +15,33 @@ const createPanelUpgradeReplacementIntoDB = async (
     panelPhotos: payload.panelPhotos ?? [],
     status: payload.status ?? 'submitted',
   });
+
+  const { createdAt, updatedAt, ...sanitizedData } = newDoc.toObject();
+  return sanitizedData;
 };
 
 const getMyAllPanelUpgradeReplacementsFromDB = async (userId: string) => {
-  return await PanelUpgradeReplacementModel.find({ createdBy: userId }).sort({
-    createdAt: -1,
-  });
+  return await PanelUpgradeReplacementModel.find({ createdBy: userId })
+    .sort({
+      createdAt: -1,
+    })
+    .select('-createdAt -updatedAt');
 };
 
-const getSinglePanelUpgradeReplacementFromDB = async (userId: string, id: string) => {
-  const data = await PanelUpgradeReplacementModel.findOne({ _id: id, createdBy: userId });
+const getSinglePanelUpgradeReplacementFromDB = async (
+  userId: string,
+  id: string,
+) => {
+  const data = await PanelUpgradeReplacementModel.findOne({
+    _id: id,
+    createdBy: userId,
+  }).select('-createdAt -updatedAt');
 
   if (!data) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Panel request not found!');
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'Panel upgrade/replacement request not found!',
+    );
   }
 
   return data;
@@ -38,16 +52,20 @@ const updateSinglePanelUpgradeReplacementIntoDB = async (
   id: string,
   payload: Partial<IPanelUpgradeReplacement>,
 ) => {
-  const data = await PanelUpgradeReplacementModel.findOne({ _id: id, createdBy: userId });
+  const updatedData = await PanelUpgradeReplacementModel.findOneAndUpdate(
+    { _id: id, createdBy: userId },
+    payload,
+    { new: true, runValidators: true },
+  ).select('-createdAt -updatedAt');
 
-  if (!data) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Panel request not found!');
+  if (!updatedData) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'Panel upgrade/replacement request not found!',
+    );
   }
 
-  Object.assign(data, payload);
-
-  const updated = await data.save();
-  return updated;
+  return updatedData;
 };
 
 export const PanelUpgradeReplacementService = {

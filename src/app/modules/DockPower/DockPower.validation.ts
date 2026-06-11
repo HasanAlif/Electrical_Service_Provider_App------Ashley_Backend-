@@ -44,9 +44,7 @@ const dockPowerBodySchema = z.object({
   subPanelSize: z.enum(DOCK_POWER_SUB_PANEL_SIZES).optional(),
   serviceSizeOther: z.string().optional(),
   dedicatedCircuitsCount: z.enum(DOCK_POWER_CIRCUIT_COUNTS).optional(),
-  dedicatedCircuitAmpRating: z
-    .enum(DOCK_POWER_CIRCUIT_AMP_RATINGS)
-    .optional(),
+  dedicatedCircuitAmpRating: z.enum(DOCK_POWER_CIRCUIT_AMP_RATINGS).optional(),
 
   panelLocation: z.enum(DOCK_POWER_PANEL_LOCATIONS),
   panelLocationOther: z.string().optional(),
@@ -65,6 +63,8 @@ const dockPowerBodySchema = z.object({
   }),
   permitNumber: z.string().optional(),
   additionalInformation: z.string().optional(),
+  status: z.enum(Service_STATUSES).optional(),
+  completionPercentage: z.number().optional(),
 });
 
 const dockPowerCreateBodySchema = dockPowerBodySchema.extend({

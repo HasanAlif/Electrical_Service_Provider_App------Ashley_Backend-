@@ -8,6 +8,7 @@ import { RemodelingRoutes } from '../modules/Remodeling/Remodeling.routes';
 import { AccessoryBuildingPowerRoutes } from '../modules/AccessoryBuildingPower/AccessoryBuildingPower.routes';
 import { HotTubRoutes } from '../modules/HotTub/HotTub.routes';
 import { DockPowerRoutes } from '../modules/DockPower/DockPower.routes';
+import { DraftRoutes } from '../modules/Draft/Draft.routes';
 
 const router = Router();
 
@@ -47,6 +48,10 @@ const moduleRoutes = [
   {
     path: '/dock-powers',
     route: DockPowerRoutes,
+  },
+  {
+    path: '/drafts',
+    route: DraftRoutes,
   },
 ];
 

@@ -1,0 +1,55 @@
+import AccessoryBuildingPowerModel from '../AccessoryBuildingPower/AccessoryBuildingPower.model';
+import DockPowerModel from '../DockPower/DockPower.model';
+import EVChargerInstallationModel from '../EVChargerInstallation/EVChargerInstallation.model';
+import HotTubModel from '../HotTub/HotTub.model';
+import PanelUpgradeReplacementModel from '../PanelUpgradeReplacement/PanelUpgradeReplacement.model';
+import RemodelingModel from '../Remodeling/Remodeling.model';
+import ServiceCallModel from '../ServiceCall/ServiceCall.model';
+
+type DraftModel = {
+  find: (filter: Record<string, unknown>) => Promise<unknown[]>;
+};
+
+const getAllMyDraftsFromDB = async (userId: string) => {
+  const models = [
+    {
+      name: 'AccessoryBuildingPower',
+      model: AccessoryBuildingPowerModel as DraftModel,
+    },
+    { name: 'DockPower', model: DockPowerModel as DraftModel },
+    {
+      name: 'EVChargerInstallation',
+      model: EVChargerInstallationModel as DraftModel,
+    },
+    { name: 'HotTub', model: HotTubModel as DraftModel },
+    {
+      name: 'PanelUpgradeReplacement',
+      model: PanelUpgradeReplacementModel as DraftModel,
+    },
+    { name: 'Remodeling', model: RemodelingModel as DraftModel },
+    { name: 'ServiceCall', model: ServiceCallModel as DraftModel },
+  ];
+
+  const draftPromises = models.map(async ({ name, model }) => {
+    const drafts = await model.find({
+      createdBy: userId,
+      status: 'draft',
+    });
+    return {
+      serviceName: name,
+      count: drafts.length,
+      data: drafts,
+    };
+  });
+
+  const results = await Promise.all(draftPromises);
+
+  // Filter out services with no drafts
+  const filteredResults = results.filter(result => result.count > 0);
+
+  return filteredResults;
+};
+
+export const DraftService = {
+  getAllMyDraftsFromDB,
+};

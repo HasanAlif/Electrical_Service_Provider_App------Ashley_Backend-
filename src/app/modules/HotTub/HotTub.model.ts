@@ -28,12 +28,22 @@ const hotTubSchema = new Schema<IHotTub>(
     fullName: {
       type: String,
       trim: true,
-      required: [true, 'Full name is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Full name is required!',
+      ],
     },
     phoneNumber: {
       type: String,
       trim: true,
-      required: [true, 'Phone number is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Phone number is required!',
+      ],
     },
     emailAddress: {
       type: String,
@@ -48,7 +58,12 @@ const hotTubSchema = new Schema<IHotTub>(
     streetAddress: {
       type: String,
       trim: true,
-      required: [true, 'Street address is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Street address is required!',
+      ],
     },
     apartmentUnit: {
       type: String,
@@ -57,36 +72,71 @@ const hotTubSchema = new Schema<IHotTub>(
     city: {
       type: String,
       trim: true,
-      required: [true, 'City is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'City is required!',
+      ],
     },
     state: {
       type: String,
       trim: true,
-      required: [true, 'State is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'State is required!',
+      ],
     },
     zipCode: {
       type: String,
       trim: true,
-      required: [true, 'ZIP code is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'ZIP code is required!',
+      ],
     },
     propertyType: {
       type: String,
       enum: HOT_TUB_PROPERTY_TYPES,
-      required: [true, 'Property type is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Property type is required!',
+      ],
     },
     ownershipStatus: {
       type: String,
       enum: HOT_TUB_OWNERSHIP_STATUSES,
-      required: [true, 'Ownership status is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Ownership status is required!',
+      ],
     },
     timelineUrgency: {
       type: String,
       enum: HOT_TUB_TIMELINE_URGENCIES,
-      required: [true, 'Timeline/urgency is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Timeline/urgency is required!',
+      ],
     },
     hasDigitalManual: {
       type: Boolean,
-      required: [true, 'Please choose whether you have a digital manual!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Please choose whether you have a digital manual!',
+      ],
     },
     manualDocument: {
       type: String,
@@ -107,7 +157,12 @@ const hotTubSchema = new Schema<IHotTub>(
     location: {
       type: String,
       enum: HOT_TUB_LOCATIONS,
-      required: [true, 'Location is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Location is required!',
+      ],
     },
     panelLocation: {
       type: String,

@@ -82,7 +82,33 @@ const validateConditionalFields = (
 
 export const RemodelingValidation = {
   createSchema: z.object({
-    body: remodelingCreateBodySchema.superRefine(validateConditionalFields),
+    body: z.any().transform((data) => {
+      if (typeof data !== 'object' || data === null) return data;
+      const cleanData = { ...data };
+      for (const key in cleanData) {
+        if (cleanData[key] === '' || cleanData[key] === null) {
+          delete cleanData[key];
+        } else if (Array.isArray(cleanData[key])) {
+          cleanData[key] = cleanData[key].filter((v: any) => v !== '' && v !== null);
+          if (cleanData[key].length === 0) delete cleanData[key];
+        }
+      }
+      return cleanData;
+    }).superRefine((data, ctx) => {
+      if (data.status === 'draft') {
+        const res = remodelingBodySchema.partial().safeParse(data);
+        if (!res.success) {
+          res.error.issues.forEach(i => ctx.addIssue(i as z.IssueData));
+        }
+      } else {
+        const res = remodelingCreateBodySchema.safeParse(data);
+        if (res.success) {
+          validateConditionalFields(data, ctx);
+        } else {
+          res.error.issues.forEach(i => ctx.addIssue(i as z.IssueData));
+        }
+      }
+    }),
   }),
 
   idParamsSchema: z.object({

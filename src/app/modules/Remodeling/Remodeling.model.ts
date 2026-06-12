@@ -25,12 +25,22 @@ const remodelingSchema = new Schema<IRemodeling>(
     fullName: {
       type: String,
       trim: true,
-      required: [true, 'Full name is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Full name is required!',
+      ],
     },
     phoneNumber: {
       type: String,
       trim: true,
-      required: [true, 'Phone number is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Phone number is required!',
+      ],
     },
     emailAddress: {
       type: String,
@@ -45,7 +55,12 @@ const remodelingSchema = new Schema<IRemodeling>(
     streetAddress: {
       type: String,
       trim: true,
-      required: [true, 'Street address is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Street address is required!',
+      ],
     },
     apartmentUnit: {
       type: String,
@@ -54,46 +69,91 @@ const remodelingSchema = new Schema<IRemodeling>(
     city: {
       type: String,
       trim: true,
-      required: [true, 'City is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'City is required!',
+      ],
     },
     state: {
       type: String,
       trim: true,
-      required: [true, 'State is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'State is required!',
+      ],
     },
     zipCode: {
       type: String,
       trim: true,
-      required: [true, 'ZIP code is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'ZIP code is required!',
+      ],
     },
     propertyType: {
       type: String,
       enum: REMODELING_PROPERTY_TYPES,
-      required: [true, 'Property type is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Property type is required!',
+      ],
     },
     ownershipStatus: {
       type: String,
       enum: REMODELING_OWNERSHIP_STATUSES,
-      required: [true, 'Ownership status is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Ownership status is required!',
+      ],
     },
     timelineUrgency: {
       type: String,
       enum: REMODELING_TIMELINE_URGENCIES,
-      required: [true, 'Timeline/urgency is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Timeline/urgency is required!',
+      ],
     },
     panelLocation: {
       type: String,
       enum: REMODELING_PANEL_LOCATIONS,
-      required: [true, 'Panel location is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Panel location is required!',
+      ],
     },
     remodelingAreas: {
       type: String,
       trim: true,
-      required: [true, 'Remodeling area is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Remodeling area is required!',
+      ],
     },
     hasPlansDrawings: {
       type: Boolean,
-      required: [true, 'Please choose whether you have plans/drawings!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Please choose whether you have plans/drawings!',
+      ],
     },
     plansDrawings: {
       type: [String],
@@ -102,11 +162,21 @@ const remodelingSchema = new Schema<IRemodeling>(
     electricalNeeds: {
       type: String,
       trim: true,
-      required: [true, 'Electrical needs are required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Electrical needs are required!',
+      ],
     },
     permitApplied: {
       type: Boolean,
-      required: [true, 'Please choose whether a permit has been applied for!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Please choose whether a permit has been applied for!',
+      ],
     },
     permitNumber: {
       type: String,

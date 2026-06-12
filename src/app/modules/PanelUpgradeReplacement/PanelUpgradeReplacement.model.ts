@@ -28,12 +28,22 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
     fullName: {
       type: String,
       trim: true,
-      required: [true, 'Full name is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Full name is required!',
+      ],
     },
     phoneNumber: {
       type: String,
       trim: true,
-      required: [true, 'Phone number is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Phone number is required!',
+      ],
     },
     emailAddress: {
       type: String,
@@ -48,7 +58,12 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
     streetAddress: {
       type: String,
       trim: true,
-      required: [true, 'Street address is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Street address is required!',
+      ],
     },
     apartmentUnit: {
       type: String,
@@ -57,37 +72,72 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
     city: {
       type: String,
       trim: true,
-      required: [true, 'City is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'City is required!',
+      ],
     },
     state: {
       type: String,
       trim: true,
-      required: [true, 'State is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'State is required!',
+      ],
     },
     zipCode: {
       type: String,
       trim: true,
-      required: [true, 'ZIP code is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'ZIP code is required!',
+      ],
     },
     propertyType: {
       type: String,
       enum: PANEL_PROPERTY_TYPES,
-      required: [true, 'Property type is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Property type is required!',
+      ],
     },
     ownershipStatus: {
       type: String,
       enum: PANEL_OWNERSHIP_STATUSES,
-      required: [true, 'Ownership status is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Ownership status is required!',
+      ],
     },
     timelineUrgency: {
       type: String,
       enum: PANEL_TIMELINE_URGENCIES,
-      required: [true, 'Timeline/urgency is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Timeline/urgency is required!',
+      ],
     },
     panelServiceType: {
       type: String,
       enum: PANEL_SERVICE_TYPES,
-      required: [true, 'Service type is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Service type is required!',
+      ],
     },
     desiredPanelAmperage: {
       type: String,
@@ -96,17 +146,32 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
     currentPanelAmperage: {
       type: String,
       enum: PANEL_AMPERAGES,
-      required: [true, 'Current panel amperage is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Current panel amperage is required!',
+      ],
     },
     panelLocation: {
       type: String,
       enum: PANEL_LOCATIONS,
-      required: [true, 'Panel location is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Panel location is required!',
+      ],
     },
     powerFeedType: {
       type: String,
       enum: PANEL_POWER_FEEDS,
-      required: [true, 'Power feed type is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Power feed type is required!',
+      ],
     },
     meterPhotos: {
       type: [String],

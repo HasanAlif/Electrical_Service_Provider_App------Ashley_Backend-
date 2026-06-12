@@ -32,12 +32,22 @@ const accessoryBuildingPowerSchema = new Schema<IAccessoryBuildingPower>(
     fullName: {
       type: String,
       trim: true,
-      required: [true, 'Full name is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Full name is required!',
+      ],
     },
     phoneNumber: {
       type: String,
       trim: true,
-      required: [true, 'Phone number is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Phone number is required!',
+      ],
     },
     emailAddress: {
       type: String,
@@ -52,7 +62,12 @@ const accessoryBuildingPowerSchema = new Schema<IAccessoryBuildingPower>(
     streetAddress: {
       type: String,
       trim: true,
-      required: [true, 'Street address is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Street address is required!',
+      ],
     },
     apartmentUnit: {
       type: String,
@@ -61,52 +76,102 @@ const accessoryBuildingPowerSchema = new Schema<IAccessoryBuildingPower>(
     city: {
       type: String,
       trim: true,
-      required: [true, 'City is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'City is required!',
+      ],
     },
     state: {
       type: String,
       trim: true,
-      required: [true, 'State is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'State is required!',
+      ],
     },
     zipCode: {
       type: String,
       trim: true,
-      required: [true, 'ZIP code is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'ZIP code is required!',
+      ],
     },
     propertyType: {
       type: String,
       enum: ACCESSORY_BUILDING_PROPERTY_TYPES,
-      required: [true, 'Property type is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Property type is required!',
+      ],
     },
     ownershipStatus: {
       type: String,
       enum: ACCESSORY_BUILDING_OWNERSHIP_STATUSES,
-      required: [true, 'Ownership status is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Ownership status is required!',
+      ],
     },
     timelineUrgency: {
       type: String,
       enum: ACCESSORY_BUILDING_TIMELINE_URGENCIES,
-      required: [true, 'Timeline/urgency is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Timeline/urgency is required!',
+      ],
     },
     entireSquareFootage: {
       type: Number,
-      required: [true, 'Entire square footage is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Entire square footage is required!',
+      ],
       min: [1, 'Entire square footage must be greater than 0!'],
     },
     intendedUse: {
       type: String,
       trim: true,
-      required: [true, 'Intended use is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Intended use is required!',
+      ],
     },
     buildingStatus: {
       type: String,
       enum: ACCESSORY_BUILDING_STATUSES,
-      required: [true, 'Building status is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Building status is required!',
+      ],
     },
     constructionType: {
       type: String,
       enum: ACCESSORY_BUILDING_CONSTRUCTION_TYPES,
-      required: [true, 'Type of construction is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Type of construction is required!',
+      ],
     },
     hasHeatingOrCooling: {
       type: Boolean,
@@ -118,12 +183,22 @@ const accessoryBuildingPowerSchema = new Schema<IAccessoryBuildingPower>(
     floorType: {
       type: String,
       enum: ACCESSORY_BUILDING_FLOOR_TYPES,
-      required: [true, 'Type of floor is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Type of floor is required!',
+      ],
     },
     electricalServiceType: {
       type: String,
       enum: ACCESSORY_BUILDING_SERVICE_TYPES,
-      required: [true, 'Electrical service type is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Electrical service type is required!',
+      ],
     },
     serviceSize: {
       type: String,
@@ -144,7 +219,12 @@ const accessoryBuildingPowerSchema = new Schema<IAccessoryBuildingPower>(
     panelLocation: {
       type: String,
       enum: ACCESSORY_BUILDING_PANEL_LOCATIONS,
-      required: [true, 'Panel location is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Panel location is required!',
+      ],
     },
     panelLocationOther: {
       type: String,
@@ -164,7 +244,12 @@ const accessoryBuildingPowerSchema = new Schema<IAccessoryBuildingPower>(
     },
     hasPlansDrawings: {
       type: Boolean,
-      required: [true, 'Please choose whether you have plans/drawings!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Please choose whether you have plans/drawings!',
+      ],
     },
     plansDrawings: {
       type: [String],
@@ -172,7 +257,12 @@ const accessoryBuildingPowerSchema = new Schema<IAccessoryBuildingPower>(
     },
     permitApplied: {
       type: Boolean,
-      required: [true, 'Please choose whether a permit has been applied for!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Please choose whether a permit has been applied for!',
+      ],
     },
     permitNumber: {
       type: String,

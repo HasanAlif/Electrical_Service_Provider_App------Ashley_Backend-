@@ -29,12 +29,22 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
     fullName: {
       type: String,
       trim: true,
-      required: [true, 'Full name is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Full name is required!',
+      ],
     },
     phoneNumber: {
       type: String,
       trim: true,
-      required: [true, 'Phone number is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Phone number is required!',
+      ],
     },
     emailAddress: {
       type: String,
@@ -49,7 +59,12 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
     streetAddress: {
       type: String,
       trim: true,
-      required: [true, 'Street address is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Street address is required!',
+      ],
     },
     apartmentUnit: {
       type: String,
@@ -58,37 +73,72 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
     city: {
       type: String,
       trim: true,
-      required: [true, 'City is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'City is required!',
+      ],
     },
     state: {
       type: String,
       trim: true,
-      required: [true, 'State is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'State is required!',
+      ],
     },
     zipCode: {
       type: String,
       trim: true,
-      required: [true, 'ZIP code is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'ZIP code is required!',
+      ],
     },
     propertyType: {
       type: String,
       enum: EV_CHARGER_PROPERTY_TYPES,
-      required: [true, 'Property type is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Property type is required!',
+      ],
     },
     ownershipStatus: {
       type: String,
       enum: EV_CHARGER_OWNERSHIP_STATUSES,
-      required: [true, 'Ownership status is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Ownership status is required!',
+      ],
     },
     timelineUrgency: {
       type: String,
       enum: EV_CHARGER_TIMELINE_URGENCIES,
-      required: [true, 'Timeline/urgency is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Timeline/urgency is required!',
+      ],
     },
     chargerConnectionType: {
       type: String,
       enum: EV_CHARGER_CONNECTION_TYPES,
-      required: [true, 'Charger connection type is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Charger connection type is required!',
+      ],
     },
     nemaConfiguration: {
       type: String,
@@ -104,17 +154,32 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
     installationLocation: {
       type: String,
       enum: EV_CHARGER_INSTALLATION_LOCATIONS,
-      required: [true, 'Installation location is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Installation location is required!',
+      ],
     },
     panelLocation: {
       type: String,
       enum: EV_CHARGER_PANEL_LOCATIONS,
-      required: [true, 'Panel location is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Panel location is required!',
+      ],
     },
     panelDistance: {
       type: String,
       enum: EV_CHARGER_DISTANCES,
-      required: [true, 'Distance is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Distance is required!',
+      ],
     },
     environment: {
       type: String,

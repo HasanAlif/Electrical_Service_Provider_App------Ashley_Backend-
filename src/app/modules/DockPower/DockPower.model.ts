@@ -31,12 +31,22 @@ const dockPowerSchema = new Schema<IDockPower>(
     fullName: {
       type: String,
       trim: true,
-      required: [true, 'Full name is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Full name is required!',
+      ],
     },
     phoneNumber: {
       type: String,
       trim: true,
-      required: [true, 'Phone number is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Phone number is required!',
+      ],
     },
     emailAddress: {
       type: String,
@@ -52,7 +62,12 @@ const dockPowerSchema = new Schema<IDockPower>(
     streetAddress: {
       type: String,
       trim: true,
-      required: [true, 'Street address is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Street address is required!',
+      ],
     },
     apartmentUnit: {
       type: String,
@@ -61,53 +76,103 @@ const dockPowerSchema = new Schema<IDockPower>(
     city: {
       type: String,
       trim: true,
-      required: [true, 'City is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'City is required!',
+      ],
     },
     state: {
       type: String,
       trim: true,
-      required: [true, 'State is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'State is required!',
+      ],
     },
     zipCode: {
       type: String,
       trim: true,
-      required: [true, 'ZIP code is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'ZIP code is required!',
+      ],
     },
 
     propertyType: {
       type: String,
       enum: DOCK_POWER_PROPERTY_TYPES,
-      required: [true, 'Property type is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Property type is required!',
+      ],
     },
     ownershipStatus: {
       type: String,
       enum: DOCK_POWER_OWNERSHIP_STATUSES,
-      required: [true, 'Ownership status is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Ownership status is required!',
+      ],
     },
     timelineUrgency: {
       type: String,
       enum: DOCK_POWER_TIMELINE_URGENCIES,
-      required: [true, 'Timeline/urgency is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Timeline/urgency is required!',
+      ],
     },
 
     isDockBuilt: {
       type: Boolean,
-      required: [true, 'Please choose whether your dock is already built!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Please choose whether your dock is already built!',
+      ],
     },
     electricalNeedsDetails: {
       type: String,
       trim: true,
-      required: [true, 'Electrical need details are required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Electrical need details are required!',
+      ],
     },
     receptacleCount: {
       type: Number,
-      required: [true, 'Receptacle count is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Receptacle count is required!',
+      ],
     },
 
     electricalServiceType: {
       type: String,
       enum: DOCK_POWER_SERVICE_TYPES,
-      required: [true, 'Electrical service type is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Electrical service type is required!',
+      ],
     },
 
     newServiceSize: {
@@ -136,7 +201,12 @@ const dockPowerSchema = new Schema<IDockPower>(
     panelLocation: {
       type: String,
       enum: DOCK_POWER_PANEL_LOCATIONS,
-      required: [true, 'Panel location is required!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Panel location is required!',
+      ],
     },
     panelLocationOther: {
       type: String,
@@ -162,7 +232,12 @@ const dockPowerSchema = new Schema<IDockPower>(
 
     hasPlansDrawings: {
       type: Boolean,
-      required: [true, 'Please choose whether you have plans/drawings!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Please choose whether you have plans/drawings!',
+      ],
     },
     plansDrawingsPhotos: {
       type: [String],
@@ -171,7 +246,12 @@ const dockPowerSchema = new Schema<IDockPower>(
 
     permitApplied: {
       type: Boolean,
-      required: [true, 'Please choose whether a permit has been applied for!'],
+      required: [
+        function (this: any) {
+          return this.status !== 'draft';
+        },
+        'Please choose whether a permit has been applied for!',
+      ],
     },
     permitNumber: {
       type: String,

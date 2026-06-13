@@ -7,10 +7,10 @@ import { IServiceCall } from './ServiceCall.interface';
 export const ServiceCallController = {
   // createServiceCall
   createServiceCall: asyncHandler(async (req: Request, res: Response) => {
-    const payload = req.body as Partial<IServiceCall>;
-    payload.createdBy = req.user._id;
-
-    const data = await ServiceCallService.createServiceCallIntoDB(payload);
+    const data = await ServiceCallService.createServiceCallIntoDB(
+      req.user,
+      req.body,
+    );
 
     sendResponse(res, {
       statusCode: httpStatus.CREATED,

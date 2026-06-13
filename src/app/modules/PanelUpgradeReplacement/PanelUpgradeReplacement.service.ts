@@ -2,15 +2,28 @@ import httpStatus from 'http-status';
 import { AppError } from '../../utils';
 import { IPanelUpgradeReplacement } from './PanelUpgradeReplacement.interface';
 import PanelUpgradeReplacementModel from './PanelUpgradeReplacement.model';
-import { DEFAULT_REQUEST_STATUS } from '../../constants';
+import { DEFAULT_REQUEST_STATUS, Service_STATUSES } from '../../constants';
+import { IUser } from '../User/user.interface';
 
 const createPanelUpgradeReplacementIntoDB = async (
-  userId: string,
+  user: IUser,
   payload: Partial<IPanelUpgradeReplacement>,
 ) => {
+  // const drafts = await PanelUpgradeReplacementModel.find({
+  //   createdBy: user._id.toString(),
+  //   status: Service_STATUSES.DRAFT,
+  // });
+
+  // if (drafts.length > 0) {
+  //   throw new AppError(
+  //     httpStatus.BAD_REQUEST,
+  //     'You can only have 1 draft Panel upgrade/replacement request. Please submit or delete existing draft before creating new one.',
+  //   );
+  // }
+
   const newDoc = await PanelUpgradeReplacementModel.create({
     ...payload,
-    createdBy: userId,
+    createdBy: user._id.toString(),
     serviceType: 'Panel Upgrade / Replacement',
     meterPhotos: payload.meterPhotos ?? [],
     panelPhotos: payload.panelPhotos ?? [],

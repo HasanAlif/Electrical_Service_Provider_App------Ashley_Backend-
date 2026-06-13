@@ -2,12 +2,29 @@ import httpStatus from 'http-status';
 import { AppError } from '../../utils';
 import { IServiceCall } from './ServiceCall.interface';
 import ServiceCallModel from './ServiceCall.model';
-import { DEFAULT_REQUEST_STATUS } from '../../constants';
+import { DEFAULT_REQUEST_STATUS, Service_STATUSES } from '../../constants';
+import { IUser } from '../User/user.interface';
 
 // createServiceCallIntoDB
-const createServiceCallIntoDB = async (payload: Partial<IServiceCall>) => {
+const createServiceCallIntoDB = async (
+  user: IUser,
+  payload: Partial<IServiceCall>,
+) => {
+  // const drafts = await ServiceCallModel.find({
+  //   createdBy: user._id.toString(),
+  //   status: Service_STATUSES.DRAFT,
+  // });
+
+  // if (drafts.length > 0) {
+  //   throw new AppError(
+  //     httpStatus.BAD_REQUEST,
+  //     'You can only have 1 draft Service call request. Please submit or delete existing draft before creating new one.',
+  //   );
+  // }
+
   const newDoc = await ServiceCallModel.create({
     ...payload,
+    createdBy: user._id.toString(),
     status: payload.status ?? DEFAULT_REQUEST_STATUS,
   });
 

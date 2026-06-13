@@ -7,11 +7,10 @@ import { IEVChargerInstallation } from './EVChargerInstallation.interface';
 export const EVChargerInstallationController = {
   createEVChargerInstallation: asyncHandler(
     async (req: Request, res: Response) => {
-      const payload = req.body as Partial<IEVChargerInstallation>;
       const data =
         await EVChargerInstallationService.createEVChargerInstallationIntoDB(
-          req.user._id.toString(),
-          payload,
+          req.user,
+          req.body,
         );
 
       sendResponse(res, {

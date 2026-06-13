@@ -2,15 +2,28 @@ import httpStatus from 'http-status';
 import { AppError } from '../../utils';
 import { IRemodeling } from './Remodeling.interface';
 import RemodelingModel from './Remodeling.model';
-import { DEFAULT_REQUEST_STATUS } from '../../constants';
+import { DEFAULT_REQUEST_STATUS, Service_STATUSES } from '../../constants';
+import { IUser } from '../User/user.interface';
 
 const createRemodelingIntoDB = async (
-  userId: string,
+  user: IUser,
   payload: Partial<IRemodeling>,
 ) => {
+  // const drafts = await RemodelingModel.find({
+  //   createdBy: user._id.toString(),
+  //   status: Service_STATUSES.DRAFT,
+  // });
+
+  // if (drafts.length > 0) {
+  //   throw new AppError(
+  //     httpStatus.BAD_REQUEST,
+  //     'You can only have 1 draft Remodeling request. Please submit or delete existing draft before creating new one.',
+  //   );
+  // }
+
   const newDoc = await RemodelingModel.create({
     ...payload,
-    createdBy: userId,
+    createdBy: user._id.toString(),
     serviceType: 'Remodeling',
     plansDrawings: payload.plansDrawings ?? [],
     existingSpacePhotos: payload.existingSpacePhotos ?? [],

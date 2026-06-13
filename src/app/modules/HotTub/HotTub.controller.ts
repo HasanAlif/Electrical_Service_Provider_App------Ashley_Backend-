@@ -6,11 +6,7 @@ import { HotTubService } from './HotTub.service';
 
 export const HotTubController = {
   createHotTub: asyncHandler(async (req: Request, res: Response) => {
-    const payload = req.body as Partial<IHotTub>;
-    const data = await HotTubService.createHotTubIntoDB(
-      req.user._id.toString(),
-      payload,
-    );
+    const data = await HotTubService.createHotTubIntoDB(req.user, req.body);
 
     sendResponse(res, {
       statusCode: httpStatus.CREATED,

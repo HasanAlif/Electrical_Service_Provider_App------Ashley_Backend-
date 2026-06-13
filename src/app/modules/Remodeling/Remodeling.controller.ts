@@ -6,10 +6,9 @@ import { RemodelingService } from './Remodeling.service';
 
 export const RemodelingController = {
   createRemodeling: asyncHandler(async (req: Request, res: Response) => {
-    const payload = req.body as Partial<IRemodeling>;
     const data = await RemodelingService.createRemodelingIntoDB(
-      req.user._id.toString(),
-      payload,
+      req.user,
+      req.body,
     );
 
     sendResponse(res, {

@@ -6,10 +6,9 @@ import { DockPowerService } from './DockPower.service';
 
 export const DockPowerController = {
   createDockPower: asyncHandler(async (req: Request, res: Response) => {
-    const payload = req.body as Partial<IDockPower>;
     const data = await DockPowerService.createDockPowerIntoDB(
-      req.user._id.toString(),
-      payload,
+      req.user,
+      req.body,
     );
 
     sendResponse(res, {

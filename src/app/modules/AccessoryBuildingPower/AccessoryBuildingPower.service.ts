@@ -2,15 +2,28 @@ import httpStatus from 'http-status';
 import { AppError } from '../../utils';
 import { IAccessoryBuildingPower } from './AccessoryBuildingPower.interface';
 import AccessoryBuildingPowerModel from './AccessoryBuildingPower.model';
-import { DEFAULT_REQUEST_STATUS } from '../../constants';
+import { DEFAULT_REQUEST_STATUS, Service_STATUSES } from '../../constants';
+import { IUser } from '../User/user.interface';
 
 const createAccessoryBuildingPowerIntoDB = async (
-  userId: string,
+  user: IUser,
   payload: Partial<IAccessoryBuildingPower>,
 ) => {
+  // const drafts = await AccessoryBuildingPowerModel.find({
+  //   createdBy: user._id.toString(),
+  //   status: Service_STATUSES.DRAFT,
+  // });
+
+  // if (drafts.length > 0) {
+  //   throw new AppError(
+  //     httpStatus.BAD_REQUEST,
+  //     'You can only have 1 draft Accessory building power request. Please submit or delete existing draft before creating new one.',
+  //   );
+  // }
+
   const newDoc = await AccessoryBuildingPowerModel.create({
     ...payload,
-    createdBy: userId,
+    createdBy: user._id.toString(),
     serviceType: 'Accessory Building / Shed Power',
     panelPhotos: payload.panelPhotos ?? [],
     existingSpacePhotos: payload.existingSpacePhotos ?? [],

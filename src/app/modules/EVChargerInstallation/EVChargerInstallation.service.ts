@@ -2,15 +2,28 @@ import httpStatus from 'http-status';
 import { AppError } from '../../utils';
 import { IEVChargerInstallation } from './EVChargerInstallation.interface';
 import EVChargerInstallationModel from './EVChargerInstallation.model';
-import { DEFAULT_REQUEST_STATUS } from '../../constants';
+import { DEFAULT_REQUEST_STATUS, Service_STATUSES } from '../../constants';
+import { IUser } from '../User/user.interface';
 
 const createEVChargerInstallationIntoDB = async (
-  userId: string,
+  user: IUser,
   payload: Partial<IEVChargerInstallation>,
 ) => {
+  // const drafts = await EVChargerInstallationModel.find({
+  //   createdBy: user._id.toString(),
+  //   status: Service_STATUSES.DRAFT,
+  // });
+
+  // if (drafts.length > 0) {
+  //   throw new AppError(
+  //     httpStatus.BAD_REQUEST,
+  //     'You can only have 1 draft EV charger installation request. Please submit or delete existing draft before creating new one.',
+  //   );
+  // }
+
   const newDoc = await EVChargerInstallationModel.create({
     ...payload,
-    createdBy: userId,
+    createdBy: user._id.toString(),
     serviceType: 'EV Charger Installation',
     // chargerProvidedByUser: payload.chargerProvidedByUser ?? false,
     panelPhotos: payload.panelPhotos ?? [],

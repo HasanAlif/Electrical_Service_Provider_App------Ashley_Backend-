@@ -2,15 +2,28 @@ import httpStatus from 'http-status';
 import { AppError } from '../../utils';
 import { IDockPower } from './DockPower.interface';
 import DockPowerModel from './DockPower.model';
-import { DEFAULT_REQUEST_STATUS } from '../../constants';
+import { DEFAULT_REQUEST_STATUS, Service_STATUSES } from '../../constants';
+import { IUser } from '../User/user.interface';
 
 const createDockPowerIntoDB = async (
-  userId: string,
+  user: IUser,
   payload: Partial<IDockPower>,
 ) => {
+  // const drafts = await DockPowerModel.find({
+  //   createdBy: user._id.toString(),
+  //   status: Service_STATUSES.DRAFT,
+  // });
+
+  // if (drafts.length > 0) {
+  //   throw new AppError(
+  //     httpStatus.BAD_REQUEST,
+  //     'You can only have 1 draft Dock power request. Please submit or delete existing draft before creating new one.',
+  //   );
+  // }
+
   const newDoc = await DockPowerModel.create({
     ...payload,
-    createdBy: userId,
+    createdBy: user._id.toString(),
     serviceType: 'Dock Power',
     panelPhotos: payload.panelPhotos ?? [],
     existingSpacePhotos: payload.existingSpacePhotos ?? [],

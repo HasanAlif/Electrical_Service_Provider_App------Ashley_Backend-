@@ -6,11 +6,10 @@ import { AccessoryBuildingPowerService } from './AccessoryBuildingPower.service'
 
 export const AccessoryBuildingPowerController = {
   createAccessoryBuilding: asyncHandler(async (req: Request, res: Response) => {
-    const payload = req.body as Partial<IAccessoryBuildingPower>;
     const data =
       await AccessoryBuildingPowerService.createAccessoryBuildingPowerIntoDB(
-        req.user._id.toString(),
-        payload,
+        req.user,
+        req.body,
       );
 
     sendResponse(res, {

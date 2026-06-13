@@ -2,15 +2,25 @@ import httpStatus from 'http-status';
 import { AppError } from '../../utils';
 import { IHotTub } from './HotTub.interface';
 import HotTubModel from './HotTub.model';
-import { DEFAULT_REQUEST_STATUS } from '../../constants';
+import { DEFAULT_REQUEST_STATUS, Service_STATUSES } from '../../constants';
+import { IUser } from '../User/user.interface';
 
-const createHotTubIntoDB = async (
-  userId: string,
-  payload: Partial<IHotTub>,
-) => {
+const createHotTubIntoDB = async (user: IUser, payload: Partial<IHotTub>) => {
+  // const drafts = await HotTubModel.find({
+  //   createdBy: user._id.toString(),
+  //   status: Service_STATUSES.DRAFT,
+  // });
+
+  // if (drafts.length > 0) {
+  //   throw new AppError(
+  //     httpStatus.BAD_REQUEST,
+  //     'You can only have 1 draft Hot tub request. Please submit or delete existing draft before creating new one.',
+  //   );
+  // }
+
   const newDoc = await HotTubModel.create({
     ...payload,
-    createdBy: userId,
+    createdBy: user._id.toString(),
     serviceType: 'Hot tub installation',
     panelPhotos: payload.panelPhotos ?? [],
     hotTubPhotos: payload.hotTubPhotos ?? [],

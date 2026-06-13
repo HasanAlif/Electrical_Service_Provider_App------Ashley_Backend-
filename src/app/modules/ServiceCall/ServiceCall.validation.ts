@@ -51,7 +51,7 @@ export const ServiceCallValidation = {
       }
       return cleanData;
     }).superRefine((data, ctx) => {
-      if (data.status === 'draft') {
+      if (data.status === Service_STATUSES.DRAFT) {
         const res = serviceCallBodySchema.partial().safeParse(data);
         if (!res.success) {
           res.error.issues.forEach(i => ctx.addIssue(i as z.IssueData));

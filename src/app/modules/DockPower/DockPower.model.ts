@@ -33,7 +33,7 @@ const dockPowerSchema = new Schema<IDockPower>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Full name is required!',
       ],
@@ -43,7 +43,7 @@ const dockPowerSchema = new Schema<IDockPower>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Phone number is required!',
       ],
@@ -64,7 +64,7 @@ const dockPowerSchema = new Schema<IDockPower>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Street address is required!',
       ],
@@ -78,7 +78,7 @@ const dockPowerSchema = new Schema<IDockPower>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'City is required!',
       ],
@@ -88,7 +88,7 @@ const dockPowerSchema = new Schema<IDockPower>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'State is required!',
       ],
@@ -98,7 +98,7 @@ const dockPowerSchema = new Schema<IDockPower>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'ZIP code is required!',
       ],
@@ -109,7 +109,7 @@ const dockPowerSchema = new Schema<IDockPower>(
       enum: DOCK_POWER_PROPERTY_TYPES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Property type is required!',
       ],
@@ -119,7 +119,7 @@ const dockPowerSchema = new Schema<IDockPower>(
       enum: DOCK_POWER_OWNERSHIP_STATUSES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Ownership status is required!',
       ],
@@ -129,7 +129,7 @@ const dockPowerSchema = new Schema<IDockPower>(
       enum: DOCK_POWER_TIMELINE_URGENCIES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Timeline/urgency is required!',
       ],
@@ -139,7 +139,7 @@ const dockPowerSchema = new Schema<IDockPower>(
       type: Boolean,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Please choose whether your dock is already built!',
       ],
@@ -149,7 +149,7 @@ const dockPowerSchema = new Schema<IDockPower>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Electrical need details are required!',
       ],
@@ -158,7 +158,7 @@ const dockPowerSchema = new Schema<IDockPower>(
       type: Number,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Receptacle count is required!',
       ],
@@ -169,7 +169,7 @@ const dockPowerSchema = new Schema<IDockPower>(
       enum: DOCK_POWER_SERVICE_TYPES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Electrical service type is required!',
       ],
@@ -203,7 +203,7 @@ const dockPowerSchema = new Schema<IDockPower>(
       enum: DOCK_POWER_PANEL_LOCATIONS,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Panel location is required!',
       ],
@@ -234,7 +234,7 @@ const dockPowerSchema = new Schema<IDockPower>(
       type: Boolean,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Please choose whether you have plans/drawings!',
       ],
@@ -248,7 +248,7 @@ const dockPowerSchema = new Schema<IDockPower>(
       type: Boolean,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Please choose whether a permit has been applied for!',
       ],

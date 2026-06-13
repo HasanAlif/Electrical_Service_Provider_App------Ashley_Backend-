@@ -28,7 +28,7 @@ const serviceCallSchema = new Schema<IServiceCall>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Full name is required!',
       ],
@@ -38,7 +38,7 @@ const serviceCallSchema = new Schema<IServiceCall>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Phone number is required!',
       ],
@@ -59,7 +59,7 @@ const serviceCallSchema = new Schema<IServiceCall>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Street address is required!',
       ],
@@ -73,7 +73,7 @@ const serviceCallSchema = new Schema<IServiceCall>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'City is required!',
       ],
@@ -83,7 +83,7 @@ const serviceCallSchema = new Schema<IServiceCall>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'State is required!',
       ],
@@ -93,7 +93,7 @@ const serviceCallSchema = new Schema<IServiceCall>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'ZIP code is required!',
       ],
@@ -104,7 +104,7 @@ const serviceCallSchema = new Schema<IServiceCall>(
       enum: SERVICE_CALL_PROPERTY_TYPES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Property type is required!',
       ],
@@ -114,7 +114,7 @@ const serviceCallSchema = new Schema<IServiceCall>(
       enum: SERVICE_CALL_OWNERSHIP_STATUSES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Ownership status is required!',
       ],
@@ -124,7 +124,7 @@ const serviceCallSchema = new Schema<IServiceCall>(
       enum: SERVICE_CALL_TIMELINE_URGENCIES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Timeline/urgency is required!',
       ],
@@ -135,7 +135,7 @@ const serviceCallSchema = new Schema<IServiceCall>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Issue description is required!',
       ],

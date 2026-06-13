@@ -185,7 +185,7 @@ export const DockPowerValidation = {
       }
       return cleanData;
     }).superRefine((data, ctx) => {
-      if (data.status === 'draft') {
+      if (data.status === Service_STATUSES.DRAFT) {
         const res = dockPowerBodySchema.partial().safeParse(data);
         if (!res.success) {
           res.error.issues.forEach(i => ctx.addIssue(i as z.IssueData));

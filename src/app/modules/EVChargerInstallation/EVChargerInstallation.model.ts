@@ -31,7 +31,7 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Full name is required!',
       ],
@@ -41,7 +41,7 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Phone number is required!',
       ],
@@ -61,7 +61,7 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Street address is required!',
       ],
@@ -75,7 +75,7 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'City is required!',
       ],
@@ -85,7 +85,7 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'State is required!',
       ],
@@ -95,7 +95,7 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'ZIP code is required!',
       ],
@@ -105,7 +105,7 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
       enum: EV_CHARGER_PROPERTY_TYPES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Property type is required!',
       ],
@@ -115,7 +115,7 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
       enum: EV_CHARGER_OWNERSHIP_STATUSES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Ownership status is required!',
       ],
@@ -125,7 +125,7 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
       enum: EV_CHARGER_TIMELINE_URGENCIES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Timeline/urgency is required!',
       ],
@@ -135,7 +135,7 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
       enum: EV_CHARGER_CONNECTION_TYPES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Charger connection type is required!',
       ],
@@ -156,7 +156,7 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
       enum: EV_CHARGER_INSTALLATION_LOCATIONS,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Installation location is required!',
       ],
@@ -166,7 +166,7 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
       enum: EV_CHARGER_PANEL_LOCATIONS,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Panel location is required!',
       ],
@@ -176,7 +176,7 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
       enum: EV_CHARGER_DISTANCES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Distance is required!',
       ],

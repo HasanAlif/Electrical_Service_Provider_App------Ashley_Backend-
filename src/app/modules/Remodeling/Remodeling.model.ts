@@ -27,7 +27,7 @@ const remodelingSchema = new Schema<IRemodeling>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Full name is required!',
       ],
@@ -37,7 +37,7 @@ const remodelingSchema = new Schema<IRemodeling>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Phone number is required!',
       ],
@@ -57,7 +57,7 @@ const remodelingSchema = new Schema<IRemodeling>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Street address is required!',
       ],
@@ -71,7 +71,7 @@ const remodelingSchema = new Schema<IRemodeling>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'City is required!',
       ],
@@ -81,7 +81,7 @@ const remodelingSchema = new Schema<IRemodeling>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'State is required!',
       ],
@@ -91,7 +91,7 @@ const remodelingSchema = new Schema<IRemodeling>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'ZIP code is required!',
       ],
@@ -101,7 +101,7 @@ const remodelingSchema = new Schema<IRemodeling>(
       enum: REMODELING_PROPERTY_TYPES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Property type is required!',
       ],
@@ -111,7 +111,7 @@ const remodelingSchema = new Schema<IRemodeling>(
       enum: REMODELING_OWNERSHIP_STATUSES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Ownership status is required!',
       ],
@@ -121,7 +121,7 @@ const remodelingSchema = new Schema<IRemodeling>(
       enum: REMODELING_TIMELINE_URGENCIES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Timeline/urgency is required!',
       ],
@@ -131,7 +131,7 @@ const remodelingSchema = new Schema<IRemodeling>(
       enum: REMODELING_PANEL_LOCATIONS,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Panel location is required!',
       ],
@@ -141,7 +141,7 @@ const remodelingSchema = new Schema<IRemodeling>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Remodeling area is required!',
       ],
@@ -150,7 +150,7 @@ const remodelingSchema = new Schema<IRemodeling>(
       type: Boolean,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Please choose whether you have plans/drawings!',
       ],
@@ -164,7 +164,7 @@ const remodelingSchema = new Schema<IRemodeling>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Electrical needs are required!',
       ],
@@ -173,7 +173,7 @@ const remodelingSchema = new Schema<IRemodeling>(
       type: Boolean,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Please choose whether a permit has been applied for!',
       ],

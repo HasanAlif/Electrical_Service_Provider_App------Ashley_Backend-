@@ -30,7 +30,7 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Full name is required!',
       ],
@@ -40,7 +40,7 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Phone number is required!',
       ],
@@ -60,7 +60,7 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Street address is required!',
       ],
@@ -74,7 +74,7 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'City is required!',
       ],
@@ -84,7 +84,7 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'State is required!',
       ],
@@ -94,7 +94,7 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'ZIP code is required!',
       ],
@@ -104,7 +104,7 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
       enum: PANEL_PROPERTY_TYPES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Property type is required!',
       ],
@@ -114,7 +114,7 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
       enum: PANEL_OWNERSHIP_STATUSES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Ownership status is required!',
       ],
@@ -124,7 +124,7 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
       enum: PANEL_TIMELINE_URGENCIES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Timeline/urgency is required!',
       ],
@@ -134,7 +134,7 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
       enum: PANEL_SERVICE_TYPES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Service type is required!',
       ],
@@ -148,7 +148,7 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
       enum: PANEL_AMPERAGES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Current panel amperage is required!',
       ],
@@ -158,7 +158,7 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
       enum: PANEL_LOCATIONS,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Panel location is required!',
       ],
@@ -168,7 +168,7 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
       enum: PANEL_POWER_FEEDS,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Power feed type is required!',
       ],

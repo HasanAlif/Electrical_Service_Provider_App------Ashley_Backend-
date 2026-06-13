@@ -30,7 +30,7 @@ const hotTubSchema = new Schema<IHotTub>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Full name is required!',
       ],
@@ -40,7 +40,7 @@ const hotTubSchema = new Schema<IHotTub>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Phone number is required!',
       ],
@@ -60,7 +60,7 @@ const hotTubSchema = new Schema<IHotTub>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Street address is required!',
       ],
@@ -74,7 +74,7 @@ const hotTubSchema = new Schema<IHotTub>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'City is required!',
       ],
@@ -84,7 +84,7 @@ const hotTubSchema = new Schema<IHotTub>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'State is required!',
       ],
@@ -94,7 +94,7 @@ const hotTubSchema = new Schema<IHotTub>(
       trim: true,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'ZIP code is required!',
       ],
@@ -104,7 +104,7 @@ const hotTubSchema = new Schema<IHotTub>(
       enum: HOT_TUB_PROPERTY_TYPES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Property type is required!',
       ],
@@ -114,7 +114,7 @@ const hotTubSchema = new Schema<IHotTub>(
       enum: HOT_TUB_OWNERSHIP_STATUSES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Ownership status is required!',
       ],
@@ -124,7 +124,7 @@ const hotTubSchema = new Schema<IHotTub>(
       enum: HOT_TUB_TIMELINE_URGENCIES,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Timeline/urgency is required!',
       ],
@@ -133,7 +133,7 @@ const hotTubSchema = new Schema<IHotTub>(
       type: Boolean,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Please choose whether you have a digital manual!',
       ],
@@ -159,7 +159,7 @@ const hotTubSchema = new Schema<IHotTub>(
       enum: HOT_TUB_LOCATIONS,
       required: [
         function (this: any) {
-          return this.status !== 'draft';
+          return this.status !== Service_STATUSES.DRAFT;
         },
         'Location is required!',
       ],

@@ -1,3 +1,4 @@
+import { Service_STATUSES } from '../../constants';
 import AccessoryBuildingPowerModel from '../AccessoryBuildingPower/AccessoryBuildingPower.model';
 import DockPowerModel from '../DockPower/DockPower.model';
 import EVChargerInstallationModel from '../EVChargerInstallation/EVChargerInstallation.model';
@@ -33,8 +34,9 @@ const getAllMyDraftsFromDB = async (userId: string) => {
   const draftPromises = models.map(async ({ name, model }) => {
     const drafts = await model.find({
       createdBy: userId,
-      status: 'draft',
+      status: Service_STATUSES.DRAFT,
     });
+
     return {
       serviceName: name,
       count: drafts.length,

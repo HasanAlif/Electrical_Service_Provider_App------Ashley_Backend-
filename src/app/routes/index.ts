@@ -10,6 +10,7 @@ import { HotTubRoutes } from '../modules/HotTub/HotTub.routes';
 import { DockPowerRoutes } from '../modules/DockPower/DockPower.routes';
 import { ElectricRoutes } from '../modules/Electric/Electric.routes';
 import { GenaratorRoutes } from '../modules/Genarator/Genarator.routes';
+import { NewConstructionRoutes } from '../modules/NewConstruction/NewConstruction.routes';
 import { DraftRoutes } from '../modules/Draft/Draft.routes';
 
 const router = Router();
@@ -58,6 +59,10 @@ const moduleRoutes = [
   {
     path: '/generators',
     route: GenaratorRoutes,
+  },
+  {
+    path: '/new-constructions',
+    route: NewConstructionRoutes,
   },
   {
     path: '/drafts',

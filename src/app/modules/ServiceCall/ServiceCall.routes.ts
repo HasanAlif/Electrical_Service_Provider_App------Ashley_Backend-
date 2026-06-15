@@ -42,9 +42,8 @@ router
     ServiceCallController.getSingleServiceCall,
   )
   .patch(
-    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
-    uploadServiceCallImages,
-    validateRequestFromFormData(ServiceCallValidation.updateServiceCallSchema),
+    auth(ROLE.USER),
+    validateRequest(ServiceCallValidation.updateServiceCallSchema),
     ServiceCallController.updateServiceCall,
   )
   .delete(

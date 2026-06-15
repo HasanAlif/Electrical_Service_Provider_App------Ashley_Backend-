@@ -154,5 +154,7 @@ bun.lock
 yarn.lock
 .vscode
 *.pem
+*.postman_collection.json
 *.png
 /postman
+config.bat

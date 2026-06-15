@@ -44,13 +44,13 @@ router
     PanelUpgradeReplacementController.getSinglePanelUpgradeReplacement,
   )
   .patch(
-    auth(ROLE.USER),
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
     uploadPanelImages,
     validateRequestFromFormData(PanelUpgradeReplacementValidation.updateSchema),
     PanelUpgradeReplacementController.updateSinglePanelUpgradeReplacement,
   )
   .delete(
-    auth(ROLE.USER),
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
     validateRequest(PanelUpgradeReplacementValidation.idParamsSchema),
     PanelUpgradeReplacementController.deleteSinglePanelUpgradeReplacement,
   );

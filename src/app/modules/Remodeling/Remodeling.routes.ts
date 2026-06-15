@@ -42,13 +42,13 @@ router
     RemodelingController.getSingleRemodeling,
   )
   .patch(
-    auth(ROLE.USER),
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
     uploadRemodelingImages,
     validateRequestFromFormData(RemodelingValidation.updateSchema),
     RemodelingController.updateSingleRemodeling,
   )
   .delete(
-    auth(ROLE.USER),
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
     validateRequest(RemodelingValidation.idParamsSchema),
     RemodelingController.deleteSingleRemodeling,
   );

@@ -42,13 +42,13 @@ router
     DockPowerController.getSingleDockPower,
   )
   .patch(
-    auth(ROLE.USER),
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
     uploadDockPowerImages,
     validateRequestFromFormData(DockPowerValidation.updateSchema),
     DockPowerController.updateSingleDockPower,
   )
   .delete(
-    auth(ROLE.USER),
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
     validateRequest(DockPowerValidation.idParamsSchema),
     DockPowerController.deleteSingleDockPower,
   );

@@ -42,13 +42,13 @@ router
     ServiceCallController.getSingleServiceCall,
   )
   .patch(
-    auth(ROLE.USER),
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
     uploadServiceCallImages,
     validateRequestFromFormData(ServiceCallValidation.updateServiceCallSchema),
     ServiceCallController.updateServiceCall,
   )
   .delete(
-    auth(ROLE.USER),
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
     validateRequest(ServiceCallValidation.serviceCallIdParamsSchema),
     ServiceCallController.deleteServiceCall,
   );

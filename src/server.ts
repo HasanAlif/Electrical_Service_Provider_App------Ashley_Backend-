@@ -6,7 +6,6 @@ import config from './app/config';
 import seedSuperAdmin from './app/seed';
 import colors from 'colors';
 import { createServer } from 'http';
-import 'dotenv/config';
 // import { initSocket } from './app/socket';
 
 let server: Server | null = null;

@@ -1,6 +1,7 @@
 import { Service_STATUSES } from '../../constants';
 import AccessoryBuildingPowerModel from '../AccessoryBuildingPower/AccessoryBuildingPower.model';
 import DockPowerModel from '../DockPower/DockPower.model';
+import ElectricModel from '../Electric/Electric.model';
 import EVChargerInstallationModel from '../EVChargerInstallation/EVChargerInstallation.model';
 import HotTubModel from '../HotTub/HotTub.model';
 import PanelUpgradeReplacementModel from '../PanelUpgradeReplacement/PanelUpgradeReplacement.model';
@@ -18,6 +19,7 @@ const getAllMyDraftsFromDB = async (userId: string) => {
       model: AccessoryBuildingPowerModel as DraftModel,
     },
     { name: 'DockPower', model: DockPowerModel as DraftModel },
+    { name: 'Electric', model: ElectricModel as DraftModel },
     {
       name: 'EVChargerInstallation',
       model: EVChargerInstallationModel as DraftModel,

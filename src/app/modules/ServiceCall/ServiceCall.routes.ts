@@ -43,7 +43,8 @@ router
   )
   .patch(
     auth(ROLE.USER),
-    validateRequest(ServiceCallValidation.updateServiceCallSchema),
+    uploadServiceCallImages,
+    validateRequestFromFormData(ServiceCallValidation.updateServiceCallSchema),
     ServiceCallController.updateServiceCall,
   )
   .delete(

@@ -10,6 +10,7 @@ import NewConstructionModel from '../NewConstruction/NewConstruction.model';
 import PanelUpgradeReplacementModel from '../PanelUpgradeReplacement/PanelUpgradeReplacement.model';
 import RemodelingModel from '../Remodeling/Remodeling.model';
 import ServiceCallModel from '../ServiceCall/ServiceCall.model';
+import StarlinkModel from '../Starlink/Starlink.model';
 
 type DraftModel = {
   find: (filter: Record<string, unknown>) => Promise<unknown[]>;
@@ -40,6 +41,7 @@ const getAllMyDraftsFromDB = async (userId: string) => {
     },
     { name: 'Remodeling', model: RemodelingModel as DraftModel },
     { name: 'ServiceCall', model: ServiceCallModel as DraftModel },
+    { name: 'Starlink', model: StarlinkModel as DraftModel },
   ];
 
   const draftPromises = models.map(async ({ name, model }) => {

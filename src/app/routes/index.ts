@@ -11,6 +11,7 @@ import { DockPowerRoutes } from '../modules/DockPower/DockPower.routes';
 import { ElectricRoutes } from '../modules/Electric/Electric.routes';
 import { GenaratorRoutes } from '../modules/Genarator/Genarator.routes';
 import { NewConstructionRoutes } from '../modules/NewConstruction/NewConstruction.routes';
+import { HomeSurgeProtectionRoutes } from '../modules/HomeSurgeProtection/HomeSurgeProtection.routes';
 import { DraftRoutes } from '../modules/Draft/Draft.routes';
 
 const router = Router();
@@ -63,6 +64,10 @@ const moduleRoutes = [
   {
     path: '/new-constructions',
     route: NewConstructionRoutes,
+  },
+  {
+    path: '/home-surge-protections',
+    route: HomeSurgeProtectionRoutes,
   },
   {
     path: '/drafts',

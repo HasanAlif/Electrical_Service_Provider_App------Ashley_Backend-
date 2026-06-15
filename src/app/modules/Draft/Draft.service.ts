@@ -4,6 +4,7 @@ import DockPowerModel from '../DockPower/DockPower.model';
 import ElectricModel from '../Electric/Electric.model';
 import EVChargerInstallationModel from '../EVChargerInstallation/EVChargerInstallation.model';
 import GenaratorModel from '../Genarator/Genarator.model';
+import HomeSurgeProtectionModel from '../HomeSurgeProtection/HomeSurgeProtection.model';
 import HotTubModel from '../HotTub/HotTub.model';
 import NewConstructionModel from '../NewConstruction/NewConstruction.model';
 import PanelUpgradeReplacementModel from '../PanelUpgradeReplacement/PanelUpgradeReplacement.model';
@@ -27,6 +28,10 @@ const getAllMyDraftsFromDB = async (userId: string) => {
       model: EVChargerInstallationModel as DraftModel,
     },
     { name: 'Generator', model: GenaratorModel as DraftModel },
+    {
+      name: 'HomeSurgeProtection',
+      model: HomeSurgeProtectionModel as DraftModel,
+    },
     { name: 'HotTub', model: HotTubModel as DraftModel },
     { name: 'NewConstruction', model: NewConstructionModel as DraftModel },
     {

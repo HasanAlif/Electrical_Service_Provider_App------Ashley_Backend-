@@ -9,6 +9,7 @@ import { AccessoryBuildingPowerRoutes } from '../modules/AccessoryBuildingPower/
 import { HotTubRoutes } from '../modules/HotTub/HotTub.routes';
 import { DockPowerRoutes } from '../modules/DockPower/DockPower.routes';
 import { ElectricRoutes } from '../modules/Electric/Electric.routes';
+import { GenaratorRoutes } from '../modules/Genarator/Genarator.routes';
 import { DraftRoutes } from '../modules/Draft/Draft.routes';
 
 const router = Router();
@@ -53,6 +54,10 @@ const moduleRoutes = [
   {
     path: '/electrics',
     route: ElectricRoutes,
+  },
+  {
+    path: '/generators',
+    route: GenaratorRoutes,
   },
   {
     path: '/drafts',

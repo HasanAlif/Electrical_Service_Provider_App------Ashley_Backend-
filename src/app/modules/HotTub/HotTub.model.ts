@@ -134,12 +134,6 @@ const hotTubSchema = new Schema<IHotTub>(
     },
     hasDigitalManual: {
       type: Boolean,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Please choose whether you have a digital manual!',
-      ],
     },
     manualDocument: {
       type: String,
@@ -160,12 +154,6 @@ const hotTubSchema = new Schema<IHotTub>(
     location: {
       type: String,
       enum: HOT_TUB_LOCATIONS,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Location is required!',
-      ],
     },
     panelLocation: {
       type: String,
@@ -177,15 +165,12 @@ const hotTubSchema = new Schema<IHotTub>(
     },
     panelPhotos: {
       type: [String],
-      default: [],
     },
     hotTubPhotos: {
       type: [String],
-      default: [],
     },
     receptaclePhotos: {
       type: [String],
-      default: [],
     },
     additionalInformation: {
       type: String,

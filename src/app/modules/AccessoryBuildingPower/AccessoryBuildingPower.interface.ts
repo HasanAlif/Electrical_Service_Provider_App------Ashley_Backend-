@@ -100,18 +100,18 @@ export interface IAccessoryBuildingPower extends Document {
   entireSquareFootage: number;
   intendedUse: string;
 
-  buildingStatus: TAccessoryBuildingStatus;
-  constructionType: TAccessoryBuildingConstructionType;
+  buildingStatus: string;
+  constructionType: string;
   hasHeatingOrCooling: boolean;
-  floorType: TAccessoryBuildingFloorType;
+  floorType: string;
 
-  electricalServiceType: TAccessoryBuildingElectricalServiceType;
-  serviceSize?: TAccessoryBuildingServiceSize;
+  electricalServiceType: string;
+  serviceSize?: string;
   serviceSizeOther?: string;
-  dedicatedCircuitsCount?: TAccessoryBuildingCircuitCount;
-  dedicatedCircuitAmpRating?: TAccessoryBuildingCircuitAmpRating;
+  dedicatedCircuitsCount?: string;
+  dedicatedCircuitAmpRating?: string;
 
-  panelLocation: TAccessoryBuildingPanelLocation;
+  panelLocation: string;
   panelLocationOther?: string;
 
   panelPhotos: string[];

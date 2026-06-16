@@ -31,24 +31,21 @@ const dockPowerBodySchema = z.object({
   ownershipStatus: z.enum(OWNERSHIP_STATUSES),
   timelineUrgency: z.enum(TIMELINE_URGENCIES),
 
-  isDockBuilt: z.boolean({
-    error: 'Please choose whether your dock is already built!',
-  }),
-  electricalNeedsDetails: z
-    .string({ error: 'Electrical need details are required!' })
-    .min(1),
+  isDockBuilt: z.boolean().optional(),
+  electricalNeedsDetails: z.string().optional(),
   receptacleCount: z.coerce
-    .number({ error: 'Receptacle count is required!' })
-    .min(0, 'Receptacle count cannot be negative!'),
+    .number()
+    .min(0, 'Receptacle count cannot be negative!')
+    .optional(),
 
-  electricalServiceType: z.enum(DOCK_POWER_SERVICE_TYPES),
+  electricalServiceType: z.enum(DOCK_POWER_SERVICE_TYPES).optional(),
   newServiceSize: z.enum(DOCK_POWER_NEW_SERVICE_SIZES).optional(),
   subPanelSize: z.enum(DOCK_POWER_SUB_PANEL_SIZES).optional(),
   serviceSizeOther: z.string().optional(),
   dedicatedCircuitsCount: z.enum(DOCK_POWER_CIRCUIT_COUNTS).optional(),
   dedicatedCircuitAmpRating: z.enum(DOCK_POWER_CIRCUIT_AMP_RATINGS).optional(),
 
-  panelLocation: z.enum(DOCK_POWER_PANEL_LOCATIONS),
+  panelLocation: z.enum(DOCK_POWER_PANEL_LOCATIONS).optional(),
   panelLocationOther: z.string().optional(),
 
   panelPhotos: z.array(z.string()).optional(),
@@ -56,108 +53,14 @@ const dockPowerBodySchema = z.object({
   routeDistanceDetails: z.string().optional(),
   existingSpacePhotos: z.array(z.string()).optional(),
 
-  hasPlansDrawings: z.boolean({
-    error: 'Please choose whether you have plans/drawings!',
-  }),
+  hasPlansDrawings: z.boolean().optional(),
   plansDrawingsPhotos: z.array(z.string()).optional(),
-  permitApplied: z.boolean({
-    error: 'Please choose whether a permit has been applied for!',
-  }),
+  permitApplied: z.boolean().optional(),
   permitNumber: z.string().optional(),
   additionalInformation: z.string().optional(),
   status: z.enum(Service_STATUSES).optional(),
   completionPercentage: z.number().optional(),
 });
-
-// Photo presence (panelPhotos, existingSpacePhotos, plansDrawingsPhotos) is
-// enforced in the service because images now arrive as form-data files.
-const dockPowerCreateBodySchema = dockPowerBodySchema;
-
-const validateDockPowerConditionalFields = (
-  data: {
-    electricalServiceType?: (typeof DOCK_POWER_SERVICE_TYPES)[number];
-    newServiceSize?: (typeof DOCK_POWER_NEW_SERVICE_SIZES)[number];
-    subPanelSize?: (typeof DOCK_POWER_SUB_PANEL_SIZES)[number];
-    serviceSizeOther?: string;
-    dedicatedCircuitsCount?: (typeof DOCK_POWER_CIRCUIT_COUNTS)[number];
-    dedicatedCircuitAmpRating?: (typeof DOCK_POWER_CIRCUIT_AMP_RATINGS)[number];
-    panelLocation?: (typeof DOCK_POWER_PANEL_LOCATIONS)[number];
-    panelLocationOther?: string;
-    hasPlansDrawings?: boolean;
-    plansDrawingsPhotos?: string[];
-    permitApplied?: boolean;
-    permitNumber?: string;
-  },
-  ctx: z.RefinementCtx,
-) => {
-  if (data.electricalServiceType === 'New service' && !data.newServiceSize) {
-    ctx.addIssue({
-      code: 'custom',
-      path: ['newServiceSize'],
-      message: 'Service size is required for new service!',
-    });
-  }
-
-  if (data.electricalServiceType === 'Sub-panel' && !data.subPanelSize) {
-    ctx.addIssue({
-      code: 'custom',
-      path: ['subPanelSize'],
-      message: 'Sub-panel size is required!',
-    });
-  }
-
-  if (
-    (data.newServiceSize === 'Other' || data.subPanelSize === 'Other') &&
-    !data.serviceSizeOther
-  ) {
-    ctx.addIssue({
-      code: 'custom',
-      path: ['serviceSizeOther'],
-      message: 'Please specify the service size when choosing Other!',
-    });
-  }
-
-  if (
-    data.electricalServiceType === '1-2 dedicated circuits' &&
-    !data.dedicatedCircuitsCount
-  ) {
-    ctx.addIssue({
-      code: 'custom',
-      path: ['dedicatedCircuitsCount'],
-      message: 'Please choose whether you need 1 or 2 dedicated circuits!',
-    });
-  }
-
-  if (
-    data.electricalServiceType === '1-2 dedicated circuits' &&
-    !data.dedicatedCircuitAmpRating
-  ) {
-    ctx.addIssue({
-      code: 'custom',
-      path: ['dedicatedCircuitAmpRating'],
-      message: 'Please choose amp rating for the circuit(s)!',
-    });
-  }
-
-  if (
-    data.panelLocation === 'Other (please specify)' &&
-    !data.panelLocationOther
-  ) {
-    ctx.addIssue({
-      code: 'custom',
-      path: ['panelLocationOther'],
-      message: 'Please specify your panel location!',
-    });
-  }
-
-  if (data.permitApplied === true && !data.permitNumber) {
-    ctx.addIssue({
-      code: 'custom',
-      path: ['permitNumber'],
-      message: 'Permit number is required when a permit has been applied for!',
-    });
-  }
-};
 
 export const DockPowerValidation = {
   createSchema: z.object({
@@ -179,18 +82,12 @@ export const DockPowerValidation = {
         return cleanData;
       })
       .superRefine((data, ctx) => {
-        if (data.status === Service_STATUSES.DRAFT) {
-          const res = dockPowerBodySchema.partial().safeParse(data);
-          if (!res.success) {
-            res.error.issues.forEach(i => ctx.addIssue(i as z.IssueData));
-          }
-        } else {
-          const res = dockPowerCreateBodySchema.safeParse(data);
-          if (res.success) {
-            validateDockPowerConditionalFields(data, ctx);
-          } else {
-            res.error.issues.forEach(i => ctx.addIssue(i as z.IssueData));
-          }
+        const res =
+          data.status === Service_STATUSES.DRAFT
+            ? dockPowerBodySchema.partial().safeParse(data)
+            : dockPowerBodySchema.safeParse(data);
+        if (!res.success) {
+          res.error.issues.forEach(i => ctx.addIssue(i as z.IssueData));
         }
       }),
   }),
@@ -215,9 +112,6 @@ export const DockPowerValidation = {
     }),
     body: dockPowerBodySchema
       .partial()
-      .extend({
-        status: z.enum(Service_STATUSES).optional(),
-      })
-      .superRefine(validateDockPowerConditionalFields),
+      .extend({ status: z.enum(Service_STATUSES).optional() }),
   }),
 };

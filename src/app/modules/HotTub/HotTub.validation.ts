@@ -28,15 +28,13 @@ const hotTubBodySchema = z.object({
   ownershipStatus: z.enum(['Owner', 'Tenant', 'Property Manager', 'Other']),
   timelineUrgency: z.enum(TIMELINE_URGENCIES),
 
-  hasDigitalManual: z.boolean({
-    error: 'Please choose whether you have a digital manual!',
-  }),
+  hasDigitalManual: z.boolean().optional(),
   manualDocument: z.string().optional(),
   hotTubManufacturer: z.string().optional(),
   hotTubModelNumber: z.string().optional(),
 
   amperageNeeded: z.enum(HOT_TUB_AMPERAGES).optional(),
-  location: z.enum(HOT_TUB_LOCATIONS),
+  location: z.enum(HOT_TUB_LOCATIONS).optional(),
   panelLocation: z.enum(HOT_TUB_PANEL_LOCATIONS).optional(),
   panelDistance: z.enum(HOT_TUB_PANEL_DISTANCE).optional(),
 

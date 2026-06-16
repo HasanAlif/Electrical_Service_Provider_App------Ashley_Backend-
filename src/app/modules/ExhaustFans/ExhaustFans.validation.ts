@@ -25,9 +25,7 @@ const exhaustFansBodySchema = z.object({
   ownershipStatus: z.enum(OWNERSHIP_STATUSES),
   timelineUrgency: z.enum(TIMELINE_URGENCIES),
 
-  newOrReplacement: z.enum(EXHAUST_FAN_INSTALL_TYPES, {
-    error: 'Please specify if this is a new installation or a replacement!',
-  }),
+  newOrReplacement: z.enum(EXHAUST_FAN_INSTALL_TYPES).optional(),
   locationOfExhaustFan: z.string().optional(),
   isRoofOrGableFan: z.string().optional(),
   willSupplyAtticFan: z.boolean().optional(),

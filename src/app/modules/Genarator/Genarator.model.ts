@@ -137,7 +137,6 @@ const GenaratorSchema = new Schema<IGenarator>(
     },
     isAlreadyHaveGenerator: {
       type: Boolean,
-      default: false,
     },
     generatorOutputPower: {
       type: String,
@@ -157,19 +156,15 @@ const GenaratorSchema = new Schema<IGenarator>(
     },
     photosOfWhereGeneratorWillBeInlet: {
       type: [String],
-      default: [],
     },
     photosOfReceptacleOnGenerator: {
       type: [String],
-      default: [],
     },
     electricPanelPhotos: {
       type: [String],
-      default: [],
     },
     generatorInstallationLocationPhotos: {
       type: [String],
-      default: [],
     },
     sizeOfGeneratorWanted: {
       type: String,
@@ -181,11 +176,9 @@ const GenaratorSchema = new Schema<IGenarator>(
     },
     isHavePropane: {
       type: Boolean,
-      default: false,
     },
     photosOfElectricalMeter: {
       type: [String],
-      default: [],
     },
 
     status: {

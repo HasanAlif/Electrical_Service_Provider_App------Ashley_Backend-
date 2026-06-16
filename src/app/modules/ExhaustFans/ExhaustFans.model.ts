@@ -137,12 +137,6 @@ const ExhaustFansSchema = new Schema<IExhaustFans>(
     newOrReplacement: {
       type: String,
       enum: EXHAUST_FAN_INSTALL_TYPES,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Please specify if this is a new installation or a replacement!',
-      ],
     },
     locationOfExhaustFan: {
       type: String,
@@ -158,7 +152,6 @@ const ExhaustFansSchema = new Schema<IExhaustFans>(
     },
     photoOfNewFan: {
       type: [String],
-      default: [],
     },
     howManyStories: {
       type: Number,
@@ -166,7 +159,6 @@ const ExhaustFansSchema = new Schema<IExhaustFans>(
     },
     photosOfInstallationArea: {
       type: [String],
-      default: [],
     },
     whereElectricalPanelLocated: {
       type: String,
@@ -174,19 +166,15 @@ const ExhaustFansSchema = new Schema<IExhaustFans>(
     },
     photosOfPanelCloseUp: {
       type: [String],
-      default: [],
     },
     photosOfPanelWideShot: {
       type: [String],
-      default: [],
     },
     photosOfCurrentKitchenExhaustFan: {
       type: [String],
-      default: [],
     },
     photosOfCurrentBathroomExhaustFan: {
       type: [String],
-      default: [],
     },
     existingDuctAndVentDiameterLocation: {
       type: String,
@@ -194,11 +182,9 @@ const ExhaustFansSchema = new Schema<IExhaustFans>(
     },
     willProvideKitchenExhaustFan: {
       type: Boolean,
-      default: false,
     },
     willProvideBathroomExhaustFan: {
       type: Boolean,
-      default: false,
     },
     typeOfExhaustFanWanted: {
       type: String,

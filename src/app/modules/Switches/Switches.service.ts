@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import { Request } from 'express';
 import {
@@ -8,76 +7,70 @@ import {
   deleteServiceImages,
 } from '../../utils';
 import { TImageFieldConfig } from '../../utils/serviceImages';
-import { IRemodeling } from './Remodeling.interface';
-import RemodelingModel from './Remodeling.model';
+import { ISwitches } from './Switches.interface';
+import SwitchesModel from './Switches.model';
 import { DEFAULT_REQUEST_STATUS } from '../../constants';
 import { IUser } from '../User/user.interface';
 
 const IMAGE_FIELDS: TImageFieldConfig[] = [
-  { name: 'plansDrawings', multiple: true },
-  { name: 'existingSpacePhotos', multiple: true },
-  { name: 'panelPhotos', multiple: true },
+  { name: 'photosOfWhereSwitchesInstallationNeeded', multiple: true },
 ];
 const IMAGE_FIELD_NAMES = IMAGE_FIELDS.map(field => field.name);
 
-const createRemodelingIntoDB = async (
+const createSwitchesIntoDB = async (
   user: IUser,
-  payload: Partial<IRemodeling>,
+  payload: Partial<ISwitches>,
   files: Request['files'],
 ) => {
   const uploaded = await uploadServiceImages(files, IMAGE_FIELDS);
-  const merged: Record<string, any> = { ...payload, ...uploaded };
-  const status = merged.status ?? DEFAULT_REQUEST_STATUS;
 
-  const newDoc = await RemodelingModel.create({
-    ...merged,
+  const newDoc = await SwitchesModel.create({
+    ...payload,
+    ...uploaded,
     createdBy: user._id.toString(),
-    serviceType: 'Remodeling',
-    status,
+    serviceType: 'Switches Installation',
+    status: payload.status ?? DEFAULT_REQUEST_STATUS,
   });
 
   const { createdAt, updatedAt, ...sanitizedData } = newDoc.toObject();
   return sanitizedData;
 };
 
-const getAllRemodelingsFromDB = async () => {
-  return await RemodelingModel.find()
+const getAllSwitchesFromDB = async () => {
+  return await SwitchesModel.find()
     .sort({ createdAt: -1 })
     .select('-createdAt -updatedAt');
 };
 
-const getMyAllRemodelingsFromDB = async (userId: string) => {
-  return await RemodelingModel.find({ createdBy: userId })
+const getMyAllSwitchesFromDB = async (userId: string) => {
+  return await SwitchesModel.find({ createdBy: userId })
     .sort({ createdAt: -1 })
     .select('-createdAt -updatedAt');
 };
 
-const getSingleRemodelingFromDB = async (userId: string, id: string) => {
-  const data = await RemodelingModel.findOne({
+const getSingleSwitchesFromDB = async (userId: string, id: string) => {
+  const data = await SwitchesModel.findOne({
     _id: id,
     createdBy: userId,
   }).select('-createdAt -updatedAt');
 
   if (!data) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Remodeling request not found!');
+    throw new AppError(httpStatus.NOT_FOUND, 'Switches request not found!');
   }
 
   return data;
 };
 
-const updateSingleRemodelingIntoDB = async (
+const updateSingleSwitchesIntoDB = async (
   userId: string,
   id: string,
-  payload: Partial<IRemodeling>,
+  payload: Partial<ISwitches>,
   files: Request['files'],
 ) => {
-  const existing = await RemodelingModel.findOne({
-    _id: id,
-    createdBy: userId,
-  });
+  const existing = await SwitchesModel.findOne({ _id: id, createdBy: userId });
 
   if (!existing) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Remodeling request not found!');
+    throw new AppError(httpStatus.NOT_FOUND, 'Switches request not found!');
   }
 
   const uploaded = await uploadServiceImages(files, IMAGE_FIELDS);
@@ -97,11 +90,11 @@ const updateSingleRemodelingIntoDB = async (
   return sanitizedData;
 };
 
-const deleteSingleRemodelingFromDB = async (userId: string, id: string) => {
-  const doc = await RemodelingModel.findOne({ _id: id, createdBy: userId });
+const deleteSingleSwitchesFromDB = async (userId: string, id: string) => {
+  const doc = await SwitchesModel.findOne({ _id: id, createdBy: userId });
 
   if (!doc) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Remodeling request not found!');
+    throw new AppError(httpStatus.NOT_FOUND, 'Switches request not found!');
   }
 
   const urls = collectImageUrls(doc.toObject(), IMAGE_FIELD_NAMES);
@@ -112,11 +105,11 @@ const deleteSingleRemodelingFromDB = async (userId: string, id: string) => {
   return sanitizedData;
 };
 
-export const RemodelingService = {
-  createRemodelingIntoDB,
-  getAllRemodelingsFromDB,
-  getMyAllRemodelingsFromDB,
-  getSingleRemodelingFromDB,
-  updateSingleRemodelingIntoDB,
-  deleteSingleRemodelingFromDB,
+export const SwitchesService = {
+  createSwitchesIntoDB,
+  getAllSwitchesFromDB,
+  getMyAllSwitchesFromDB,
+  getSingleSwitchesFromDB,
+  updateSingleSwitchesIntoDB,
+  deleteSingleSwitchesFromDB,
 };

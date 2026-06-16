@@ -136,12 +136,6 @@ const serviceCallSchema = new Schema<IServiceCall>(
     issueDescription: {
       type: String,
       trim: true,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Issue description is required!',
-      ],
     },
     preferredTime: {
       type: String,
@@ -149,7 +143,6 @@ const serviceCallSchema = new Schema<IServiceCall>(
     },
     schedulingPreference: {
       type: [String],
-      default: [],
     },
 
     // installationLocation: {
@@ -183,15 +176,12 @@ const serviceCallSchema = new Schema<IServiceCall>(
 
     panelPhotos: {
       type: [String],
-      default: [],
     },
     workAreaPhotos: {
       type: [String],
-      default: [],
     },
     extraReferencePhotos: {
       type: [String],
-      default: [],
     },
     notes: {
       type: String,
@@ -199,7 +189,6 @@ const serviceCallSchema = new Schema<IServiceCall>(
     },
     quickTags: {
       type: [String],
-      default: [],
     },
 
     status: {

@@ -10,7 +10,7 @@ import {
 import { TImageFieldConfig } from '../../utils/serviceImages';
 import { IHotTub } from './HotTub.interface';
 import HotTubModel from './HotTub.model';
-import { DEFAULT_REQUEST_STATUS, Service_STATUSES } from '../../constants';
+import { DEFAULT_REQUEST_STATUS } from '../../constants';
 import { IUser } from '../User/user.interface';
 
 const IMAGE_FIELDS: TImageFieldConfig[] = [
@@ -21,28 +21,6 @@ const IMAGE_FIELDS: TImageFieldConfig[] = [
 ];
 const IMAGE_FIELD_NAMES = IMAGE_FIELDS.map(field => field.name);
 
-// Required-image rules enforced on submit (skipped for drafts).
-const assertRequiredImages = (data: Record<string, any>) => {
-  if (!data.panelPhotos?.length) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      'Please upload photo(s) of electrical panel!',
-    );
-  }
-  if (!data.hotTubPhotos?.length) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      'Please upload photo(s) of the hot tub!',
-    );
-  }
-  if (data.hasDigitalManual === true && !data.manualDocument) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      'Please upload the digital manual!',
-    );
-  }
-};
-
 const createHotTubIntoDB = async (
   user: IUser,
   payload: Partial<IHotTub>,
@@ -51,10 +29,6 @@ const createHotTubIntoDB = async (
   const uploaded = await uploadServiceImages(files, IMAGE_FIELDS);
   const merged: Record<string, any> = { ...payload, ...uploaded };
   const status = merged.status ?? DEFAULT_REQUEST_STATUS;
-
-  if (status !== Service_STATUSES.DRAFT) {
-    assertRequiredImages(merged);
-  }
 
   const newDoc = await HotTubModel.create({
     ...merged,

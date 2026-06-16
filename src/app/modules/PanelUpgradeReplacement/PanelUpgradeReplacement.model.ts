@@ -135,12 +135,6 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
     panelServiceType: {
       type: String,
       enum: PANEL_SERVICE_TYPES,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Service type is required!',
-      ],
     },
     desiredPanelAmperage: {
       type: String,
@@ -149,40 +143,20 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
     currentPanelAmperage: {
       type: String,
       enum: PANEL_AMPERAGES,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Current panel amperage is required!',
-      ],
     },
     panelLocation: {
       type: String,
       enum: PANEL_LOCATIONS,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Panel location is required!',
-      ],
     },
     powerFeedType: {
       type: String,
       enum: PANEL_POWER_FEEDS,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Power feed type is required!',
-      ],
     },
     meterPhotos: {
       type: [String],
-      default: [],
     },
     panelPhotos: {
       type: [String],
-      default: [],
     },
     additionalInformation: {
       type: String,

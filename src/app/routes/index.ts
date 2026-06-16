@@ -16,6 +16,7 @@ import { StarlinkRoutes } from '../modules/Starlink/Starlink.routes';
 import { DedicatedCircuitRoutes } from '../modules/DedicatedCircuit/DedicatedCircuit.routes';
 import { ExhaustFansRoutes } from '../modules/ExhaustFans/ExhaustFans.routes';
 import { OutletsRoutes } from '../modules/Outlets/Outlets.routes';
+import { SwitchesRoutes } from '../modules/Switches/Switches.routes';
 import { DraftRoutes } from '../modules/Draft/Draft.routes';
 
 const router = Router();
@@ -88,6 +89,10 @@ const moduleRoutes = [
   {
     path: '/outlets',
     route: OutletsRoutes,
+  },
+  {
+    path: '/switches',
+    route: SwitchesRoutes,
   },
   {
     path: '/drafts',

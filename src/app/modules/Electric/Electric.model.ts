@@ -135,12 +135,6 @@ const electricSchema = new Schema<IElectric>(
     inspectionType: {
       type: String,
       trim: true,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Please choose the type of inspection needed!',
-      ],
     },
     squareFootage: {
       type: String,
@@ -152,7 +146,6 @@ const electricSchema = new Schema<IElectric>(
     },
     panelPhotos: {
       type: [String],
-      default: [],
     },
 
     additionalInformation: {

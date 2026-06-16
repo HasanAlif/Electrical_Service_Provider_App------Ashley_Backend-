@@ -133,7 +133,6 @@ const StarlinkSchema = new Schema<IStarlink>(
 
     haveStarlinkEquipment: {
       type: Boolean,
-      default: false,
     },
     whenHaveEquipment: {
       type: String,
@@ -145,11 +144,9 @@ const StarlinkSchema = new Schema<IStarlink>(
     },
     haveMountingEquipment: {
       type: Boolean,
-      default: false,
     },
     areaOfInstallationPhotos: {
       type: [String],
-      default: [],
     },
     roomOfRouterIn: {
       type: String,
@@ -161,7 +158,6 @@ const StarlinkSchema = new Schema<IStarlink>(
     },
     photosOfRoomForRouter: {
       type: [String],
-      default: [],
     },
     additionalNotes: {
       type: String,

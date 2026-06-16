@@ -24,9 +24,7 @@ const genaratorBodySchema = z.object({
   ownershipStatus: z.enum(OWNERSHIP_STATUSES),
   timelineUrgency: z.enum(TIMELINE_URGENCIES),
 
-  generatorType: z
-    .string({ error: 'Please choose the type of generator needed!' })
-    .min(1, 'Please choose the type of generator needed!'),
+  generatorType: z.string().optional(),
   isAlreadyHaveGenerator: z.boolean().optional(),
   generatorOutputPower: z.string().optional(),
   preferredBackupInstallation: z.string().optional(),

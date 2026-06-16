@@ -22,9 +22,7 @@ const serviceCallBodySchema = z.object({
   propertyType: z.enum(PROPERTY_TYPES),
   ownershipStatus: z.enum(OWNERSHIP_STATUSES),
   timelineUrgency: z.enum(TIMELINE_URGENCIES),
-  issueDescription: z
-    .string({ error: 'Issue description is required!' })
-    .min(1),
+  issueDescription: z.string().optional(),
   preferredTime: z.enum(SERVICE_CALL_PREFERRED_TIMES).optional(),
   schedulingPreference: z.array(z.string()).optional(),
   panelPhotos: z.array(z.string()).optional(),

@@ -1,10 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from 'zod';
-import {
-  PANEL_AMPERAGES,
-  PANEL_LOCATIONS,
-  PANEL_POWER_FEEDS,
-  PANEL_SERVICE_TYPES,
-} from './PanelUpgradeReplacement.interface';
 import {
   CONTACT_METHODS,
   OWNERSHIP_STATUSES,
@@ -12,8 +7,9 @@ import {
   TIMELINE_URGENCIES,
   Service_STATUSES,
 } from '../../constants';
+import { SWITCH_INSTALL_TYPES } from './Switches.interface';
 
-const panelBodySchema = z.object({
+const switchesBodySchema = z.object({
   fullName: z.string({ error: 'Full name is required!' }).min(1),
   phoneNumber: z.string({ error: 'Phone number is required!' }).min(1),
   emailAddress: z.string().email('Invalid email format!').optional(),
@@ -29,20 +25,17 @@ const panelBodySchema = z.object({
   ownershipStatus: z.enum(OWNERSHIP_STATUSES),
   timelineUrgency: z.enum(TIMELINE_URGENCIES),
 
-  panelServiceType: z.enum(PANEL_SERVICE_TYPES).optional(),
-  currentPanelAmperage: z.enum(PANEL_AMPERAGES).optional(),
-  desiredPanelAmperage: z.enum(PANEL_AMPERAGES).optional(),
-  panelLocation: z.enum(PANEL_LOCATIONS).optional(),
-  powerFeedType: z.enum(PANEL_POWER_FEEDS).optional(),
-
-  meterPhotos: z.array(z.string()).optional(),
-  panelPhotos: z.array(z.string()).optional(),
+  howManySwitchesNeeded: z.string().optional(),
+  isNewInstallationOrReplacement: z.enum(SWITCH_INSTALL_TYPES).optional(),
+  photosOfWhereSwitchesInstallationNeeded: z.array(z.string()).optional(),
+  typeOfSwitchesNeeded: z.string().optional(),
   additionalInformation: z.string().optional(),
+
   status: z.enum(Service_STATUSES).optional(),
   completionPercentage: z.number().optional(),
 });
 
-export const PanelUpgradeReplacementValidation = {
+export const SwitchesValidation = {
   createSchema: z.object({
     body: z
       .any()
@@ -64,8 +57,8 @@ export const PanelUpgradeReplacementValidation = {
       .superRefine((data, ctx) => {
         const res =
           data.status === Service_STATUSES.DRAFT
-            ? panelBodySchema.partial().safeParse(data)
-            : panelBodySchema.safeParse(data);
+            ? switchesBodySchema.partial().safeParse(data)
+            : switchesBodySchema.safeParse(data);
         if (!res.success) {
           res.error.issues.forEach(i => ctx.addIssue(i as z.IssueData));
         }
@@ -74,15 +67,15 @@ export const PanelUpgradeReplacementValidation = {
 
   idParamsSchema: z.object({
     params: z.object({
-      id: z.string({ error: 'Panel request ID is required!' }).min(1),
+      id: z.string({ error: 'Switches request ID is required!' }).min(1),
     }),
   }),
 
   updateSchema: z.object({
     params: z.object({
-      id: z.string({ error: 'Panel request ID is required!' }).min(1),
+      id: z.string({ error: 'Switches request ID is required!' }).min(1),
     }),
-    body: panelBodySchema
+    body: switchesBodySchema
       .partial()
       .extend({ status: z.enum(Service_STATUSES).optional() }),
   }),

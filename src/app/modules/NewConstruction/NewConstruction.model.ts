@@ -133,7 +133,6 @@ const NewConstructionSchema = new Schema<INewConstruction>(
 
     hasConstructionBegun: {
       type: Boolean,
-      default: false,
     },
     stageOfConstruction: {
       type: String,
@@ -141,11 +140,9 @@ const NewConstructionSchema = new Schema<INewConstruction>(
     },
     haveBuildingPlans: {
       type: Boolean,
-      default: false,
     },
     photosOfBuildingPlans: {
       type: [String],
-      default: [],
     },
 
     status: {

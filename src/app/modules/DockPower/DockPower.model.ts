@@ -140,42 +140,18 @@ const dockPowerSchema = new Schema<IDockPower>(
 
     isDockBuilt: {
       type: Boolean,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Please choose whether your dock is already built!',
-      ],
     },
     electricalNeedsDetails: {
       type: String,
       trim: true,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Electrical need details are required!',
-      ],
     },
     receptacleCount: {
       type: Number,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Receptacle count is required!',
-      ],
     },
 
     electricalServiceType: {
       type: String,
       enum: DOCK_POWER_SERVICE_TYPES,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Electrical service type is required!',
-      ],
     },
 
     newServiceSize: {
@@ -204,12 +180,6 @@ const dockPowerSchema = new Schema<IDockPower>(
     panelLocation: {
       type: String,
       enum: DOCK_POWER_PANEL_LOCATIONS,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Panel location is required!',
-      ],
     },
     panelLocationOther: {
       type: String,
@@ -217,7 +187,6 @@ const dockPowerSchema = new Schema<IDockPower>(
     },
     panelPhotos: {
       type: [String],
-      default: [],
     },
 
     privateUtilitiesDetails: {
@@ -230,31 +199,19 @@ const dockPowerSchema = new Schema<IDockPower>(
     },
     existingSpacePhotos: {
       type: [String],
-      default: [],
     },
 
     hasPlansDrawings: {
       type: Boolean,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Please choose whether you have plans/drawings!',
-      ],
+      default: false,
     },
     plansDrawingsPhotos: {
       type: [String],
-      default: [],
     },
 
     permitApplied: {
       type: Boolean,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Please choose whether a permit has been applied for!',
-      ],
+      default: false,
     },
     permitNumber: {
       type: String,

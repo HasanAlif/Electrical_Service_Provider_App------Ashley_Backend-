@@ -24,18 +24,14 @@ const remodelingBodySchema = z.object({
   ownershipStatus: z.enum(OWNERSHIP_STATUSES),
   timelineUrgency: z.enum(TIMELINE_URGENCIES),
 
-  panelLocation: z.enum(REMODELING_PANEL_LOCATIONS),
-  remodelingAreas: z.string({ error: 'Remodeling area is required!' }).min(1),
+  panelLocation: z.enum(REMODELING_PANEL_LOCATIONS).optional(),
+  remodelingAreas: z.string().optional(),
 
-  hasPlansDrawings: z.boolean({
-    error: 'Please choose whether you have plans/drawings!',
-  }),
+  hasPlansDrawings: z.boolean().optional(),
   plansDrawings: z.array(z.string()).optional(),
-  electricalNeeds: z.string({ error: 'Electrical needs are required!' }).min(1),
+  electricalNeeds: z.string().optional(),
 
-  permitApplied: z.boolean({
-    error: 'Please choose whether a permit has been applied for!',
-  }),
+  permitApplied: z.boolean().optional(),
   permitNumber: z.string().optional(),
   additionalInformation: z.string().optional(),
 
@@ -44,26 +40,6 @@ const remodelingBodySchema = z.object({
   status: z.enum(Service_STATUSES).optional(),
   completionPercentage: z.number().optional(),
 });
-
-// Photo presence (existingSpacePhotos, panelPhotos, plansDrawings) is enforced in
-// the service because images now arrive as form-data files, not in `data`.
-const remodelingCreateBodySchema = remodelingBodySchema;
-
-const validateConditionalFields = (
-  data: {
-    permitApplied?: boolean;
-    permitNumber?: string;
-  },
-  ctx: z.RefinementCtx,
-) => {
-  if (data.permitApplied === true && !data.permitNumber) {
-    ctx.addIssue({
-      code: 'custom',
-      path: ['permitNumber'],
-      message: 'Permit number is required when a permit has been applied for!',
-    });
-  }
-};
 
 export const RemodelingValidation = {
   createSchema: z.object({
@@ -85,18 +61,12 @@ export const RemodelingValidation = {
         return cleanData;
       })
       .superRefine((data, ctx) => {
-        if (data.status === Service_STATUSES.DRAFT) {
-          const res = remodelingBodySchema.partial().safeParse(data);
-          if (!res.success) {
-            res.error.issues.forEach(i => ctx.addIssue(i as z.IssueData));
-          }
-        } else {
-          const res = remodelingCreateBodySchema.safeParse(data);
-          if (res.success) {
-            validateConditionalFields(data, ctx);
-          } else {
-            res.error.issues.forEach(i => ctx.addIssue(i as z.IssueData));
-          }
+        const res =
+          data.status === Service_STATUSES.DRAFT
+            ? remodelingBodySchema.partial().safeParse(data)
+            : remodelingBodySchema.safeParse(data);
+        if (!res.success) {
+          res.error.issues.forEach(i => ctx.addIssue(i as z.IssueData));
         }
       }),
   }),
@@ -113,9 +83,6 @@ export const RemodelingValidation = {
     }),
     body: remodelingBodySchema
       .partial()
-      .extend({
-        status: z.enum(Service_STATUSES).optional(),
-      })
-      .superRefine(validateConditionalFields),
+      .extend({ status: z.enum(Service_STATUSES).optional() }),
   }),
 };

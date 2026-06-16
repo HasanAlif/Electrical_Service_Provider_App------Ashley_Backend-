@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { model, Schema } from 'mongoose';
 import {
   CONTACT_METHODS,
@@ -7,24 +8,14 @@ import {
   Service_STATUSES,
   TIMELINE_URGENCIES,
 } from '../../constants';
-import {
-  // ACCESSORY_BUILDING_CIRCUIT_AMP_RATINGS,
-  // ACCESSORY_BUILDING_CIRCUIT_COUNTS,
-  // ACCESSORY_BUILDING_CONSTRUCTION_TYPES,
-  // ACCESSORY_BUILDING_FLOOR_TYPES,
-  // ACCESSORY_BUILDING_PANEL_LOCATIONS,
-  // ACCESSORY_BUILDING_SERVICE_SIZES,
-  // ACCESSORY_BUILDING_SERVICE_TYPES,
-  // ACCESSORY_BUILDING_STATUSES,
-  IAccessoryBuildingPower,
-} from './AccessoryBuildingPower.interface';
+import { ISwitches, SWITCH_INSTALL_TYPES } from './Switches.interface';
 
-const accessoryBuildingPowerSchema = new Schema<IAccessoryBuildingPower>(
+const SwitchesSchema = new Schema<ISwitches>(
   {
     serviceType: {
       type: String,
       trim: true,
-      default: 'Accessory Building / Shed Power',
+      default: 'Switches Installation',
     },
     createdBy: {
       type: Schema.Types.ObjectId,
@@ -32,6 +23,7 @@ const accessoryBuildingPowerSchema = new Schema<IAccessoryBuildingPower>(
       required: true,
       index: true,
     },
+
     fullName: {
       type: String,
       trim: true,
@@ -62,6 +54,7 @@ const accessoryBuildingPowerSchema = new Schema<IAccessoryBuildingPower>(
       enum: CONTACT_METHODS,
       default: 'Call',
     },
+
     streetAddress: {
       type: String,
       trim: true,
@@ -106,6 +99,7 @@ const accessoryBuildingPowerSchema = new Schema<IAccessoryBuildingPower>(
         'ZIP code is required!',
       ],
     },
+
     propertyType: {
       type: String,
       enum: PROPERTY_TYPES,
@@ -136,77 +130,19 @@ const accessoryBuildingPowerSchema = new Schema<IAccessoryBuildingPower>(
         'Timeline/urgency is required!',
       ],
     },
-    entireSquareFootage: {
-      type: Number,
-      trim: true,
-    },
-    intendedUse: {
+
+    howManySwitchesNeeded: {
       type: String,
       trim: true,
     },
-    buildingStatus: {
+    isNewInstallationOrReplacement: {
       type: String,
-      trim: true,
+      enum: SWITCH_INSTALL_TYPES,
     },
-    constructionType: {
-      type: String,
-      trim: true,
-    },
-    hasHeatingOrCooling: {
-      type: Boolean,
-    },
-    floorType: {
-      type: String,
-      trim: true,
-    },
-    electricalServiceType: {
-      type: String,
-      trim: true,
-    },
-    serviceSize: {
-      type: String,
-      trim: true,
-    },
-    serviceSizeOther: {
-      type: String,
-      trim: true,
-    },
-    dedicatedCircuitsCount: {
-      type: String,
-      trim: true,
-    },
-    dedicatedCircuitAmpRating: {
-      type: String,
-      trim: true,
-    },
-    panelLocation: {
-      type: String,
-      trim: true,
-    },
-    panelLocationOther: {
-      type: String,
-      trim: true,
-    },
-    panelPhotos: {
+    photosOfWhereSwitchesInstallationNeeded: {
       type: [String],
     },
-    routeDetails: {
-      type: String,
-      trim: true,
-    },
-    existingSpacePhotos: {
-      type: [String],
-    },
-    hasPlansDrawings: {
-      type: Boolean,
-    },
-    plansDrawings: {
-      type: [String],
-    },
-    permitApplied: {
-      type: Boolean,
-    },
-    permitNumber: {
+    typeOfSwitchesNeeded: {
       type: String,
       trim: true,
     },
@@ -214,6 +150,7 @@ const accessoryBuildingPowerSchema = new Schema<IAccessoryBuildingPower>(
       type: String,
       trim: true,
     },
+
     status: {
       type: String,
       enum: Service_STATUSES,
@@ -230,11 +167,8 @@ const accessoryBuildingPowerSchema = new Schema<IAccessoryBuildingPower>(
   },
 );
 
-accessoryBuildingPowerSchema.index({ createdBy: 1, status: 1 });
+SwitchesSchema.index({ createdBy: 1, status: 1 });
 
-const AccessoryBuildingPowerModel = model<IAccessoryBuildingPower>(
-  'AccessoryBuildingPower',
-  accessoryBuildingPowerSchema,
-);
+const SwitchesModel = model<ISwitches>('Switches', SwitchesSchema);
 
-export default AccessoryBuildingPowerModel;
+export default SwitchesModel;

@@ -8,13 +8,13 @@ import {
   TIMELINE_URGENCIES,
 } from '../../constants';
 import { IEVChargerInstallation } from './EVChargerInstallation.interface';
-import {
-  EV_CHARGER_CONNECTION_TYPES,
-  EV_CHARGER_DISTANCES,
-  EV_CHARGER_INSTALLATION_LOCATIONS,
-  EV_CHARGER_PANEL_LOCATIONS,
-  EV_CHARGER_STATUSES,
-} from './EVChargerInstallation.interface';
+// import {
+//   EV_CHARGER_CONNECTION_TYPES,
+//   EV_CHARGER_DISTANCES,
+//   EV_CHARGER_INSTALLATION_LOCATIONS,
+//   EV_CHARGER_PANEL_LOCATIONS,
+//   EV_CHARGER_STATUSES,
+// } from './EVChargerInstallation.interface';
 
 const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
   {
@@ -135,13 +135,7 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
     },
     chargerConnectionType: {
       type: String,
-      enum: EV_CHARGER_CONNECTION_TYPES,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Charger connection type is required!',
-      ],
+      trim: true,
     },
     nemaConfiguration: {
       type: String,
@@ -152,37 +146,19 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
     },
     chargerStatus: {
       type: String,
-      enum: EV_CHARGER_STATUSES,
+      trim: true,
     },
     installationLocation: {
       type: String,
-      enum: EV_CHARGER_INSTALLATION_LOCATIONS,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Installation location is required!',
-      ],
+      trim: true,
     },
     panelLocation: {
       type: String,
-      enum: EV_CHARGER_PANEL_LOCATIONS,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Panel location is required!',
-      ],
+      trim: true,
     },
     panelDistance: {
       type: String,
-      enum: EV_CHARGER_DISTANCES,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Distance is required!',
-      ],
+      trim: true,
     },
     environment: {
       type: String,
@@ -209,7 +185,6 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
     },
     panelPhotos: {
       type: [String],
-      default: [],
     },
     status: {
       type: String,

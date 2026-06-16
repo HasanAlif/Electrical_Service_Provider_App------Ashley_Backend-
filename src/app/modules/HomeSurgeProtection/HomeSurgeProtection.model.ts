@@ -133,7 +133,6 @@ const HomeSurgeProtectionSchema = new Schema<IHomeSurgeProtection>(
 
     photosOfElectricalPanel: {
       type: [String],
-      default: [],
     },
     additionalNotes: {
       type: String,

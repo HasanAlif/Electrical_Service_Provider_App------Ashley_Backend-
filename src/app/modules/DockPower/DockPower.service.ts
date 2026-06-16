@@ -10,7 +10,7 @@ import {
 import { TImageFieldConfig } from '../../utils/serviceImages';
 import { IDockPower } from './DockPower.interface';
 import DockPowerModel from './DockPower.model';
-import { DEFAULT_REQUEST_STATUS, Service_STATUSES } from '../../constants';
+import { DEFAULT_REQUEST_STATUS } from '../../constants';
 import { IUser } from '../User/user.interface';
 
 const IMAGE_FIELDS: TImageFieldConfig[] = [
@@ -20,28 +20,6 @@ const IMAGE_FIELDS: TImageFieldConfig[] = [
 ];
 const IMAGE_FIELD_NAMES = IMAGE_FIELDS.map(field => field.name);
 
-// Required-image rules enforced on submit (skipped for drafts).
-const assertRequiredImages = (data: Record<string, any>) => {
-  if (!data.panelPhotos?.length) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      'Please upload clear photo(s) of electrical panel!',
-    );
-  }
-  if (!data.existingSpacePhotos?.length) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      'Please upload photo(s) of the existing space!',
-    );
-  }
-  if (data.hasPlansDrawings === true && !data.plansDrawingsPhotos?.length) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      'Please upload the plans/drawings!',
-    );
-  }
-};
-
 const createDockPowerIntoDB = async (
   user: IUser,
   payload: Partial<IDockPower>,
@@ -50,10 +28,6 @@ const createDockPowerIntoDB = async (
   const uploaded = await uploadServiceImages(files, IMAGE_FIELDS);
   const merged: Record<string, any> = { ...payload, ...uploaded };
   const status = merged.status ?? DEFAULT_REQUEST_STATUS;
-
-  if (status !== Service_STATUSES.DRAFT) {
-    assertRequiredImages(merged);
-  }
 
   const newDoc = await DockPowerModel.create({
     ...merged,

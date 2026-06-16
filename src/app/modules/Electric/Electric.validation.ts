@@ -24,14 +24,8 @@ const electricBodySchema = z.object({
   ownershipStatus: z.enum(OWNERSHIP_STATUSES),
   timelineUrgency: z.enum(TIMELINE_URGENCIES),
 
-  inspectionType: z
-    .string({ error: 'Please choose the type of inspection needed!' })
-    .min(1, 'Please choose the type of inspection needed!'),
-  panelNeedForInspected: z
-    .string({
-      error: 'Please specify whether a panel is needed for the inspection!',
-    })
-    .min(1, 'Please specify whether a panel is needed for the inspection!'),
+  inspectionType: z.string().optional(),
+  panelNeedForInspected: z.string().optional(),
 
   panelPhotos: z.array(z.string()).optional(),
 

@@ -132,54 +132,23 @@ const remodelingSchema = new Schema<IRemodeling>(
     panelLocation: {
       type: String,
       enum: REMODELING_PANEL_LOCATIONS,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Panel location is required!',
-      ],
     },
     remodelingAreas: {
       type: String,
       trim: true,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Remodeling area is required!',
-      ],
     },
     hasPlansDrawings: {
       type: Boolean,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Please choose whether you have plans/drawings!',
-      ],
     },
     plansDrawings: {
       type: [String],
-      default: [],
     },
     electricalNeeds: {
       type: String,
       trim: true,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Electrical needs are required!',
-      ],
     },
     permitApplied: {
       type: Boolean,
-      required: [
-        function (this: any) {
-          return this.status !== Service_STATUSES.DRAFT;
-        },
-        'Please choose whether a permit has been applied for!',
-      ],
     },
     permitNumber: {
       type: String,
@@ -191,11 +160,9 @@ const remodelingSchema = new Schema<IRemodeling>(
     },
     existingSpacePhotos: {
       type: [String],
-      default: [],
     },
     panelPhotos: {
       type: [String],
-      default: [],
     },
     status: {
       type: String,

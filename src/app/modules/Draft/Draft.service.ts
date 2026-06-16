@@ -4,6 +4,7 @@ import DedicatedCircuitModel from '../DedicatedCircuit/DedicatedCircuit.model';
 import DockPowerModel from '../DockPower/DockPower.model';
 import ElectricModel from '../Electric/Electric.model';
 import EVChargerInstallationModel from '../EVChargerInstallation/EVChargerInstallation.model';
+import ExhaustFansModel from '../ExhaustFans/ExhaustFans.model';
 import GenaratorModel from '../Genarator/Genarator.model';
 import HomeSurgeProtectionModel from '../HomeSurgeProtection/HomeSurgeProtection.model';
 import HotTubModel from '../HotTub/HotTub.model';
@@ -33,6 +34,7 @@ const getAllMyDraftsFromDB = async (userId: string) => {
       name: 'EVChargerInstallation',
       model: EVChargerInstallationModel as DraftModel,
     },
+    { name: 'ExhaustFans', model: ExhaustFansModel as DraftModel },
     { name: 'Generator', model: GenaratorModel as DraftModel },
     {
       name: 'HomeSurgeProtection',

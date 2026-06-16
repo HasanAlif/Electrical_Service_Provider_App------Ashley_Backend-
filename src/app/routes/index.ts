@@ -14,6 +14,7 @@ import { NewConstructionRoutes } from '../modules/NewConstruction/NewConstructio
 import { HomeSurgeProtectionRoutes } from '../modules/HomeSurgeProtection/HomeSurgeProtection.routes';
 import { StarlinkRoutes } from '../modules/Starlink/Starlink.routes';
 import { DedicatedCircuitRoutes } from '../modules/DedicatedCircuit/DedicatedCircuit.routes';
+import { ExhaustFansRoutes } from '../modules/ExhaustFans/ExhaustFans.routes';
 import { DraftRoutes } from '../modules/Draft/Draft.routes';
 
 const router = Router();
@@ -78,6 +79,10 @@ const moduleRoutes = [
   {
     path: '/dedicated-circuits',
     route: DedicatedCircuitRoutes,
+  },
+  {
+    path: '/exhaust-fans',
+    route: ExhaustFansRoutes,
   },
   {
     path: '/drafts',

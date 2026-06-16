@@ -15,6 +15,7 @@ import { HomeSurgeProtectionRoutes } from '../modules/HomeSurgeProtection/HomeSu
 import { StarlinkRoutes } from '../modules/Starlink/Starlink.routes';
 import { DedicatedCircuitRoutes } from '../modules/DedicatedCircuit/DedicatedCircuit.routes';
 import { ExhaustFansRoutes } from '../modules/ExhaustFans/ExhaustFans.routes';
+import { OutletsRoutes } from '../modules/Outlets/Outlets.routes';
 import { DraftRoutes } from '../modules/Draft/Draft.routes';
 
 const router = Router();
@@ -83,6 +84,10 @@ const moduleRoutes = [
   {
     path: '/exhaust-fans',
     route: ExhaustFansRoutes,
+  },
+  {
+    path: '/outlets',
+    route: OutletsRoutes,
   },
   {
     path: '/drafts',

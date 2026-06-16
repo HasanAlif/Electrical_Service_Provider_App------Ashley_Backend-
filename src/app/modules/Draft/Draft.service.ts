@@ -9,6 +9,7 @@ import GenaratorModel from '../Genarator/Genarator.model';
 import HomeSurgeProtectionModel from '../HomeSurgeProtection/HomeSurgeProtection.model';
 import HotTubModel from '../HotTub/HotTub.model';
 import NewConstructionModel from '../NewConstruction/NewConstruction.model';
+import OutletsModel from '../Outlets/Outlets.model';
 import PanelUpgradeReplacementModel from '../PanelUpgradeReplacement/PanelUpgradeReplacement.model';
 import RemodelingModel from '../Remodeling/Remodeling.model';
 import ServiceCallModel from '../ServiceCall/ServiceCall.model';
@@ -42,6 +43,7 @@ const getAllMyDraftsFromDB = async (userId: string) => {
     },
     { name: 'HotTub', model: HotTubModel as DraftModel },
     { name: 'NewConstruction', model: NewConstructionModel as DraftModel },
+    { name: 'Outlets', model: OutletsModel as DraftModel },
     {
       name: 'PanelUpgradeReplacement',
       model: PanelUpgradeReplacementModel as DraftModel,

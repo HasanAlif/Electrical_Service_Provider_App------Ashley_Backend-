@@ -17,6 +17,8 @@ import { DedicatedCircuitRoutes } from '../modules/DedicatedCircuit/DedicatedCir
 import { ExhaustFansRoutes } from '../modules/ExhaustFans/ExhaustFans.routes';
 import { OutletsRoutes } from '../modules/Outlets/Outlets.routes';
 import { SwitchesRoutes } from '../modules/Switches/Switches.routes';
+import { LightingRoutes } from '../modules/Lighting/Lighting.routes';
+import { CellingFansRoutes } from '../modules/CellingFans/CellingFans.routes';
 import { DraftRoutes } from '../modules/Draft/Draft.routes';
 
 const router = Router();
@@ -93,6 +95,14 @@ const moduleRoutes = [
   {
     path: '/switches',
     route: SwitchesRoutes,
+  },
+  {
+    path: '/lighting',
+    route: LightingRoutes,
+  },
+  {
+    path: '/ceiling-fans',
+    route: CellingFansRoutes,
   },
   {
     path: '/drafts',

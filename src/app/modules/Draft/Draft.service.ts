@@ -2,9 +2,11 @@ import { Service_STATUSES } from '../../constants';
 import AccessoryBuildingPowerModel from '../AccessoryBuildingPower/AccessoryBuildingPower.model';
 import DedicatedCircuitModel from '../DedicatedCircuit/DedicatedCircuit.model';
 import DockPowerModel from '../DockPower/DockPower.model';
+import CellingFansModel from '../CellingFans/CellingFans.model';
 import ElectricModel from '../Electric/Electric.model';
 import EVChargerInstallationModel from '../EVChargerInstallation/EVChargerInstallation.model';
 import ExhaustFansModel from '../ExhaustFans/ExhaustFans.model';
+import LightingModel from '../Lighting/Lighting.model';
 import GenaratorModel from '../Genarator/Genarator.model';
 import HomeSurgeProtectionModel from '../HomeSurgeProtection/HomeSurgeProtection.model';
 import HotTubModel from '../HotTub/HotTub.model';
@@ -30,6 +32,7 @@ const getAllMyDraftsFromDB = async (userId: string) => {
       name: 'DedicatedCircuit',
       model: DedicatedCircuitModel as DraftModel,
     },
+    { name: 'CellingFans', model: CellingFansModel as DraftModel },
     { name: 'DockPower', model: DockPowerModel as DraftModel },
     { name: 'Electric', model: ElectricModel as DraftModel },
     {
@@ -43,6 +46,7 @@ const getAllMyDraftsFromDB = async (userId: string) => {
       model: HomeSurgeProtectionModel as DraftModel,
     },
     { name: 'HotTub', model: HotTubModel as DraftModel },
+    { name: 'Lighting', model: LightingModel as DraftModel },
     { name: 'NewConstruction', model: NewConstructionModel as DraftModel },
     { name: 'Outlets', model: OutletsModel as DraftModel },
     {

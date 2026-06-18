@@ -145,6 +145,7 @@ const OutletsSchema = new Schema<IOutlets>(
     },
     photosOfWhereOutletsInstall: {
       type: [String],
+      default: [],
     },
     typeOfOutletsNeed: {
       type: String,
@@ -152,6 +153,7 @@ const OutletsSchema = new Schema<IOutlets>(
     },
     photosOfCurrentOutlets: {
       type: [String],
+      default: [],
     },
     howManyAmps: {
       type: String,

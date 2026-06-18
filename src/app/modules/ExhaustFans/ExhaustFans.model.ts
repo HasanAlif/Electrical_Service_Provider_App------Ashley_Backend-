@@ -152,6 +152,7 @@ const ExhaustFansSchema = new Schema<IExhaustFans>(
     },
     photoOfNewFan: {
       type: [String],
+      default: [],
     },
     howManyStories: {
       type: Number,
@@ -159,6 +160,7 @@ const ExhaustFansSchema = new Schema<IExhaustFans>(
     },
     photosOfInstallationArea: {
       type: [String],
+      default: [],
     },
     whereElectricalPanelLocated: {
       type: String,
@@ -166,15 +168,19 @@ const ExhaustFansSchema = new Schema<IExhaustFans>(
     },
     photosOfPanelCloseUp: {
       type: [String],
+      default: [],
     },
     photosOfPanelWideShot: {
       type: [String],
+      default: [],
     },
     photosOfCurrentKitchenExhaustFan: {
       type: [String],
+      default: [],
     },
     photosOfCurrentBathroomExhaustFan: {
       type: [String],
+      default: [],
     },
     existingDuctAndVentDiameterLocation: {
       type: String,

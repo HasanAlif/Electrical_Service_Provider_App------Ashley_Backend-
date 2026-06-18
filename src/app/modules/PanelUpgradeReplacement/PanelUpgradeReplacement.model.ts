@@ -154,9 +154,11 @@ const panelUpgradeReplacementSchema = new Schema<IPanelUpgradeReplacement>(
     },
     meterPhotos: {
       type: [String],
+      default: [],
     },
     panelPhotos: {
       type: [String],
+      default: [],
     },
     additionalInformation: {
       type: String,

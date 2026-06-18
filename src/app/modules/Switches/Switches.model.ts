@@ -141,6 +141,7 @@ const SwitchesSchema = new Schema<ISwitches>(
     },
     photosOfWhereSwitchesInstallationNeeded: {
       type: [String],
+      default: [],
     },
     typeOfSwitchesNeeded: {
       type: String,

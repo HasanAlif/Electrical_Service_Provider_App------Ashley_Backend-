@@ -165,12 +165,15 @@ const hotTubSchema = new Schema<IHotTub>(
     },
     panelPhotos: {
       type: [String],
+      default: [],
     },
     hotTubPhotos: {
       type: [String],
+      default: [],
     },
     receptaclePhotos: {
       type: [String],
+      default: [],
     },
     additionalInformation: {
       type: String,

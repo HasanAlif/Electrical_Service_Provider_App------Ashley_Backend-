@@ -142,6 +142,7 @@ const remodelingSchema = new Schema<IRemodeling>(
     },
     plansDrawings: {
       type: [String],
+      default: [],
     },
     electricalNeeds: {
       type: String,
@@ -160,9 +161,11 @@ const remodelingSchema = new Schema<IRemodeling>(
     },
     existingSpacePhotos: {
       type: [String],
+      default: [],
     },
     panelPhotos: {
       type: [String],
+      default: [],
     },
     status: {
       type: String,

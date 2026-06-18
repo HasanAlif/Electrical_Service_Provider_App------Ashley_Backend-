@@ -146,6 +146,7 @@ const electricSchema = new Schema<IElectric>(
     },
     panelPhotos: {
       type: [String],
+      default: [],
     },
 
     additionalInformation: {

@@ -169,9 +169,11 @@ const DedicatedCircuitSchema = new Schema<IDedicatedCircuit>(
     },
     photosOfElectricalMeter: {
       type: [String],
+      default: [],
     },
     photosOfInstallationLocation: {
       type: [String],
+      default: [],
     },
 
     status: {

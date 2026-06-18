@@ -189,6 +189,7 @@ const accessoryBuildingPowerSchema = new Schema<IAccessoryBuildingPower>(
     },
     panelPhotos: {
       type: [String],
+      default: [],
     },
     routeDetails: {
       type: String,
@@ -196,12 +197,14 @@ const accessoryBuildingPowerSchema = new Schema<IAccessoryBuildingPower>(
     },
     existingSpacePhotos: {
       type: [String],
+      default: [],
     },
     hasPlansDrawings: {
       type: Boolean,
     },
     plansDrawings: {
       type: [String],
+      default: [],
     },
     permitApplied: {
       type: Boolean,

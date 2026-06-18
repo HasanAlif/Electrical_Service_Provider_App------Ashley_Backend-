@@ -147,6 +147,7 @@ const StarlinkSchema = new Schema<IStarlink>(
     },
     areaOfInstallationPhotos: {
       type: [String],
+      default: [],
     },
     roomOfRouterIn: {
       type: String,
@@ -158,6 +159,7 @@ const StarlinkSchema = new Schema<IStarlink>(
     },
     photosOfRoomForRouter: {
       type: [String],
+      default: [],
     },
     additionalNotes: {
       type: String,

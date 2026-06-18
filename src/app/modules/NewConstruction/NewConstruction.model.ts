@@ -143,6 +143,7 @@ const NewConstructionSchema = new Schema<INewConstruction>(
     },
     photosOfBuildingPlans: {
       type: [String],
+      default: [],
     },
 
     status: {

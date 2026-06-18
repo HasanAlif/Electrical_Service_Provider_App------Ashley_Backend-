@@ -156,15 +156,19 @@ const GenaratorSchema = new Schema<IGenarator>(
     },
     photosOfWhereGeneratorWillBeInlet: {
       type: [String],
+      default: [],
     },
     photosOfReceptacleOnGenerator: {
       type: [String],
+      default: [],
     },
     electricPanelPhotos: {
       type: [String],
+      default: [],
     },
     generatorInstallationLocationPhotos: {
       type: [String],
+      default: [],
     },
     sizeOfGeneratorWanted: {
       type: String,
@@ -179,6 +183,7 @@ const GenaratorSchema = new Schema<IGenarator>(
     },
     photosOfElectricalMeter: {
       type: [String],
+      default: [],
     },
 
     status: {

@@ -185,6 +185,7 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
     },
     panelPhotos: {
       type: [String],
+      default: [],
     },
     status: {
       type: String,

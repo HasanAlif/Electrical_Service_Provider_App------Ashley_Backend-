@@ -187,6 +187,7 @@ const dockPowerSchema = new Schema<IDockPower>(
     },
     panelPhotos: {
       type: [String],
+      default: [],
     },
 
     privateUtilitiesDetails: {
@@ -199,6 +200,7 @@ const dockPowerSchema = new Schema<IDockPower>(
     },
     existingSpacePhotos: {
       type: [String],
+      default: [],
     },
 
     hasPlansDrawings: {
@@ -207,6 +209,7 @@ const dockPowerSchema = new Schema<IDockPower>(
     },
     plansDrawingsPhotos: {
       type: [String],
+      default: [],
     },
 
     permitApplied: {

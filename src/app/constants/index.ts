@@ -33,15 +33,13 @@ export type TTimelineUrgency = (typeof TIMELINE_URGENCIES)[number];
 
 export const Service_STATUSES = {
   DRAFT: 'draft',
-  SUBMITTED: 'submitted',
+  PENDING: 'pending',
   IN_REVIEW: 'in_review',
-  QUOTED: 'quoted',
-  SCHEDULED: 'scheduled',
-  COMPLETED: 'completed',
-  CANCELLED: 'cancelled',
+  SEND: 'send',
+  CLOSED: 'closed',
 } as const;
 
 export type TServiceStatus =
   (typeof Service_STATUSES)[keyof typeof Service_STATUSES];
 
-export const DEFAULT_REQUEST_STATUS = Service_STATUSES.SUBMITTED;
+export const DEFAULT_REQUEST_STATUS = Service_STATUSES.PENDING;

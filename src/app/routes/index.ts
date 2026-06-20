@@ -20,6 +20,7 @@ import { SwitchesRoutes } from '../modules/Switches/Switches.routes';
 import { LightingRoutes } from '../modules/Lighting/Lighting.routes';
 import { CellingFansRoutes } from '../modules/CellingFans/CellingFans.routes';
 import { DraftRoutes } from '../modules/Draft/Draft.routes';
+import { AdminRoutes } from '../modules/Admin/Admin.routes';
 
 const router = Router();
 
@@ -107,6 +108,10 @@ const moduleRoutes = [
   {
     path: '/drafts',
     route: DraftRoutes,
+  },
+  {
+    path: '/admin',
+    route: AdminRoutes,
   },
 ];
 

@@ -21,6 +21,17 @@ const getAllQuotes = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const getSingleQuote = asyncHandler(async (req: Request, res: Response) => {
+  const data = await AdminService.getSingleQuote(req.params.id as string);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Quote retrieved successfully!',
+    data,
+  });
+});
+
 export const AdminController = {
   getAllQuotes,
+  getSingleQuote,
 };

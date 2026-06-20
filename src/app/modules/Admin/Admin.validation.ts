@@ -1,11 +1,9 @@
 import { z } from 'zod';
 
 export const AdminValidation = {
-  create: z.object({
-    name: z.string().min(1, 'Name is required'),
-  }),
-  update: z.object({
-    id: z.string().uuid('Invalid ID format'),
-    name: z.string().optional(),
+  idParamsSchema: z.object({
+    params: z.object({
+      id: z.string({ error: 'Quote ID is required!' }).min(1),
+    }),
   }),
 };

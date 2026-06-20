@@ -1,4 +1,6 @@
+import httpStatus from 'http-status';
 import { Service_STATUSES } from '../../constants';
+import { AppError } from '../../utils';
 import AccessoryBuildingPowerModel from '../AccessoryBuildingPower/AccessoryBuildingPower.model';
 import CellingFansModel from '../CellingFans/CellingFans.model';
 import DedicatedCircuitModel from '../DedicatedCircuit/DedicatedCircuit.model';
@@ -29,9 +31,11 @@ type QuoteRow = {
   additionalInformation?: string;
 };
 
+type LeanQuery = { lean: () => Promise<QuoteRow[]> };
+
 type QuoteModel = {
-  find: (filter: Record<string, unknown>) => {
-    select: (fields: string) => { lean: () => Promise<QuoteRow[]> };
+  find: (filter: Record<string, unknown>) => LeanQuery & {
+    select: (fields: string) => LeanQuery;
   };
 };
 
@@ -131,6 +135,26 @@ const getAllQuotes = async (filters: TGetAllQuotesFilters) => {
   };
 };
 
+const getSingleQuote = async (quoteId: string) => {
+  // ObjectIds are globally unique, so at most one collection holds this quote.
+  const matches = await Promise.all(
+    quoteModels.map(model =>
+      model
+        .find({ _id: quoteId, status: { $ne: Service_STATUSES.DRAFT } })
+        .lean(),
+    ),
+  );
+
+  const quote = matches.flat()[0];
+
+  if (!quote) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Quote not found!');
+  }
+
+  return quote;
+};
+
 export const AdminService = {
   getAllQuotes,
+  getSingleQuote,
 };

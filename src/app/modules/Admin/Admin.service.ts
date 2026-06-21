@@ -206,8 +206,32 @@ const updateQuoteStatus = async (
   return updated;
 };
 
+const getQouteForUpdate = async (quoteId: string) => {
+  // ObjectIds are globally unique, so at most one collection holds this quote.
+  const matches = await Promise.all(
+    quoteModels.map(model =>
+      model
+        .find({ _id: quoteId, status: { $ne: Service_STATUSES.DRAFT } })
+        .lean(),
+    ),
+  );
+
+  const quote = matches.flat()[0];
+
+  if (!quote) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Quote not found!');
+  }
+
+  // Minimal shape for prefilling the status-update form.
+  return {
+    id: String(quote._id),
+    currentStatus: quote.status,
+  };
+};
+
 export const AdminService = {
   getAllQuotes,
   getSingleQuote,
   updateQuoteStatus,
+  getQouteForUpdate,
 };

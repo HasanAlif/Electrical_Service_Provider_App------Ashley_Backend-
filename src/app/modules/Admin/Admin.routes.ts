@@ -20,6 +20,11 @@ router
 
 router
   .route('/quotes/:id/status')
+  .get(
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    validateRequest(AdminValidation.idParamsSchema),
+    AdminController.getQouteForUpdate,
+  )
   .patch(
     auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
     validateRequest(AdminValidation.updateQuoteStatusSchema),

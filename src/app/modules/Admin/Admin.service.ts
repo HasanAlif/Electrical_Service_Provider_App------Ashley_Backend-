@@ -183,6 +183,80 @@ const getAllQuotes = async (filters: TGetAllQuotesFilters) => {
   };
 };
 
+type TSearchQuotesFilters = {
+  searchQuery: string;
+  page?: number;
+  limit?: number;
+};
+
+const escapeRegex = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const searchByNameQidOrEmail = async (filters: TSearchQuotesFilters) => {
+  const searchQuery = (filters.searchQuery ?? '').trim();
+
+  if (!searchQuery) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'searchQuery is required!');
+  }
+
+  const page = Number(filters.page) || 1;
+  const limit = Number(filters.limit) || 10;
+
+  const regex = { $regex: escapeRegex(searchQuery), $options: 'i' };
+
+  const matchesPerModel = await Promise.all(
+    quoteModels.map(model =>
+      model
+        .find({
+          status: { $ne: Service_STATUSES.DRAFT },
+          $or: [{ fullName: regex }, { qId: regex }, { emailAddress: regex }],
+        })
+        .select(QUOTE_FIELDS)
+        .lean(),
+    ),
+  );
+
+  const results = matchesPerModel.flat();
+
+  const statusCounts = buildStatusCounts(results);
+
+  const q = searchQuery.toLowerCase();
+  const fieldScore = (value?: string) => {
+    if (!value) return 0;
+    const v = value.toLowerCase();
+    if (v === q) return 3;
+    if (v.startsWith(q)) return 2;
+    if (v.includes(q)) return 1;
+    return 0;
+  };
+
+  const scored = results.map(row => ({
+    row,
+    score:
+      fieldScore(row.fullName) +
+      fieldScore(row.qId) +
+      fieldScore(row.emailAddress),
+  }));
+
+  scored.sort(
+    (a, b) =>
+      b.score - a.score ||
+      new Date(b.row.createdAt).getTime() - new Date(a.row.createdAt).getTime(),
+  );
+
+  const sorted = scored.map(item => item.row);
+
+  const total = sorted.length;
+  const totalPage = Math.ceil(total / limit);
+  const skip = (page - 1) * limit;
+  const data = sorted.slice(skip, skip + limit);
+
+  return {
+    meta: { page, limit, total, totalPage, ...statusCounts },
+    data,
+  };
+};
+
 const getSingleQuote = async (quoteId: string) => {
   // ObjectIds are globally unique, so at most one collection holds this quote.
   const matches = await Promise.all(
@@ -274,6 +348,7 @@ const getQouteForUpdate = async (quoteId: string) => {
 
 export const AdminService = {
   getAllQuotes,
+  searchByNameQidOrEmail,
   getSingleQuote,
   updateQuoteStatus,
   getQouteForUpdate,

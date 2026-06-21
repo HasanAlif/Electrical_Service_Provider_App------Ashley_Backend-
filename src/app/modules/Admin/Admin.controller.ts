@@ -21,6 +21,25 @@ const getAllQuotes = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const searchByNameQidOrEmail = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { searchQuery, page, limit } = req.query;
+
+    const result = await AdminService.searchByNameQidOrEmail({
+      searchQuery: searchQuery as string,
+      page: page ? Number(page) : undefined,
+      limit: limit ? Number(limit) : undefined,
+    });
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      message: 'Quotes search results retrieved successfully!',
+      meta: result.meta,
+      data: result.data,
+    });
+  },
+);
+
 const getSingleQuote = asyncHandler(async (req: Request, res: Response) => {
   const data = await AdminService.getSingleQuote(req.params.id as string);
 
@@ -68,6 +87,7 @@ const getQoutesCount = asyncHandler(async (req: Request, res: Response) => {
 
 export const AdminController = {
   getAllQuotes,
+  searchByNameQidOrEmail,
   getSingleQuote,
   updateQuoteStatus,
   getQouteForUpdate,

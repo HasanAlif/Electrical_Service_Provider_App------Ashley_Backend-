@@ -19,6 +19,7 @@ import RemodelingModel from '../Remodeling/Remodeling.model';
 import ServiceCallModel from '../ServiceCall/ServiceCall.model';
 import StarlinkModel from '../Starlink/Starlink.model';
 import SwitchesModel from '../Switches/Switches.model';
+import CategoryModel from './Category.model';
 
 type QuoteRow = {
   _id: unknown;
@@ -346,6 +347,74 @@ const getQouteForUpdate = async (quoteId: string) => {
   };
 };
 
+// ----- Categories (CRUD) -----
+
+type TCategoryPayload = {
+  name: string;
+  description?: string;
+  isActive?: boolean;
+};
+
+const createCategory = async (payload: TCategoryPayload) => {
+  const exists = await CategoryModel.findOne({ name: payload.name });
+  if (exists) {
+    throw new AppError(httpStatus.CONFLICT, 'Category name already exists!');
+  }
+
+  return CategoryModel.create(payload);
+};
+
+const getAllCategories = async () => {
+  return CategoryModel.find().sort({ name: 1 });
+};
+
+const getSingleCategory = async (id: string) => {
+  const category = await CategoryModel.findById(id);
+
+  if (!category) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Category not found!');
+  }
+
+  return category;
+};
+
+const updateCategory = async (
+  id: string,
+  payload: Partial<TCategoryPayload>,
+) => {
+  // Guard the unique name (returns a clean 409 instead of the global 400).
+  if (payload.name !== undefined) {
+    const dup = await CategoryModel.findOne({
+      name: payload.name,
+      _id: { $ne: id },
+    });
+    if (dup) {
+      throw new AppError(httpStatus.CONFLICT, 'Category name already exists!');
+    }
+  }
+
+  const category = await CategoryModel.findByIdAndUpdate(id, payload, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!category) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Category not found!');
+  }
+
+  return category;
+};
+
+const deleteCategory = async (id: string) => {
+  const category = await CategoryModel.findByIdAndDelete(id);
+
+  if (!category) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Category not found!');
+  }
+
+  return category;
+};
+
 export const AdminService = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -353,4 +422,9 @@ export const AdminService = {
   updateQuoteStatus,
   getQouteForUpdate,
   getQoutesCount,
+  createCategory,
+  getAllCategories,
+  getSingleCategory,
+  updateCategory,
+  deleteCategory,
 };

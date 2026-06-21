@@ -43,4 +43,31 @@ router
     AdminController.updateQuoteStatus,
   );
 
+router
+  .route('/categories')
+  .post(
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    validateRequest(AdminValidation.createCategorySchema),
+    AdminController.createCategory,
+  )
+  .get(auth(ROLE.ADMIN, ROLE.SUPER_ADMIN), AdminController.getAllCategories);
+
+router
+  .route('/categories/:id')
+  .get(
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    validateRequest(AdminValidation.categoryIdParamsSchema),
+    AdminController.getSingleCategory,
+  )
+  .patch(
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    validateRequest(AdminValidation.updateCategorySchema),
+    AdminController.updateCategory,
+  )
+  .delete(
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    validateRequest(AdminValidation.categoryIdParamsSchema),
+    AdminController.deleteCategory,
+  );
+
 export const AdminRoutes = router;

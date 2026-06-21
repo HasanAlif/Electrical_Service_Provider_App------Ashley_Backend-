@@ -85,6 +85,59 @@ const getQoutesCount = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const createCategory = asyncHandler(async (req: Request, res: Response) => {
+  const data = await AdminService.createCategory(req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    message: 'Category created successfully!',
+    data,
+  });
+});
+
+const getAllCategories = asyncHandler(async (req: Request, res: Response) => {
+  const data = await AdminService.getAllCategories();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Categories retrieved successfully!',
+    data,
+  });
+});
+
+const getSingleCategory = asyncHandler(async (req: Request, res: Response) => {
+  const data = await AdminService.getSingleCategory(req.params.id as string);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Category retrieved successfully!',
+    data,
+  });
+});
+
+const updateCategory = asyncHandler(async (req: Request, res: Response) => {
+  const data = await AdminService.updateCategory(
+    req.params.id as string,
+    req.body,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Category updated successfully!',
+    data,
+  });
+});
+
+const deleteCategory = asyncHandler(async (req: Request, res: Response) => {
+  const data = await AdminService.deleteCategory(req.params.id as string);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Category deleted successfully!',
+    data,
+  });
+});
+
 export const AdminController = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -92,4 +145,9 @@ export const AdminController = {
   updateQuoteStatus,
   getQouteForUpdate,
   getQoutesCount,
+  createCategory,
+  getAllCategories,
+  getSingleCategory,
+  updateCategory,
+  deleteCategory,
 };

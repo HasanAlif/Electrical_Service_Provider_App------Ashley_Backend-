@@ -27,4 +27,37 @@ export const AdminValidation = {
         { message: 'Provide a status or internalNote to update!' },
       ),
   }),
+
+  createCategorySchema: z.object({
+    body: z.object({
+      name: z.string({ error: 'Category name is required!' }).trim().min(1),
+      description: z.string().trim().optional(),
+      isActive: z.boolean().optional(),
+    }),
+  }),
+
+  updateCategorySchema: z.object({
+    params: z.object({
+      id: z.string({ error: 'Category ID is required!' }).min(1),
+    }),
+    body: z
+      .object({
+        name: z.string().trim().min(1).optional(),
+        description: z.string().trim().optional(),
+        isActive: z.boolean().optional(),
+      })
+      .refine(
+        data =>
+          data.name !== undefined ||
+          data.description !== undefined ||
+          data.isActive !== undefined,
+        { message: 'Provide at least one field to update!' },
+      ),
+  }),
+
+  categoryIdParamsSchema: z.object({
+    params: z.object({
+      id: z.string({ error: 'Category ID is required!' }).min(1),
+    }),
+  }),
 };

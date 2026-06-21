@@ -31,7 +31,23 @@ const getSingleQuote = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const updateQuoteStatus = asyncHandler(async (req: Request, res: Response) => {
+  const { status, internalNote } = req.body;
+
+  const data = await AdminService.updateQuoteStatus(req.params.id as string, {
+    status,
+    internalNote,
+  });
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Quote updated successfully!',
+    data,
+  });
+});
+
 export const AdminController = {
   getAllQuotes,
   getSingleQuote,
+  updateQuoteStatus,
 };

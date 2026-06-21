@@ -186,6 +186,12 @@ const GenaratorSchema = new Schema<IGenarator>(
       default: [],
     },
 
+    internalNote: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+
     status: {
       type: String,
       enum: Service_STATUSES,

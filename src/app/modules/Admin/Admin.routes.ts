@@ -18,4 +18,12 @@ router
     AdminController.getSingleQuote,
   );
 
+router
+  .route('/quotes/:id/status')
+  .patch(
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    validateRequest(AdminValidation.updateQuoteStatusSchema),
+    AdminController.updateQuoteStatus,
+  );
+
 export const AdminRoutes = router;

@@ -167,6 +167,12 @@ const remodelingSchema = new Schema<IRemodeling>(
       type: [String],
       default: [],
     },
+    internalNote: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+
     status: {
       type: String,
       enum: Service_STATUSES,

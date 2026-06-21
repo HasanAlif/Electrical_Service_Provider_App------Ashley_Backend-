@@ -152,6 +152,12 @@ const SwitchesSchema = new Schema<ISwitches>(
       trim: true,
     },
 
+    internalNote: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+
     status: {
       type: String,
       enum: Service_STATUSES,

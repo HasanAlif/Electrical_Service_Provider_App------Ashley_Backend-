@@ -187,6 +187,12 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
       type: [String],
       default: [],
     },
+    internalNote: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+
     status: {
       type: String,
       enum: Service_STATUSES,

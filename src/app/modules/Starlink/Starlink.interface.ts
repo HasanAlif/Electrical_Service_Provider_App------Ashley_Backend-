@@ -39,6 +39,7 @@ export interface IStarlink extends Document {
   additionalNotes?: string;
 
   status: TServiceStatus;
+  internalNote: string;
   completionPercentage: number;
 
   createdAt: Date;

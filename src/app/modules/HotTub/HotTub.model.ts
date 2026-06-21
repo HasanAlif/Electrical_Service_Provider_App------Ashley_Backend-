@@ -179,6 +179,12 @@ const hotTubSchema = new Schema<IHotTub>(
       type: String,
       trim: true,
     },
+    internalNote: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+
     status: {
       type: String,
       enum: Service_STATUSES,

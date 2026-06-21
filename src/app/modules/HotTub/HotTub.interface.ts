@@ -80,6 +80,7 @@ export interface IHotTub extends Document {
   additionalInformation?: string;
 
   status: TServiceStatus;
+  internalNote: string;
   completionPercentage: number;
 
   createdAt: Date;

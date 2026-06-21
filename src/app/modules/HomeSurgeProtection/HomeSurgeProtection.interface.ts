@@ -32,6 +32,7 @@ export interface IHomeSurgeProtection extends Document {
   additionalNotes?: string;
 
   status: TServiceStatus;
+  internalNote: string;
   completionPercentage: number;
 
   createdAt: Date;

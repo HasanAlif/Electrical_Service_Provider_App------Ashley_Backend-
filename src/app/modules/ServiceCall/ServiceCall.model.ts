@@ -196,6 +196,12 @@ const serviceCallSchema = new Schema<IServiceCall>(
       default: [],
     },
 
+    internalNote: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+
     status: {
       type: String,
       enum: Service_STATUSES,

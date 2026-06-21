@@ -55,6 +55,7 @@ export interface IServiceCall extends Document {
   quickTags: string[];
 
   status: TServiceStatus;
+  internalNote: string;
   completionPercentage: number;
 
   createdAt: Date;

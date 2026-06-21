@@ -29,6 +29,7 @@ type QuoteRow = {
   createdAt: Date;
   status?: string;
   additionalInformation?: string;
+  internalNote?: string;
 };
 
 type LeanQuery = { lean: () => Promise<QuoteRow[]> };
@@ -37,6 +38,11 @@ type QuoteModel = {
   find: (filter: Record<string, unknown>) => LeanQuery & {
     select: (fields: string) => LeanQuery;
   };
+  findOneAndUpdate: (
+    filter: Record<string, unknown>,
+    update: Record<string, unknown>,
+    options: Record<string, unknown>,
+  ) => { lean: () => Promise<QuoteRow | null> };
 };
 
 // Every submitted-quote collection across all service modules (mirrors Draft.service.ts).
@@ -154,7 +160,54 @@ const getSingleQuote = async (quoteId: string) => {
   return quote;
 };
 
+type TUpdateQuoteStatusPayload = {
+  status?: string;
+  internalNote?: string;
+};
+
+const updateQuoteStatus = async (
+  quoteId: string,
+  payload: TUpdateQuoteStatusPayload,
+) => {
+  // Build the update from only the fields the admin actually sent.
+  const update: Record<string, unknown> = {};
+  if (payload.status !== undefined) update.status = payload.status;
+  if (payload.internalNote !== undefined) {
+    update.internalNote = payload.internalNote;
+  }
+
+  if (Object.keys(update).length === 0) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Provide a status or internalNote to update!',
+    );
+  }
+
+  // ObjectIds are globally unique, so at most one collection holds this quote.
+  // Drafts are never exposed/edited through the admin surface.
+  const results = await Promise.all(
+    quoteModels.map(model =>
+      model
+        .findOneAndUpdate(
+          { _id: quoteId, status: { $ne: Service_STATUSES.DRAFT } },
+          update,
+          { new: true, runValidators: true },
+        )
+        .lean(),
+    ),
+  );
+
+  const updated = results.find(Boolean);
+
+  if (!updated) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Quote not found!');
+  }
+
+  return updated;
+};
+
 export const AdminService = {
   getAllQuotes,
   getSingleQuote,
+  updateQuoteStatus,
 };

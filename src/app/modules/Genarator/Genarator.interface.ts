@@ -45,6 +45,7 @@ export interface IGenarator extends Document {
   photosOfElectricalMeter: string[];
 
   status: TServiceStatus;
+  internalNote: string;
   completionPercentage: number;
 
   createdAt: Date;

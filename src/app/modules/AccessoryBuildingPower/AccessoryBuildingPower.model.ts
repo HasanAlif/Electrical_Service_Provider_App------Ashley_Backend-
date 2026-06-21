@@ -217,6 +217,12 @@ const accessoryBuildingPowerSchema = new Schema<IAccessoryBuildingPower>(
       type: String,
       trim: true,
     },
+    internalNote: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+
     status: {
       type: String,
       enum: Service_STATUSES,

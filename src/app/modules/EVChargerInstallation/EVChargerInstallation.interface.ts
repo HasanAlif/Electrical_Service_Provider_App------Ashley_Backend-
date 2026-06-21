@@ -91,6 +91,7 @@ export interface IEVChargerInstallation extends Document {
   panelPhotos: string[];
 
   status: TServiceStatus;
+  internalNote: string;
   completionPercentage: number;
 
   createdAt: Date;

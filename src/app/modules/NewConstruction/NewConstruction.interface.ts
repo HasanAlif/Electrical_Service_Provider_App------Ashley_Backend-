@@ -34,6 +34,7 @@ export interface INewConstruction extends Document {
   photosOfBuildingPlans: string[];
 
   status: TServiceStatus;
+  internalNote: string;
   completionPercentage: number;
 
   createdAt: Date;

@@ -53,6 +53,7 @@ export interface IRemodeling extends Document {
   panelPhotos: string[];
 
   status: TServiceStatus;
+  internalNote: string;
   completionPercentage: number;
 
   createdAt: Date;

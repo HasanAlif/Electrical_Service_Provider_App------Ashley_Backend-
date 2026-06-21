@@ -80,6 +80,13 @@ router
   .get(auth(ROLE.ADMIN, ROLE.SUPER_ADMIN), AdminController.getAllPartner);
 
 router
+  .route('/partners/search')
+  .get(
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    AdminController.searchPartnersByNameOrCategory,
+  );
+
+router
   .route('/partners/:id')
   .get(
     auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),

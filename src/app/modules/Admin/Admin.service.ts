@@ -510,6 +510,74 @@ const deletePartner = async (id: string) => {
   return partner;
 };
 
+type TPartnerSearchFilters = {
+  searchQuery?: string;
+  category?: string;
+  status?: string;
+};
+
+const searchPartnersByNameOrCategory = async (
+  filters: TPartnerSearchFilters,
+) => {
+  const searchQuery = (filters.searchQuery ?? '').trim();
+  const category = (filters.category ?? '').trim();
+  const status = (filters.status ?? '').trim().toLowerCase();
+
+  // Filters: exact category, and status -> isVerified ('all' = no filter).
+  const mongoFilter: Record<string, unknown> = {};
+  if (category) {
+    mongoFilter.category = category;
+  }
+  if (status && status !== 'all') {
+    if (status !== 'verified' && status !== 'unverified') {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "status must be 'all', 'verified', or 'unverified'!",
+      );
+    }
+    mongoFilter.isVerified = status === 'verified';
+  }
+  if (searchQuery) {
+    const regex = { $regex: escapeRegex(searchQuery), $options: 'i' };
+    mongoFilter.$or = [{ companyName: regex }, { category: regex }];
+  }
+
+  const partners = await PartnerModel.find(mongoFilter).lean();
+
+  // No search term → filtered list, newest first (like getAllPartner).
+  if (!searchQuery) {
+    return partners.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  }
+
+  // With a search term → relevance rank: exact (3) > starts-with (2) >
+  // contains (1), summed across the two searchable fields; createdAt desc tiebreak.
+  const q = searchQuery.toLowerCase();
+  const fieldScore = (value?: string) => {
+    if (!value) return 0;
+    const v = value.toLowerCase();
+    if (v === q) return 3;
+    if (v.startsWith(q)) return 2;
+    if (v.includes(q)) return 1;
+    return 0;
+  };
+
+  return partners
+    .map(partner => ({
+      partner,
+      score: fieldScore(partner.companyName) + fieldScore(partner.category),
+    }))
+    .sort(
+      (a, b) =>
+        b.score - a.score ||
+        new Date(b.partner.createdAt).getTime() -
+          new Date(a.partner.createdAt).getTime(),
+    )
+    .map(item => item.partner);
+};
+
 export const AdminService = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -527,4 +595,5 @@ export const AdminService = {
   getSinglePartner,
   updatePartner,
   deletePartner,
+  searchPartnersByNameOrCategory,
 };

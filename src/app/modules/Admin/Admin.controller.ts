@@ -191,6 +191,24 @@ const deletePartner = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const searchPartnersByNameOrCategory = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { searchQuery, category, status } = req.query;
+
+    const data = await AdminService.searchPartnersByNameOrCategory({
+      searchQuery: searchQuery as string | undefined,
+      category: category as string | undefined,
+      status: status as string | undefined,
+    });
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      message: 'Partners search results retrieved successfully!',
+      data,
+    });
+  },
+);
+
 export const AdminController = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -208,4 +226,5 @@ export const AdminController = {
   getSinglePartner,
   updatePartner,
   deletePartner,
+  searchPartnersByNameOrCategory,
 };

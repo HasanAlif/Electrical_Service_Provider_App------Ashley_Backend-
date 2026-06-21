@@ -98,6 +98,47 @@ type TGetAllQuotesFilters = {
   limit?: number;
 };
 
+const getQoutesCount = async () => {
+  const rowsPerModel = await Promise.all(
+    quoteModels.map(model =>
+      model
+        .find({ status: { $ne: Service_STATUSES.DRAFT } })
+        .select('status createdAt')
+        .lean(),
+    ),
+  );
+
+  const rows = rowsPerModel.flat();
+
+  // "Today" = since local midnight on the server.
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
+  let newToday = 0;
+  let pending = 0;
+  let needResponse = 0;
+
+  rows.forEach(row => {
+    if (row.createdAt && new Date(row.createdAt) >= startOfToday) {
+      newToday += 1;
+    }
+    if (row.status === Service_STATUSES.PENDING) {
+      pending += 1;
+    }
+    // Everything not yet closed still needs a response.
+    if (row.status !== Service_STATUSES.CLOSED) {
+      needResponse += 1;
+    }
+  });
+
+  return {
+    totalQoutes: rows.length,
+    newToday,
+    pending,
+    needResponse,
+  };
+};
+
 const getAllQuotes = async (filters: TGetAllQuotesFilters) => {
   const { status, serviceType } = filters;
 
@@ -234,4 +275,5 @@ export const AdminService = {
   getSingleQuote,
   updateQuoteStatus,
   getQouteForUpdate,
+  getQoutesCount,
 };

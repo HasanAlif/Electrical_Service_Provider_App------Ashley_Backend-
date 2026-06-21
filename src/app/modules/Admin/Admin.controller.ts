@@ -56,9 +56,20 @@ const getQouteForUpdate = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const getQoutesCount = asyncHandler(async (req: Request, res: Response) => {
+  const data = await AdminService.getQoutesCount();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Quotes count retrieved successfully!',
+    data,
+  });
+});
+
 export const AdminController = {
   getAllQuotes,
   getSingleQuote,
   updateQuoteStatus,
   getQouteForUpdate,
+  getQoutesCount,
 };

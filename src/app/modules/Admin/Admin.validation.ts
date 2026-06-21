@@ -60,4 +60,47 @@ export const AdminValidation = {
       id: z.string({ error: 'Category ID is required!' }).min(1),
     }),
   }),
+
+  createPartnerSchema: z.object({
+    body: z.object({
+      companyName: z
+        .string({ error: 'Partner company name is required!' })
+        .trim()
+        .min(1),
+      category: z
+        .string({ error: 'Partner category is required!' })
+        .trim()
+        .min(1),
+      description: z.string().trim().optional(),
+      phoneNumber: z.string().trim().optional(),
+      websiteUrl: z.string().trim().optional(),
+      isVerified: z.boolean().optional(),
+      isActive: z.boolean().optional(),
+    }),
+  }),
+
+  updatePartnerSchema: z.object({
+    params: z.object({
+      id: z.string({ error: 'Partner ID is required!' }).min(1),
+    }),
+    body: z
+      .object({
+        companyName: z.string().trim().min(1).optional(),
+        category: z.string().trim().min(1).optional(),
+        description: z.string().trim().optional(),
+        phoneNumber: z.string().trim().optional(),
+        websiteUrl: z.string().trim().optional(),
+        isVerified: z.boolean().optional(),
+        isActive: z.boolean().optional(),
+      })
+      .refine(data => Object.keys(data).length > 0, {
+        message: 'Provide at least one field to update!',
+      }),
+  }),
+
+  partnerIdParamsSchema: z.object({
+    params: z.object({
+      id: z.string({ error: 'Partner ID is required!' }).min(1),
+    }),
+  }),
 };

@@ -138,6 +138,59 @@ const deleteCategory = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const createPartner = asyncHandler(async (req: Request, res: Response) => {
+  const data = await AdminService.createPartner(req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    message: 'Partner created successfully!',
+    data,
+  });
+});
+
+const getAllPartner = asyncHandler(async (req: Request, res: Response) => {
+  const data = await AdminService.getAllPartner();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Partners retrieved successfully!',
+    data,
+  });
+});
+
+const getSinglePartner = asyncHandler(async (req: Request, res: Response) => {
+  const data = await AdminService.getSinglePartner(req.params.id as string);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Partner retrieved successfully!',
+    data,
+  });
+});
+
+const updatePartner = asyncHandler(async (req: Request, res: Response) => {
+  const data = await AdminService.updatePartner(
+    req.params.id as string,
+    req.body,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Partner updated successfully!',
+    data,
+  });
+});
+
+const deletePartner = asyncHandler(async (req: Request, res: Response) => {
+  const data = await AdminService.deletePartner(req.params.id as string);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Partner deleted successfully!',
+    data,
+  });
+});
+
 export const AdminController = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -150,4 +203,9 @@ export const AdminController = {
   getSingleCategory,
   updateCategory,
   deleteCategory,
+  createPartner,
+  getAllPartner,
+  getSinglePartner,
+  updatePartner,
+  deletePartner,
 };

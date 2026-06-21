@@ -20,6 +20,7 @@ import ServiceCallModel from '../ServiceCall/ServiceCall.model';
 import StarlinkModel from '../Starlink/Starlink.model';
 import SwitchesModel from '../Switches/Switches.model';
 import CategoryModel from './Category.model';
+import PartnerModel from './Partner.model';
 
 type QuoteRow = {
   _id: unknown;
@@ -415,6 +416,100 @@ const deleteCategory = async (id: string) => {
   return category;
 };
 
+// ----- Partners (CRUD) -----
+
+type TPartnerPayload = {
+  companyName: string;
+  category: string;
+  description?: string;
+  phoneNumber?: string;
+  websiteUrl?: string;
+  isVerified?: boolean;
+  isActive?: boolean;
+};
+
+// Partners reference a Category by name — reject names that don't exist.
+const assertCategoryExists = async (name: string) => {
+  const category = await CategoryModel.findOne({ name });
+  if (!category) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `Category '${name}' does not exist!`,
+    );
+  }
+};
+
+const createPartner = async (payload: TPartnerPayload) => {
+  await assertCategoryExists(payload.category);
+
+  const exists = await PartnerModel.findOne({
+    companyName: payload.companyName,
+  });
+  if (exists) {
+    throw new AppError(
+      httpStatus.CONFLICT,
+      'Partner company name already exists!',
+    );
+  }
+
+  return PartnerModel.create(payload);
+};
+
+const getAllPartner = async () => {
+  return PartnerModel.find().sort({ createdAt: -1 });
+};
+
+const getSinglePartner = async (id: string) => {
+  const partner = await PartnerModel.findById(id);
+
+  if (!partner) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Partner not found!');
+  }
+
+  return partner;
+};
+
+const updatePartner = async (id: string, payload: Partial<TPartnerPayload>) => {
+  if (payload.category !== undefined) {
+    await assertCategoryExists(payload.category);
+  }
+
+  // Guard the unique companyName (returns a clean 409 instead of the global 400).
+  if (payload.companyName !== undefined) {
+    const dup = await PartnerModel.findOne({
+      companyName: payload.companyName,
+      _id: { $ne: id },
+    });
+    if (dup) {
+      throw new AppError(
+        httpStatus.CONFLICT,
+        'Partner company name already exists!',
+      );
+    }
+  }
+
+  const partner = await PartnerModel.findByIdAndUpdate(id, payload, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!partner) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Partner not found!');
+  }
+
+  return partner;
+};
+
+const deletePartner = async (id: string) => {
+  const partner = await PartnerModel.findByIdAndDelete(id);
+
+  if (!partner) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Partner not found!');
+  }
+
+  return partner;
+};
+
 export const AdminService = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -427,4 +522,9 @@ export const AdminService = {
   getSingleCategory,
   updateCategory,
   deleteCategory,
+  createPartner,
+  getAllPartner,
+  getSinglePartner,
+  updatePartner,
+  deletePartner,
 };

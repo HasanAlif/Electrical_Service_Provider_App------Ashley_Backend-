@@ -70,4 +70,31 @@ router
     AdminController.deleteCategory,
   );
 
+router
+  .route('/partners')
+  .post(
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    validateRequest(AdminValidation.createPartnerSchema),
+    AdminController.createPartner,
+  )
+  .get(auth(ROLE.ADMIN, ROLE.SUPER_ADMIN), AdminController.getAllPartner);
+
+router
+  .route('/partners/:id')
+  .get(
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    validateRequest(AdminValidation.partnerIdParamsSchema),
+    AdminController.getSinglePartner,
+  )
+  .patch(
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    validateRequest(AdminValidation.updatePartnerSchema),
+    AdminController.updatePartner,
+  )
+  .delete(
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    validateRequest(AdminValidation.partnerIdParamsSchema),
+    AdminController.deletePartner,
+  );
+
 export const AdminRoutes = router;

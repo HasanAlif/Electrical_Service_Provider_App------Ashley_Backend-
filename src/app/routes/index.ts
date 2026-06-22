@@ -21,6 +21,7 @@ import { LightingRoutes } from '../modules/Lighting/Lighting.routes';
 import { CellingFansRoutes } from '../modules/CellingFans/CellingFans.routes';
 import { DraftRoutes } from '../modules/Draft/Draft.routes';
 import { AdminRoutes } from '../modules/Admin/Admin.routes';
+import { FAQRoutes } from '../modules/FAQ/FAQ.routes';
 
 const router = Router();
 
@@ -112,6 +113,10 @@ const moduleRoutes = [
   {
     path: '/admin',
     route: AdminRoutes,
+  },
+  {
+    path: '/faqs',
+    route: FAQRoutes,
   },
 ];
 

@@ -736,6 +736,33 @@ const getSingleAdmin = async (id: string) => {
   return admin;
 };
 
+const updateAdminUserStatus = async (id: string) => {
+  const admin = await User.findById(id);
+
+  if (
+    !admin ||
+    (admin.role !== ROLE.ADMIN && admin.role !== ROLE.SUSPENDED_ADMIN)
+  ) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Admin user not found!');
+  }
+
+  // Toggle suspension and keep role in sync.
+  const nextSuspended = !admin.isSuspended;
+  admin.isSuspended = nextSuspended;
+  admin.role = nextSuspended ? ROLE.SUSPENDED_ADMIN : ROLE.ADMIN;
+  await admin.save();
+
+  return {
+    _id: admin._id,
+    name: admin.name,
+    email: admin.email,
+    phone: admin.phone,
+    role: admin.role,
+    isSuspended: admin.isSuspended,
+    image: admin.image || defaultUserImage,
+  };
+};
+
 const deleteAdminUserBySuperAdmin = async (id: string) => {
   const admin = await User.findById(id);
 
@@ -774,5 +801,6 @@ export const AdminService = {
   createAdminUserBySuperAdmin,
   getAllAdmins,
   getSingleAdmin,
+  updateAdminUserStatus,
   deleteAdminUserBySuperAdmin,
 };

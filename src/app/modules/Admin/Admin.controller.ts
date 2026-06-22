@@ -264,6 +264,20 @@ const getSingleAdmin = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const updateAdminUserStatus = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = await AdminService.updateAdminUserStatus(
+      req.params.id as string,
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      message: 'Admin user status updated successfully!',
+      data,
+    });
+  },
+);
+
 const deleteAdminUserBySuperAdmin = asyncHandler(
   async (req: Request, res: Response) => {
     const data = await AdminService.deleteAdminUserBySuperAdmin(
@@ -301,5 +315,6 @@ export const AdminController = {
   createAdminUserBySuperAdmin,
   getAllAdmins,
   getSingleAdmin,
+  updateAdminUserStatus,
   deleteAdminUserBySuperAdmin,
 };

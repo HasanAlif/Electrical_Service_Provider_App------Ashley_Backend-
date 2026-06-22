@@ -129,6 +129,10 @@ router
   .get(auth(ROLE.SUPER_ADMIN), AdminController.getAllAdmins);
 
 router
+  .route('/:id/status')
+  .patch(auth(ROLE.SUPER_ADMIN), AdminController.updateAdminUserStatus);
+
+router
   .route('/:id')
   .get(auth(ROLE.SUPER_ADMIN), AdminController.getSingleAdmin)
   .delete(auth(ROLE.SUPER_ADMIN), AdminController.deleteAdminUserBySuperAdmin);

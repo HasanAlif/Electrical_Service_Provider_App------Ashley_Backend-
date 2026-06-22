@@ -116,4 +116,12 @@ router
   .route('/profile')
   .get(auth(ROLE.ADMIN, ROLE.SUPER_ADMIN), AdminController.getAdminProfile);
 
+router
+  .route('/create-admin')
+  .post(
+    auth(ROLE.SUPER_ADMIN),
+    validateRequest(AdminValidation.createAdminUserSchema),
+    AdminController.createAdminUserBySuperAdmin,
+  );
+
 export const AdminRoutes = router;

@@ -116,4 +116,21 @@ export const AdminValidation = {
         .max(20, { message: 'New password cannot exceed 20 characters!' }),
     }),
   }),
+
+  createAdminUserSchema: z.object({
+    body: z.object({
+      firstName: z.string({ error: 'First name is required!' }).trim().min(1),
+      lastName: z.string({ error: 'Last name is required!' }).trim().min(1),
+      phone: z.string({ error: 'Phone is required!' }).trim().min(1),
+      email: z
+        .string({ error: 'Email is required!' })
+        .email({ message: 'Invalid email format!' })
+        .transform(e => e.toLowerCase()),
+      password: z
+        .string({ error: 'Password is required!' })
+        .min(8, { message: 'Password must be at least 8 characters long!' })
+        .max(20, { message: 'Password cannot exceed 20 characters!' }),
+      image: z.string().trim().optional(),
+    }),
+  }),
 };

@@ -16,6 +16,8 @@ export interface IUser extends Document {
   _id: Types.ObjectId;
 
   name: string;
+  firstName?: string;
+  lastName?: string;
   address: string;
   phone: string;
   image: string;
@@ -35,6 +37,7 @@ export interface IUser extends Document {
 
   role: TRole;
   isActive: boolean;
+  isSuspended: boolean;
   isDeleted: boolean;
   deactivationReason?: string;
 

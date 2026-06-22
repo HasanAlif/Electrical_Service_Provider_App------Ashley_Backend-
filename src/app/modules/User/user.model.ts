@@ -26,6 +26,14 @@ const userSchema = new Schema<IUser, IUserModel>(
       trim: true,
       required: [true, 'Name is required!'],
     },
+    firstName: {
+      type: String,
+      trim: true,
+    },
+    lastName: {
+      type: String,
+      trim: true,
+    },
     address: {
       type: String,
       trim: true,
@@ -97,6 +105,10 @@ const userSchema = new Schema<IUser, IUserModel>(
     isActive: {
       type: Boolean,
       default: true,
+    },
+    isSuspended: {
+      type: Boolean,
+      default: false,
     },
     isDeleted: {
       type: Boolean,

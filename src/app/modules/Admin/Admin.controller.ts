@@ -229,6 +229,18 @@ const getAdminProfile = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const createAdminUserBySuperAdmin = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = await AdminService.createAdminUserBySuperAdmin(req.body);
+
+    sendResponse(res, {
+      statusCode: httpStatus.CREATED,
+      message: 'Admin user created successfully!',
+      data,
+    });
+  },
+);
+
 export const AdminController = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -249,4 +261,5 @@ export const AdminController = {
   searchPartnersByNameOrCategory,
   changePassword,
   getAdminProfile,
+  createAdminUserBySuperAdmin,
 };

@@ -4,6 +4,7 @@ import { TUserAddress } from './user.interface';
 export const ROLE = {
   USER: 'USER',
   ADMIN: 'ADMIN',
+  SUSPENDED_ADMIN: 'SUSPENDED_ADMIN',
   SUPER_ADMIN: 'SUPER_ADMIN',
 } as const;
 

@@ -24,7 +24,7 @@ import PartnerModel from './Partner.model';
 import User from '../User/user.model';
 import { IUser } from '../User/user.interface';
 import { createAccessToken, createRefreshToken } from '../../lib';
-import { defaultUserImage } from '../User/user.constant';
+import { defaultUserImage, ROLE, AUTH_PROVIDER } from '../User/user.constant';
 
 type QuoteRow = {
   _id: unknown;
@@ -652,6 +652,45 @@ const getAdminProfile = async (userData: IUser) => {
   };
 };
 
+const createAdminUserBySuperAdmin = async (payload: {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  password: string;
+  image?: string;
+}) => {
+  const exists = await User.findOne({ email: payload.email });
+  if (exists) {
+    throw new AppError(httpStatus.CONFLICT, 'Email already exists!');
+  }
+
+  const user = await User.create({
+    firstName: payload.firstName,
+    lastName: payload.lastName,
+    name: `${payload.firstName} ${payload.lastName}`,
+    phone: payload.phone,
+    email: payload.email,
+    password: payload.password, // pre('save') hook hashes it
+    image: payload.image || defaultUserImage,
+    role: ROLE.ADMIN,
+    authProvider: AUTH_PROVIDER.EMAIL,
+    isVerifiedByOTP: true,
+  });
+
+  return {
+    _id: user._id,
+    name: user.name,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    phone: user.phone,
+    email: user.email,
+    image: user.image || defaultUserImage,
+    role: user.role,
+    isSuspended: user.isSuspended,
+  };
+};
+
 export const AdminService = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -672,4 +711,5 @@ export const AdminService = {
   searchPartnersByNameOrCategory,
   changePassword,
   getAdminProfile,
+  createAdminUserBySuperAdmin,
 };

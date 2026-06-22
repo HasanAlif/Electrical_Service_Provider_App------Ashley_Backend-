@@ -140,6 +140,13 @@ router
   );
 
 router
+  .route('/quote-submission-trend')
+  .get(
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    AdminController.quoteSubmissionTrend,
+  );
+
+router
   .route('/:id/status')
   .patch(auth(ROLE.SUPER_ADMIN), AdminController.updateAdminUserStatus);
 

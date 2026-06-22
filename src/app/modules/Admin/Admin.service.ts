@@ -856,6 +856,59 @@ const getQouteStatsOverview = async () => {
   };
 };
 
+const MONTH_ABBR = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
+const quoteSubmissionTrend = async () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth(); // 0-based
+  const monthStart = new Date(year, month, 1);
+  const nextMonthStart = new Date(year, month + 1, 1);
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const abbr = MONTH_ABBR[month];
+
+  // This month's non-draft quotes across every collection (createdAt only).
+  const rowsPerModel = await Promise.all(
+    quoteModels.map(model =>
+      model
+        .find({
+          status: { $ne: Service_STATUSES.DRAFT },
+          createdAt: { $gte: monthStart, $lt: nextMonthStart },
+        })
+        .select('createdAt')
+        .lean(),
+    ),
+  );
+  const rows = rowsPerModel.flat();
+
+  // Pre-seed every day of the month to 0, in ascending order.
+  const trend: Record<string, number> = {};
+  for (let day = 1; day <= daysInMonth; day++) {
+    trend[`${abbr}-${day}`] = 0;
+  }
+
+  rows.forEach(row => {
+    if (!row.createdAt) return;
+    const day = new Date(row.createdAt).getDate();
+    trend[`${abbr}-${day}`] += 1;
+  });
+
+  return trend;
+};
+
 export const AdminService = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -883,4 +936,5 @@ export const AdminService = {
   deleteAdminUserBySuperAdmin,
   getDashboardStats,
   getQouteStatsOverview,
+  quoteSubmissionTrend,
 };

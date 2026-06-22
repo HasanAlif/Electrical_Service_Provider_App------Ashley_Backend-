@@ -314,6 +314,18 @@ const getQouteStatsOverview = asyncHandler(
   },
 );
 
+const quoteSubmissionTrend = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = await AdminService.quoteSubmissionTrend();
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      message: 'Quote submission trend retrieved successfully!',
+      data,
+    });
+  },
+);
+
 export const AdminController = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -341,4 +353,5 @@ export const AdminController = {
   deleteAdminUserBySuperAdmin,
   getDashboardStats,
   getQouteStatsOverview,
+  quoteSubmissionTrend,
 };

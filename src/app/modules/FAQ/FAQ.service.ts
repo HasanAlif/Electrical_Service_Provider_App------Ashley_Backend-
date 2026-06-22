@@ -1,6 +1,7 @@
 import httpStatus from 'http-status';
 import { AppError } from '../../utils';
 import FAQModel from './FAQ.model';
+import { AppContent, ContentType } from './appContent.model';
 
 type TFAQPayload = {
   question: string;
@@ -48,10 +49,44 @@ const deleteFAQ = async (id: string) => {
   return faq;
 };
 
+const getContentTypeName = (type: ContentType): string => {
+  const typeNames: Record<ContentType, string> = {
+    [ContentType.PRIVACY_POLICY]: 'Privacy Policy',
+    [ContentType.TERMS_AND_CONDITIONS]: 'Terms and Conditions',
+  };
+  return typeNames[type] || type;
+};
+
+const createOrUpdateContent = async (type: ContentType, content: string) => {
+  const result = await AppContent.findOneAndUpdate(
+    { type },
+    { content },
+    { new: true, upsert: true, runValidators: true },
+  );
+  return result;
+};
+
+const getContentByType = async (type: ContentType) => {
+  const result = await AppContent.findOne({ type });
+  if (!result) {
+    return {
+      _id: null,
+      type,
+      content: '',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+  }
+  return result;
+};
+
 export const FAQService = {
   createFAQ,
   getAllFAQs,
   getSingleFAQ,
   updateFAQ,
   deleteFAQ,
+  getContentTypeName,
+  createOrUpdateContent,
+  getContentByType,
 };

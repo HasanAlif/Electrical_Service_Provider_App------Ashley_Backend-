@@ -2,6 +2,7 @@ import httpStatus from 'http-status';
 import { Request, Response } from 'express';
 import { asyncHandler, sendResponse } from '../../utils';
 import { FAQService } from './FAQ.service';
+import { ContentType } from './appContent.model';
 
 const createFAQ = asyncHandler(async (req: Request, res: Response) => {
   const data = await FAQService.createFAQ(req.body);
@@ -53,10 +54,51 @@ const deleteFAQ = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const getContentTypeName = (type: string): string => {
+  const typeNames: Record<string, string> = {
+    [ContentType.PRIVACY_POLICY]: 'Privacy Policy',
+    [ContentType.TERMS_AND_CONDITIONS]: 'Terms and Conditions',
+  };
+  return typeNames[type] || type;
+};
+
+const createOrUpdateContent = asyncHandler(
+  async (req: Request, res: Response) => {
+    const type = req.params.type as ContentType;
+    const { content } = req.body;
+    const result = await FAQService.createOrUpdateContent(type, content);
+
+    const contentTypeName = getContentTypeName(type);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      message: `${contentTypeName} updated successfully`,
+      data: result,
+    });
+  },
+);
+
+const getContentByType = asyncHandler(async (req: Request, res: Response) => {
+  const type = req.params.type as ContentType;
+  const result = await FAQService.getContentByType(type);
+
+  const contentTypeName = getContentTypeName(type);
+  const message = result._id
+    ? `${contentTypeName} retrieved successfully`
+    : `${contentTypeName} not yet created`;
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message,
+    data: result,
+  });
+});
+
 export const FAQController = {
   createFAQ,
   getAllFAQs,
   getSingleFAQ,
   updateFAQ,
   deleteFAQ,
+  createOrUpdateContent,
+  getContentByType,
 };

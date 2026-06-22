@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ContentType } from './appContent.model';
 
 export const FAQValidation = {
   createSchema: z.object({
@@ -21,6 +22,21 @@ export const FAQValidation = {
         data => data.question !== undefined || data.answer !== undefined,
         { message: 'Provide a question or answer to update!' },
       ),
+  }),
+
+  updateAppContentSchema: z.object({
+    body: z.object({
+      content: z
+        .string({ error: 'Content is required!' })
+        .trim()
+        .min(1, 'Content cannot be empty!'),
+    }),
+    params: z.object({
+      type: z.enum(
+        [ContentType.PRIVACY_POLICY, ContentType.TERMS_AND_CONDITIONS],
+        { error: 'Invalid content type!' },
+      ),
+    }),
   }),
 
   idParamsSchema: z.object({

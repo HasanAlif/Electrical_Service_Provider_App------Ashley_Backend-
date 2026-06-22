@@ -22,6 +22,7 @@ import { CellingFansRoutes } from '../modules/CellingFans/CellingFans.routes';
 import { DraftRoutes } from '../modules/Draft/Draft.routes';
 import { AdminRoutes } from '../modules/Admin/Admin.routes';
 import { FAQRoutes } from '../modules/FAQ/FAQ.routes';
+import { appContentRoutes } from '../modules/FAQ/appContent.route';
 
 const router = Router();
 
@@ -117,6 +118,10 @@ const moduleRoutes = [
   {
     path: '/faqs',
     route: FAQRoutes,
+  },
+  {
+    path: '/app-content',
+    route: appContentRoutes,
   },
 ];
 

@@ -821,6 +821,41 @@ const getDashboardStats = async () => {
   };
 };
 
+const getQouteStatsOverview = async () => {
+  const rowsPerModel = await Promise.all(
+    quoteModels.map(model =>
+      model
+        .find({ status: { $ne: Service_STATUSES.DRAFT } })
+        .select('status')
+        .lean(),
+    ),
+  );
+  const rows = rowsPerModel.flat();
+  const total = rows.length;
+
+  let pending = 0;
+  let inReview = 0;
+  let contacted = 0;
+  let closed = 0;
+
+  rows.forEach(row => {
+    if (row.status === Service_STATUSES.PENDING) pending += 1;
+    else if (row.status === Service_STATUSES.IN_REVIEW) inReview += 1;
+    else if (row.status === Service_STATUSES.SEND) contacted += 1;
+    else if (row.status === Service_STATUSES.CLOSED) closed += 1;
+  });
+
+  // Each status as a whole-number percentage of all non-draft quotes.
+  const pct = (n: number) => (total === 0 ? 0 : Math.round((n / total) * 100));
+
+  return {
+    Pending: pct(pending),
+    'In Review': pct(inReview),
+    Contacted: pct(contacted),
+    Closed: pct(closed),
+  };
+};
+
 export const AdminService = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -847,4 +882,5 @@ export const AdminService = {
   updateAdminUserStatus,
   deleteAdminUserBySuperAdmin,
   getDashboardStats,
+  getQouteStatsOverview,
 };

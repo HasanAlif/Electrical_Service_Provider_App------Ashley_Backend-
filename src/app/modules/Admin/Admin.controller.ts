@@ -302,6 +302,18 @@ const getDashboardStats = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const getQouteStatsOverview = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = await AdminService.getQouteStatsOverview();
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      message: 'Quote stats overview retrieved successfully!',
+      data,
+    });
+  },
+);
+
 export const AdminController = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -328,4 +340,5 @@ export const AdminController = {
   updateAdminUserStatus,
   deleteAdminUserBySuperAdmin,
   getDashboardStats,
+  getQouteStatsOverview,
 };

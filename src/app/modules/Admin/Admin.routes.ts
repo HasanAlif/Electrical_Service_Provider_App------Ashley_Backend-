@@ -133,6 +133,13 @@ router
   .get(auth(ROLE.ADMIN, ROLE.SUPER_ADMIN), AdminController.getDashboardStats);
 
 router
+  .route('/quote-status-overview')
+  .get(
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    AdminController.getQouteStatsOverview,
+  );
+
+router
   .route('/:id/status')
   .patch(auth(ROLE.SUPER_ADMIN), AdminController.updateAdminUserStatus);
 

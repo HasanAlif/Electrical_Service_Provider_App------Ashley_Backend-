@@ -635,6 +635,23 @@ const changePassword = async (
   };
 };
 
+const getAdminProfile = async (userData: IUser) => {
+  const user = await User.findById(userData._id);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not exists!');
+  }
+
+  return {
+    name: user.name,
+    address: user.address,
+    phone: user.phone,
+    email: user.email,
+    image: user.image || defaultUserImage,
+    role: user.role,
+  };
+};
+
 export const AdminService = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -654,4 +671,5 @@ export const AdminService = {
   deletePartner,
   searchPartnersByNameOrCategory,
   changePassword,
+  getAdminProfile,
 };

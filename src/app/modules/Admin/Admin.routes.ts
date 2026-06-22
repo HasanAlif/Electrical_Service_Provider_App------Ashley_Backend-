@@ -112,4 +112,8 @@ router
     AdminController.changePassword,
   );
 
+router
+  .route('/profile')
+  .get(auth(ROLE.ADMIN, ROLE.SUPER_ADMIN), AdminController.getAdminProfile);
+
 export const AdminRoutes = router;

@@ -219,6 +219,16 @@ const changePassword = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const getAdminProfile = asyncHandler(async (req: Request, res: Response) => {
+  const data = await AdminService.getAdminProfile(req.user);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Admin profile retrieved successfully!',
+    data,
+  });
+});
+
 export const AdminController = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -238,4 +248,5 @@ export const AdminController = {
   deletePartner,
   searchPartnersByNameOrCategory,
   changePassword,
+  getAdminProfile,
 };

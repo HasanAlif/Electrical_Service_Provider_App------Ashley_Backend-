@@ -128,4 +128,8 @@ router
   .route('/all-admins')
   .get(auth(ROLE.SUPER_ADMIN), AdminController.getAllAdmins);
 
+router
+  .route('/:id')
+  .get(auth(ROLE.SUPER_ADMIN), AdminController.getSingleAdmin);
+
 export const AdminRoutes = router;

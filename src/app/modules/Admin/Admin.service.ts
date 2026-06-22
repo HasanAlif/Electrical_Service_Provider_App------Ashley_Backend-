@@ -721,6 +721,18 @@ const getAllAdmins = async (status?: string) => {
   return { meta: { activeAdmin, suspendedAdmin }, data };
 };
 
+const getSingleAdmin = async (id: string) => {
+  const admin = await User.findById(id)
+    .select('name email phone createdAt role isSuspended image')
+    .lean();
+
+  if (!admin || (admin.role !== ROLE.ADMIN && admin.role !== ROLE.SUSPENDED_ADMIN)) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Admin user not found!');
+  }
+
+  return admin;
+};
+
 export const AdminService = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -743,4 +755,5 @@ export const AdminService = {
   getAdminProfile,
   createAdminUserBySuperAdmin,
   getAllAdmins,
+  getSingleAdmin,
 };

@@ -254,6 +254,16 @@ const getAllAdmins = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const getSingleAdmin = asyncHandler(async (req: Request, res: Response) => {
+  const data = await AdminService.getSingleAdmin(req.params.id as string);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Admin user retrieved successfully!',
+    data,
+  });
+});
+
 export const AdminController = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -276,4 +286,5 @@ export const AdminController = {
   getAdminProfile,
   createAdminUserBySuperAdmin,
   getAllAdmins,
+  getSingleAdmin,
 };

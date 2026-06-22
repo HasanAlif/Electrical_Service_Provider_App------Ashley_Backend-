@@ -726,11 +726,29 @@ const getSingleAdmin = async (id: string) => {
     .select('name email phone createdAt role isSuspended image')
     .lean();
 
-  if (!admin || (admin.role !== ROLE.ADMIN && admin.role !== ROLE.SUSPENDED_ADMIN)) {
+  if (
+    !admin ||
+    (admin.role !== ROLE.ADMIN && admin.role !== ROLE.SUSPENDED_ADMIN)
+  ) {
     throw new AppError(httpStatus.NOT_FOUND, 'Admin user not found!');
   }
 
   return admin;
+};
+
+const deleteAdminUserBySuperAdmin = async (id: string) => {
+  const admin = await User.findById(id);
+
+  if (
+    !admin ||
+    (admin.role !== ROLE.ADMIN && admin.role !== ROLE.SUSPENDED_ADMIN)
+  ) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Admin user not found!');
+  }
+
+  await admin.deleteOne();
+
+  return { message: 'Admin user deleted successfully!' };
 };
 
 export const AdminService = {
@@ -756,4 +774,5 @@ export const AdminService = {
   createAdminUserBySuperAdmin,
   getAllAdmins,
   getSingleAdmin,
+  deleteAdminUserBySuperAdmin,
 };

@@ -264,6 +264,20 @@ const getSingleAdmin = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const deleteAdminUserBySuperAdmin = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = await AdminService.deleteAdminUserBySuperAdmin(
+      req.params.id as string,
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      message: 'Admin user deleted successfully!',
+      data,
+    });
+  },
+);
+
 export const AdminController = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -287,4 +301,5 @@ export const AdminController = {
   createAdminUserBySuperAdmin,
   getAllAdmins,
   getSingleAdmin,
+  deleteAdminUserBySuperAdmin,
 };

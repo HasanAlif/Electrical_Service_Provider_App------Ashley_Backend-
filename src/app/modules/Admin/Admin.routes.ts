@@ -130,6 +130,7 @@ router
 
 router
   .route('/:id')
-  .get(auth(ROLE.SUPER_ADMIN), AdminController.getSingleAdmin);
+  .get(auth(ROLE.SUPER_ADMIN), AdminController.getSingleAdmin)
+  .delete(auth(ROLE.SUPER_ADMIN), AdminController.deleteAdminUserBySuperAdmin);
 
 export const AdminRoutes = router;

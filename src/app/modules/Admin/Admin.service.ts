@@ -21,6 +21,10 @@ import StarlinkModel from '../Starlink/Starlink.model';
 import SwitchesModel from '../Switches/Switches.model';
 import CategoryModel from './Category.model';
 import PartnerModel from './Partner.model';
+import User from '../User/user.model';
+import { IUser } from '../User/user.interface';
+import { createAccessToken, createRefreshToken } from '../../lib';
+import { defaultUserImage } from '../User/user.constant';
 
 type QuoteRow = {
   _id: unknown;
@@ -578,6 +582,59 @@ const searchPartnersByNameOrCategory = async (
     .map(item => item.partner);
 };
 
+const changePassword = async (
+  userData: IUser,
+  payload: { oldPassword: string; newPassword: string },
+) => {
+  const { oldPassword, newPassword } = payload;
+
+  // Select password to use the isPasswordMatched method.
+  const user = await User.findOne({
+    _id: userData._id,
+    isActive: true,
+  }).select('+password');
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not exists!');
+  }
+
+  const isCredentialsCorrect = await user.isPasswordMatched(oldPassword);
+  if (!isCredentialsCorrect) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Current password is not correct!',
+    );
+  }
+
+  if (oldPassword === newPassword) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'New password must be different!',
+    );
+  }
+
+  user.password = newPassword;
+  // Set 5 seconds earlier to avoid the isJWTIssuedBeforePasswordChanged race.
+  user.passwordChangedAt = new Date(Date.now() - 5000);
+  await user.save(); // pre('save') hook hashes the new password
+
+  const accessTokenPayload = {
+    _id: user._id.toString(),
+    name: user.name,
+    address: user.address,
+    phone: user.phone,
+    email: user.email,
+    image: user.image || defaultUserImage,
+    role: user.role,
+  };
+
+  return {
+    accessToken: createAccessToken(accessTokenPayload),
+    refreshToken: createRefreshToken({ email: user.email }),
+    user: accessTokenPayload,
+  };
+};
+
 export const AdminService = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -596,4 +653,5 @@ export const AdminService = {
   updatePartner,
   deletePartner,
   searchPartnersByNameOrCategory,
+  changePassword,
 };

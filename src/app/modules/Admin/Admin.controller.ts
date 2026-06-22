@@ -209,6 +209,16 @@ const searchPartnersByNameOrCategory = asyncHandler(
   },
 );
 
+const changePassword = asyncHandler(async (req: Request, res: Response) => {
+  const data = await AdminService.changePassword(req.user, req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Password changed successfully!',
+    data,
+  });
+});
+
 export const AdminController = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -227,4 +237,5 @@ export const AdminController = {
   updatePartner,
   deletePartner,
   searchPartnersByNameOrCategory,
+  changePassword,
 };

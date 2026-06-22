@@ -104,4 +104,12 @@ router
     AdminController.deletePartner,
   );
 
+router
+  .route('/change-password')
+  .patch(
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    validateRequest(AdminValidation.changePasswordSchema),
+    AdminController.changePassword,
+  );
+
 export const AdminRoutes = router;

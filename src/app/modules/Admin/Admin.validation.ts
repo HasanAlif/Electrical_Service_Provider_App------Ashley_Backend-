@@ -103,4 +103,17 @@ export const AdminValidation = {
       id: z.string({ error: 'Partner ID is required!' }).min(1),
     }),
   }),
+
+  changePasswordSchema: z.object({
+    body: z.object({
+      oldPassword: z
+        .string({ error: 'Old password is required!' })
+        .min(8, { message: 'Old password must be at least 8 characters long!' })
+        .max(20, { message: 'Old password cannot exceed 20 characters!' }),
+      newPassword: z
+        .string({ error: 'New password is required!' })
+        .min(8, { message: 'New password must be at least 8 characters long!' })
+        .max(20, { message: 'New password cannot exceed 20 characters!' }),
+    }),
+  }),
 };

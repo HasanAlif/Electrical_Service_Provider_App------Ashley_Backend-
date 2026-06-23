@@ -168,6 +168,13 @@ router
   );
 
 router
+  .route('/recent-partners-updates')
+  .get(
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    AdminController.recentPartnersUpdates,
+  );
+
+router
   .route('/:id/status')
   .patch(auth(ROLE.SUPER_ADMIN), AdminController.updateAdminUserStatus);
 

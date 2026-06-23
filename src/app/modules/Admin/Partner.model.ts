@@ -8,6 +8,10 @@ export interface IPartner extends Document {
   description?: string;
   isVerified: boolean;
   isActive: boolean;
+  lastChange?: {
+    changeType: 'created' | 'updated';
+    fields: string[];
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -44,6 +48,11 @@ const PartnerSchema = new Schema<IPartner>(
     isActive: {
       type: Boolean,
       default: true,
+    },
+    // Tracks the most recent change so the recent-updates feed can describe it.
+    lastChange: {
+      changeType: { type: String, enum: ['created', 'updated'] },
+      fields: { type: [String], default: [] },
     },
   },
   {

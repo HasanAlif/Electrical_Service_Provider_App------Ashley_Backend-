@@ -456,8 +456,22 @@ const createPartner = async (payload: TPartnerPayload) => {
     );
   }
 
-  return PartnerModel.create(payload);
+  return PartnerModel.create({
+    ...payload,
+    lastChange: { changeType: 'created', fields: [] },
+  });
 };
+
+// Partner fields whose changes are surfaced in the recent-updates feed.
+const TRACKED_PARTNER_FIELDS: (keyof TPartnerPayload)[] = [
+  'companyName',
+  'category',
+  'description',
+  'phoneNumber',
+  'websiteUrl',
+  'isVerified',
+  'isActive',
+];
 
 const getAllPartner = async () => {
   return PartnerModel.find().sort({ createdAt: -1 });
@@ -478,6 +492,11 @@ const updatePartner = async (id: string, payload: Partial<TPartnerPayload>) => {
     await assertCategoryExists(payload.category);
   }
 
+  const existing = await PartnerModel.findById(id).lean();
+  if (!existing) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Partner not found!');
+  }
+
   // Guard the unique companyName (returns a clean 409 instead of the global 400).
   if (payload.companyName !== undefined) {
     const dup = await PartnerModel.findOne({
@@ -492,10 +511,21 @@ const updatePartner = async (id: string, payload: Partial<TPartnerPayload>) => {
     }
   }
 
-  const partner = await PartnerModel.findByIdAndUpdate(id, payload, {
-    new: true,
-    runValidators: true,
-  });
+  // Which tracked fields the payload actually changes (for the recent-updates feed).
+  const existingValues = existing as unknown as Record<string, unknown>;
+  const changedFields = TRACKED_PARTNER_FIELDS.filter(
+    field =>
+      payload[field] !== undefined && payload[field] !== existingValues[field],
+  );
+
+  const partner = await PartnerModel.findByIdAndUpdate(
+    id,
+    {
+      ...payload,
+      lastChange: { changeType: 'updated', fields: changedFields },
+    },
+    { new: true, runValidators: true },
+  );
 
   if (!partner) {
     throw new AppError(httpStatus.NOT_FOUND, 'Partner not found!');
@@ -988,6 +1018,92 @@ const partnerVerificationStats = async () => {
   };
 };
 
+const MONTH_FULL = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
+// Friendly label for a single changed partner field (booleans handled separately).
+const PARTNER_FIELD_LABELS: Record<string, string> = {
+  phoneNumber: 'Phone number updated',
+  websiteUrl: 'Website updated',
+  description: 'Description updated',
+  category: 'Category changed',
+  companyName: 'Company name updated',
+};
+
+type RecentPartnerRow = {
+  companyName: string;
+  isVerified: boolean;
+  isActive: boolean;
+  lastChange?: { changeType?: 'created' | 'updated'; fields?: string[] };
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+// Short, user-friendly summary of a partner's most recent change.
+const buildPartnerUpdateMessage = (partner: RecentPartnerRow) => {
+  const change = partner.lastChange;
+
+  // Legacy rows (updated before change-tracking existed): infer from timestamps.
+  if (!change || !change.changeType) {
+    const isNew =
+      Math.abs(
+        new Date(partner.updatedAt).getTime() -
+          new Date(partner.createdAt).getTime(),
+      ) < 2000;
+    return isNew ? 'Newly added partner' : 'Profile updated';
+  }
+
+  if (change.changeType === 'created') {
+    return 'Newly added partner';
+  }
+
+  const fields = change.fields ?? [];
+  if (fields.length === 0) return 'Profile updated';
+  if (fields.length > 1) return 'Profile details updated';
+
+  // A single field changed — the current value equals what this update set.
+  const field = fields[0];
+  if (field === 'isVerified') {
+    return partner.isVerified ? 'Marked as verified' : 'Verification removed';
+  }
+  if (field === 'isActive') {
+    return partner.isActive ? 'Partner activated' : 'Partner deactivated';
+  }
+  return PARTNER_FIELD_LABELS[field] ?? 'Profile updated';
+};
+
+const recentPartnersUpdates = async () => {
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+  const partners = await PartnerModel.find({
+    updatedAt: { $gte: sevenDaysAgo },
+  })
+    .select('companyName isVerified isActive lastChange createdAt updatedAt')
+    .sort({ updatedAt: -1 })
+    .lean<RecentPartnerRow[]>();
+
+  return partners.map(partner => {
+    const updated = new Date(partner.updatedAt);
+    return {
+      companyName: partner.companyName,
+      Updated: buildPartnerUpdateMessage(partner),
+      updatedAt: `${updated.getDate()}-${MONTH_FULL[updated.getMonth()]}`,
+    };
+  });
+};
+
 export const AdminService = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -1018,4 +1134,5 @@ export const AdminService = {
   quoteSubmissionTrend,
   serviceTypeDistribution,
   partnerVerificationStats,
+  recentPartnersUpdates,
 };

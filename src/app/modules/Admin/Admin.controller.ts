@@ -350,6 +350,18 @@ const partnerVerificationStats = asyncHandler(
   },
 );
 
+const recentPartnersUpdates = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = await AdminService.recentPartnersUpdates();
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      message: 'Recent partners updates retrieved successfully!',
+      data,
+    });
+  },
+);
+
 export const AdminController = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -380,4 +392,5 @@ export const AdminController = {
   quoteSubmissionTrend,
   serviceTypeDistribution,
   partnerVerificationStats,
+  recentPartnersUpdates,
 };

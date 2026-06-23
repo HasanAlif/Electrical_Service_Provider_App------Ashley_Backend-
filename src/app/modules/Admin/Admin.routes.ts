@@ -161,6 +161,13 @@ router
   );
 
 router
+  .route('/top-performing-service')
+  .get(
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    AdminController.serviceTypeDistribution,
+  );
+
+router
   .route('/:id/status')
   .patch(auth(ROLE.SUPER_ADMIN), AdminController.updateAdminUserStatus);
 

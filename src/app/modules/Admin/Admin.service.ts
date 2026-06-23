@@ -960,6 +960,34 @@ const serviceTypeDistribution = async () => {
   return result;
 };
 
+const partnerVerificationStats = async () => {
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+  const [totalPartners, verifiedPartners, recentlyUpdated] = await Promise.all([
+    PartnerModel.countDocuments(),
+    PartnerModel.countDocuments({ isVerified: true }),
+    PartnerModel.countDocuments({ updatedAt: { $gte: sevenDaysAgo } }),
+  ]);
+
+  const unverifiedPartners = totalPartners - verifiedPartners;
+
+  // Verified share of all partners; unverified takes the remainder so they total 100%.
+  const percentageOfverifiedPartners =
+    totalPartners === 0
+      ? 0
+      : Math.round((verifiedPartners / totalPartners) * 100);
+  const percentageOfunVerifiedPartners =
+    totalPartners === 0 ? 0 : 100 - percentageOfverifiedPartners;
+
+  return {
+    verifiedPartners,
+    percentageOfverifiedPartners,
+    unverifiedPartners,
+    percentageOfunVerifiedPartners,
+    // recentlyUpdated,
+  };
+};
+
 export const AdminService = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -989,4 +1017,5 @@ export const AdminService = {
   getQouteStatsOverview,
   quoteSubmissionTrend,
   serviceTypeDistribution,
+  partnerVerificationStats,
 };

@@ -338,6 +338,18 @@ const serviceTypeDistribution = asyncHandler(
   },
 );
 
+const partnerVerificationStats = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = await AdminService.partnerVerificationStats();
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      message: 'Partner verification stats retrieved successfully!',
+      data,
+    });
+  },
+);
+
 export const AdminController = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -367,4 +379,5 @@ export const AdminController = {
   getQouteStatsOverview,
   quoteSubmissionTrend,
   serviceTypeDistribution,
+  partnerVerificationStats,
 };

@@ -154,6 +154,13 @@ router
   );
 
 router
+  .route('/partner-verification-stats')
+  .get(
+    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    AdminController.partnerVerificationStats,
+  );
+
+router
   .route('/:id/status')
   .patch(auth(ROLE.SUPER_ADMIN), AdminController.updateAdminUserStatus);
 

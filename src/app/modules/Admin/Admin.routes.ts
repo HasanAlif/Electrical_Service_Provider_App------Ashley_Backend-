@@ -175,6 +175,10 @@ router
   );
 
 router
+  .route('/admin-action-summary')
+  .get(auth(ROLE.ADMIN, ROLE.SUPER_ADMIN), AdminController.adminActionSummary);
+
+router
   .route('/:id/status')
   .patch(auth(ROLE.SUPER_ADMIN), AdminController.updateAdminUserStatus);
 

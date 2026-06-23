@@ -21,6 +21,7 @@ import StarlinkModel from '../Starlink/Starlink.model';
 import SwitchesModel from '../Switches/Switches.model';
 import CategoryModel from './Category.model';
 import PartnerModel from './Partner.model';
+import FAQModel from '../FAQ/FAQ.model';
 import User from '../User/user.model';
 import { IUser } from '../User/user.interface';
 import { createAccessToken, createRefreshToken } from '../../lib';
@@ -1104,6 +1105,42 @@ const recentPartnersUpdates = async () => {
   });
 };
 
+const adminActionSummary = async () => {
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+  // Quotes needing follow-up: every non-draft quote that isn't closed.
+  const followUpRowsPerModel = await Promise.all(
+    quoteModels.map(model =>
+      model
+        .find({
+          status: { $nin: [Service_STATUSES.DRAFT, Service_STATUSES.CLOSED] },
+        })
+        .select('status')
+        .lean(),
+    ),
+  );
+  const QuotesNeedsFollowUp = followUpRowsPerModel.flat().length;
+
+  const [partnersAwaitingVerification, faqCreated, faqEdited] =
+    await Promise.all([
+      PartnerModel.countDocuments({ isVerified: false }),
+      FAQModel.countDocuments({ createdAt: { $gte: sevenDaysAgo } }),
+      FAQModel.countDocuments({
+        updatedAt: { $gte: sevenDaysAgo },
+        $expr: { $ne: ['$updatedAt', '$createdAt'] },
+      }),
+    ]);
+
+  // Each FAQ counts once for a recent creation and once for a recent edit.
+  const FAQItemsUpdates = faqCreated + faqEdited;
+
+  return {
+    QuotesNeedsFollowUp,
+    partnersAwaitingVerification,
+    FAQItemsUpdates,
+  };
+};
+
 export const AdminService = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -1135,4 +1172,5 @@ export const AdminService = {
   serviceTypeDistribution,
   partnerVerificationStats,
   recentPartnersUpdates,
+  adminActionSummary,
 };

@@ -362,6 +362,16 @@ const recentPartnersUpdates = asyncHandler(
   },
 );
 
+const adminActionSummary = asyncHandler(async (req: Request, res: Response) => {
+  const data = await AdminService.adminActionSummary();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Admin action summary retrieved successfully!',
+    data,
+  });
+});
+
 export const AdminController = {
   getAllQuotes,
   searchByNameQidOrEmail,
@@ -393,4 +403,5 @@ export const AdminController = {
   serviceTypeDistribution,
   partnerVerificationStats,
   recentPartnersUpdates,
+  adminActionSummary,
 };

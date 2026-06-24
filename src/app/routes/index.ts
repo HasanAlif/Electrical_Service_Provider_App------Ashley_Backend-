@@ -23,6 +23,7 @@ import { DraftRoutes } from '../modules/Draft/Draft.routes';
 import { AdminRoutes } from '../modules/Admin/Admin.routes';
 import { FAQRoutes } from '../modules/FAQ/FAQ.routes';
 import { appContentRoutes } from '../modules/FAQ/appContent.route';
+import { QuotesRoutes } from '../modules/Quotes/Quotes.routes';
 
 const router = Router();
 
@@ -122,6 +123,10 @@ const moduleRoutes = [
   {
     path: '/app-content',
     route: appContentRoutes,
+  },
+  {
+    path: '/quotes',
+    route: QuotesRoutes,
   },
 ];
 

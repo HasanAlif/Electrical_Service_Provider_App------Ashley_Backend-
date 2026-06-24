@@ -102,9 +102,13 @@ const buildStatusCounts = (rows: QuoteRow[]) => {
 type TGetAllQuotesFilters = {
   status?: string;
   serviceType?: string;
+  searchQuery?: string;
   page?: number;
   limit?: number;
 };
+
+const escapeRegex = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 const getQoutesCount = async () => {
   const rowsPerModel = await Promise.all(
@@ -149,18 +153,28 @@ const getQoutesCount = async () => {
 
 const getAllQuotes = async (filters: TGetAllQuotesFilters) => {
   const { status, serviceType } = filters;
+  const searchQuery = (filters.searchQuery ?? '').trim();
 
   const page = Number(filters.page) || 1;
   const limit = Number(filters.limit) || 10;
 
-  // Base set: all non-draft quotes (optionally narrowed by serviceType). Drafts
-  // are internal-only and never exposed through this endpoint.
+  // Base set: all non-draft quotes, optionally narrowed by serviceType and a
+  // name/qId/email search. Drafts are internal-only and never exposed here.
   const baseQuery: Record<string, unknown> = {
     status: { $ne: Service_STATUSES.DRAFT },
   };
 
   if (serviceType) {
     baseQuery.serviceType = serviceType;
+  }
+
+  if (searchQuery) {
+    const regex = { $regex: escapeRegex(searchQuery), $options: 'i' };
+    baseQuery.$or = [
+      { fullName: regex },
+      { qId: regex },
+      { emailAddress: regex },
+    ];
   }
 
   const quotesPerModel = await Promise.all(
@@ -173,85 +187,45 @@ const getAllQuotes = async (filters: TGetAllQuotesFilters) => {
   const statusCounts = buildStatusCounts(allQuotes);
 
   // The status filter only narrows the rows actually returned in `data`.
-  const filtered = (
-    status ? allQuotes.filter(q => q.status === status) : allQuotes
-  ).sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-  );
+  const matched = status
+    ? allQuotes.filter(q => q.status === status)
+    : allQuotes;
 
-  const total = filtered.length;
-  const totalPage = Math.ceil(total / limit);
-  const skip = (page - 1) * limit;
-  const data = filtered.slice(skip, skip + limit);
+  // With a search term → relevance rank (exact > starts-with > contains across
+  // name/qId/email), createdAt desc tiebreak. Without → newest first.
+  let sorted: QuoteRow[];
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    const fieldScore = (value?: string) => {
+      if (!value) return 0;
+      const v = value.toLowerCase();
+      if (v === q) return 3;
+      if (v.startsWith(q)) return 2;
+      if (v.includes(q)) return 1;
+      return 0;
+    };
 
-  return {
-    meta: { page, limit, total, totalPage, ...statusCounts },
-    data,
-  };
-};
-
-type TSearchQuotesFilters = {
-  searchQuery: string;
-  page?: number;
-  limit?: number;
-};
-
-const escapeRegex = (value: string) =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-const searchByNameQidOrEmail = async (filters: TSearchQuotesFilters) => {
-  const searchQuery = (filters.searchQuery ?? '').trim();
-
-  if (!searchQuery) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'searchQuery is required!');
+    sorted = matched
+      .map(row => ({
+        row,
+        score:
+          fieldScore(row.fullName) +
+          fieldScore(row.qId) +
+          fieldScore(row.emailAddress),
+      }))
+      .sort(
+        (a, b) =>
+          b.score - a.score ||
+          new Date(b.row.createdAt).getTime() -
+            new Date(a.row.createdAt).getTime(),
+      )
+      .map(item => item.row);
+  } else {
+    sorted = matched.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
   }
-
-  const page = Number(filters.page) || 1;
-  const limit = Number(filters.limit) || 10;
-
-  const regex = { $regex: escapeRegex(searchQuery), $options: 'i' };
-
-  const matchesPerModel = await Promise.all(
-    quoteModels.map(model =>
-      model
-        .find({
-          status: { $ne: Service_STATUSES.DRAFT },
-          $or: [{ fullName: regex }, { qId: regex }, { emailAddress: regex }],
-        })
-        .select(QUOTE_FIELDS)
-        .lean(),
-    ),
-  );
-
-  const results = matchesPerModel.flat();
-
-  const statusCounts = buildStatusCounts(results);
-
-  const q = searchQuery.toLowerCase();
-  const fieldScore = (value?: string) => {
-    if (!value) return 0;
-    const v = value.toLowerCase();
-    if (v === q) return 3;
-    if (v.startsWith(q)) return 2;
-    if (v.includes(q)) return 1;
-    return 0;
-  };
-
-  const scored = results.map(row => ({
-    row,
-    score:
-      fieldScore(row.fullName) +
-      fieldScore(row.qId) +
-      fieldScore(row.emailAddress),
-  }));
-
-  scored.sort(
-    (a, b) =>
-      b.score - a.score ||
-      new Date(b.row.createdAt).getTime() - new Date(a.row.createdAt).getTime(),
-  );
-
-  const sorted = scored.map(item => item.row);
 
   const total = sorted.length;
   const totalPage = Math.ceil(total / limit);
@@ -474,8 +448,70 @@ const TRACKED_PARTNER_FIELDS: (keyof TPartnerPayload)[] = [
   'isActive',
 ];
 
-const getAllPartner = async () => {
-  return PartnerModel.find().sort({ createdAt: -1 });
+type TPartnerListFilters = {
+  searchQuery?: string;
+  category?: string;
+  status?: string;
+};
+
+const getAllPartner = async (filters: TPartnerListFilters = {}) => {
+  const searchQuery = (filters.searchQuery ?? '').trim();
+  const category = (filters.category ?? '').trim();
+  const status = (filters.status ?? '').trim().toLowerCase();
+
+  // Filters: exact category, and status -> isVerified ('all' = no filter).
+  const mongoFilter: Record<string, unknown> = {};
+  if (category) {
+    mongoFilter.category = category;
+  }
+  if (status && status !== 'all') {
+    if (status !== 'verified' && status !== 'unverified') {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "status must be 'all', 'verified', or 'unverified'!",
+      );
+    }
+    mongoFilter.isVerified = status === 'verified';
+  }
+  if (searchQuery) {
+    const regex = { $regex: escapeRegex(searchQuery), $options: 'i' };
+    mongoFilter.$or = [{ companyName: regex }, { category: regex }];
+  }
+
+  const partners = await PartnerModel.find(mongoFilter).lean();
+
+  // No search term → filtered list, newest first (the original getAllPartner).
+  if (!searchQuery) {
+    return partners.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  }
+
+  // With a search term → relevance rank: exact (3) > starts-with (2) >
+  // contains (1), summed across the two searchable fields; createdAt desc tiebreak.
+  const q = searchQuery.toLowerCase();
+  const fieldScore = (value?: string) => {
+    if (!value) return 0;
+    const v = value.toLowerCase();
+    if (v === q) return 3;
+    if (v.startsWith(q)) return 2;
+    if (v.includes(q)) return 1;
+    return 0;
+  };
+
+  return partners
+    .map(partner => ({
+      partner,
+      score: fieldScore(partner.companyName) + fieldScore(partner.category),
+    }))
+    .sort(
+      (a, b) =>
+        b.score - a.score ||
+        new Date(b.partner.createdAt).getTime() -
+          new Date(a.partner.createdAt).getTime(),
+    )
+    .map(item => item.partner);
 };
 
 const getSinglePartner = async (id: string) => {
@@ -543,74 +579,6 @@ const deletePartner = async (id: string) => {
   }
 
   return partner;
-};
-
-type TPartnerSearchFilters = {
-  searchQuery?: string;
-  category?: string;
-  status?: string;
-};
-
-const searchPartnersByNameOrCategory = async (
-  filters: TPartnerSearchFilters,
-) => {
-  const searchQuery = (filters.searchQuery ?? '').trim();
-  const category = (filters.category ?? '').trim();
-  const status = (filters.status ?? '').trim().toLowerCase();
-
-  // Filters: exact category, and status -> isVerified ('all' = no filter).
-  const mongoFilter: Record<string, unknown> = {};
-  if (category) {
-    mongoFilter.category = category;
-  }
-  if (status && status !== 'all') {
-    if (status !== 'verified' && status !== 'unverified') {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        "status must be 'all', 'verified', or 'unverified'!",
-      );
-    }
-    mongoFilter.isVerified = status === 'verified';
-  }
-  if (searchQuery) {
-    const regex = { $regex: escapeRegex(searchQuery), $options: 'i' };
-    mongoFilter.$or = [{ companyName: regex }, { category: regex }];
-  }
-
-  const partners = await PartnerModel.find(mongoFilter).lean();
-
-  // No search term → filtered list, newest first (like getAllPartner).
-  if (!searchQuery) {
-    return partners.sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-    );
-  }
-
-  // With a search term → relevance rank: exact (3) > starts-with (2) >
-  // contains (1), summed across the two searchable fields; createdAt desc tiebreak.
-  const q = searchQuery.toLowerCase();
-  const fieldScore = (value?: string) => {
-    if (!value) return 0;
-    const v = value.toLowerCase();
-    if (v === q) return 3;
-    if (v.startsWith(q)) return 2;
-    if (v.includes(q)) return 1;
-    return 0;
-  };
-
-  return partners
-    .map(partner => ({
-      partner,
-      score: fieldScore(partner.companyName) + fieldScore(partner.category),
-    }))
-    .sort(
-      (a, b) =>
-        b.score - a.score ||
-        new Date(b.partner.createdAt).getTime() -
-          new Date(a.partner.createdAt).getTime(),
-    )
-    .map(item => item.partner);
 };
 
 const changePassword = async (
@@ -1143,7 +1111,6 @@ const adminActionSummary = async () => {
 
 export const AdminService = {
   getAllQuotes,
-  searchByNameQidOrEmail,
   getSingleQuote,
   updateQuoteStatus,
   getQouteForUpdate,
@@ -1158,7 +1125,6 @@ export const AdminService = {
   getSinglePartner,
   updatePartner,
   deletePartner,
-  searchPartnersByNameOrCategory,
   changePassword,
   getAdminProfile,
   createAdminUserBySuperAdmin,

@@ -145,7 +145,8 @@ const SwitchesSchema = new Schema<ISwitches>(
       default: [],
     },
     typeOfSwitchesNeeded: {
-      type: String,
+      type: [String],
+      default: [],
       trim: true,
     },
     additionalInformation: {

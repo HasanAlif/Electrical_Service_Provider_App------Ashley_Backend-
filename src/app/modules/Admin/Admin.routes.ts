@@ -10,17 +10,10 @@ router
   .route('/quotes')
   .get(auth(ROLE.ADMIN, ROLE.SUPER_ADMIN), AdminController.getAllQuotes);
 
-// Must precede '/quotes/:id' so 'count'/'search' aren't matched as an :id.
+// Must precede '/quotes/:id' so 'count' isn't matched as an :id.
 router
   .route('/quotes/count')
   .get(auth(ROLE.ADMIN, ROLE.SUPER_ADMIN), AdminController.getQoutesCount);
-
-router
-  .route('/quotes/search')
-  .get(
-    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
-    AdminController.searchByNameQidOrEmail,
-  );
 
 router
   .route('/quotes/:id')
@@ -78,13 +71,6 @@ router
     AdminController.createPartner,
   )
   .get(auth(ROLE.ADMIN, ROLE.SUPER_ADMIN), AdminController.getAllPartner);
-
-router
-  .route('/partners/search')
-  .get(
-    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
-    AdminController.searchPartnersByNameOrCategory,
-  );
 
 router
   .route('/partners/:id')

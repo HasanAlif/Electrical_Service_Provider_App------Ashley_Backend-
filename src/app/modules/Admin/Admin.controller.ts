@@ -4,11 +4,12 @@ import { asyncHandler, sendResponse } from '../../utils';
 import { AdminService } from './Admin.service';
 
 const getAllQuotes = asyncHandler(async (req: Request, res: Response) => {
-  const { status, serviceType, page, limit } = req.query;
+  const { status, serviceType, searchQuery, page, limit } = req.query;
 
   const result = await AdminService.getAllQuotes({
     status: status as string | undefined,
     serviceType: serviceType as string | undefined,
+    searchQuery: searchQuery as string | undefined,
     page: page ? Number(page) : undefined,
     limit: limit ? Number(limit) : undefined,
   });
@@ -20,25 +21,6 @@ const getAllQuotes = asyncHandler(async (req: Request, res: Response) => {
     data: result.data,
   });
 });
-
-const searchByNameQidOrEmail = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { searchQuery, page, limit } = req.query;
-
-    const result = await AdminService.searchByNameQidOrEmail({
-      searchQuery: searchQuery as string,
-      page: page ? Number(page) : undefined,
-      limit: limit ? Number(limit) : undefined,
-    });
-
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      message: 'Quotes search results retrieved successfully!',
-      meta: result.meta,
-      data: result.data,
-    });
-  },
-);
 
 const getSingleQuote = asyncHandler(async (req: Request, res: Response) => {
   const data = await AdminService.getSingleQuote(req.params.id as string);
@@ -149,7 +131,13 @@ const createPartner = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const getAllPartner = asyncHandler(async (req: Request, res: Response) => {
-  const data = await AdminService.getAllPartner();
+  const { searchQuery, category, status } = req.query;
+
+  const data = await AdminService.getAllPartner({
+    searchQuery: searchQuery as string | undefined,
+    category: category as string | undefined,
+    status: status as string | undefined,
+  });
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -190,24 +178,6 @@ const deletePartner = asyncHandler(async (req: Request, res: Response) => {
     data,
   });
 });
-
-const searchPartnersByNameOrCategory = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { searchQuery, category, status } = req.query;
-
-    const data = await AdminService.searchPartnersByNameOrCategory({
-      searchQuery: searchQuery as string | undefined,
-      category: category as string | undefined,
-      status: status as string | undefined,
-    });
-
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      message: 'Partners search results retrieved successfully!',
-      data,
-    });
-  },
-);
 
 const changePassword = asyncHandler(async (req: Request, res: Response) => {
   const data = await AdminService.changePassword(req.user, req.body);
@@ -374,7 +344,6 @@ const adminActionSummary = asyncHandler(async (req: Request, res: Response) => {
 
 export const AdminController = {
   getAllQuotes,
-  searchByNameQidOrEmail,
   getSingleQuote,
   updateQuoteStatus,
   getQouteForUpdate,
@@ -389,7 +358,6 @@ export const AdminController = {
   getSinglePartner,
   updatePartner,
   deletePartner,
-  searchPartnersByNameOrCategory,
   changePassword,
   getAdminProfile,
   createAdminUserBySuperAdmin,

@@ -1,15 +1,23 @@
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
+import helmet from 'helmet';
 import morgan from 'morgan';
 import routes from './app/routes';
 import { globalErrorHandler, notFoundHandler } from './app/utils';
+import { globalLimiter, sanitizeMongo } from './app/middlewares';
 import os from 'os';
 import config from './app/config';
 
 const app: Application = express();
 
+// behind a single proxy (Vercel) — needed for correct client IP in rate limiting
+app.set('trust proxy', 1);
+
 // app.disable('etag');
+
+// security headers (set early, before routes)
+app.use(helmet());
 
 // CORS configuration
 app.use(
@@ -34,11 +42,17 @@ app.use(
 //parser
 app.use(cookieParser());
 app.use(morgan('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+
+// strip MongoDB operator/dotted keys from body/params/query (NoSQL-injection guard)
+app.use(sanitizeMongo);
 
 // for static files
 // app.use('/public', express.static('public'));
+
+// broad rate limit for the whole API (auth/OTP routes add a stricter limiter)
+app.use(globalLimiter);
 
 // All main routes
 app.use('/api/v1', routes);

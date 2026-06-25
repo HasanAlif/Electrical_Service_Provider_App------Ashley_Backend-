@@ -5,6 +5,7 @@ import {
   uploadServiceImages,
   collectImageUrls,
   deleteServiceImages,
+  sanitizeServiceCreatePayload,
 } from '../../utils';
 import { TImageFieldConfig } from '../../utils/serviceImages';
 import { IEVChargerInstallation } from './EVChargerInstallation.interface';
@@ -24,14 +25,15 @@ const createEVChargerInstallationIntoDB = async (
   payload: Partial<IEVChargerInstallation>,
   files: Request['files'],
 ) => {
+  const safePayload = sanitizeServiceCreatePayload(payload);
   const uploaded = await uploadServiceImages(files, IMAGE_FIELDS);
 
   const newDoc = await EVChargerInstallationModel.create({
-    ...payload,
+    ...safePayload,
     ...uploaded,
     createdBy: user._id.toString(),
     serviceType: 'EV Charger Installation',
-    status: payload.status ?? DEFAULT_REQUEST_STATUS,
+    status: safePayload.status ?? DEFAULT_REQUEST_STATUS,
   });
 
   const { createdAt, updatedAt, ...sanitizedData } = newDoc.toObject();

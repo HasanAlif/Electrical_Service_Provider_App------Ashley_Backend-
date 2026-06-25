@@ -250,6 +250,9 @@ const dockPowerSchema = new Schema<IDockPower>(
 );
 
 dockPowerSchema.index({ createdBy: 1, status: 1 });
+// admin/quotes fan-out (status != draft) + trend, and per-user lists — both sorted by createdAt
+dockPowerSchema.index({ status: 1, createdAt: -1 });
+dockPowerSchema.index({ createdBy: 1, createdAt: -1 });
 
 dockPowerSchema.plugin(qIdPlugin);
 

@@ -5,6 +5,7 @@ import {
   uploadServiceImages,
   collectImageUrls,
   deleteServiceImages,
+  sanitizeServiceCreatePayload,
 } from '../../utils';
 import { TImageFieldConfig } from '../../utils/serviceImages';
 import { ICellingFans } from './CellingFans.interface';
@@ -23,14 +24,15 @@ const createCellingFansIntoDB = async (
   payload: Partial<ICellingFans>,
   files: Request['files'],
 ) => {
+  const safePayload = sanitizeServiceCreatePayload(payload);
   const uploaded = await uploadServiceImages(files, IMAGE_FIELDS);
 
   const newDoc = await CellingFansModel.create({
-    ...payload,
+    ...safePayload,
     ...uploaded,
     createdBy: user._id.toString(),
     serviceType: 'Ceiling Fan Installation',
-    status: payload.status ?? DEFAULT_REQUEST_STATUS,
+    status: safePayload.status ?? DEFAULT_REQUEST_STATUS,
   });
 
   const { createdAt, updatedAt, ...sanitizedData } = newDoc.toObject();

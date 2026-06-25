@@ -190,6 +190,9 @@ const StarlinkSchema = new Schema<IStarlink>(
 );
 
 StarlinkSchema.index({ createdBy: 1, status: 1 });
+// admin/quotes fan-out (status != draft) + trend, and per-user lists — both sorted by createdAt
+StarlinkSchema.index({ status: 1, createdAt: -1 });
+StarlinkSchema.index({ createdBy: 1, createdAt: -1 });
 
 StarlinkSchema.plugin(qIdPlugin);
 

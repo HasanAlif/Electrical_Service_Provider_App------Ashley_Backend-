@@ -5,6 +5,7 @@ import {
   uploadServiceImages,
   collectImageUrls,
   deleteServiceImages,
+  sanitizeServiceCreatePayload,
 } from '../../utils';
 import { TImageFieldConfig } from '../../utils/serviceImages';
 import { IServiceCall } from './ServiceCall.interface';
@@ -26,13 +27,14 @@ const createServiceCallIntoDB = async (
   payload: Partial<IServiceCall>,
   files: Request['files'],
 ) => {
+  const safePayload = sanitizeServiceCreatePayload(payload);
   const uploaded = await uploadServiceImages(files, IMAGE_FIELDS);
 
   const newDoc = await ServiceCallModel.create({
-    ...payload,
+    ...safePayload,
     ...uploaded,
     createdBy: user._id.toString(),
-    status: payload.status ?? DEFAULT_REQUEST_STATUS,
+    status: safePayload.status ?? DEFAULT_REQUEST_STATUS,
   });
 
   const { createdAt, updatedAt, ...sanitizedData } = newDoc.toObject();
@@ -54,10 +56,11 @@ const getMyAllServiceCallsFromDB = async (userId: string) => {
 };
 
 // getSingleServiceCallFromDB
-const getSingleServiceCallFromDB = async (id: string) => {
-  const serviceCall = await ServiceCallModel.findById(id).select(
-    '-createdAt -updatedAt',
-  );
+const getSingleServiceCallFromDB = async (userId: string, id: string) => {
+  const serviceCall = await ServiceCallModel.findOne({
+    _id: id,
+    createdBy: userId,
+  }).select('-createdAt -updatedAt');
 
   if (!serviceCall) {
     throw new AppError(httpStatus.NOT_FOUND, 'Service call not found!');

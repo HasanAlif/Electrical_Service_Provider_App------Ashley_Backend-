@@ -5,6 +5,7 @@ import {
   uploadServiceImages,
   collectImageUrls,
   deleteServiceImages,
+  sanitizeServiceCreatePayload,
 } from '../../utils';
 import { TImageFieldConfig } from '../../utils/serviceImages';
 import { ILighting } from './Lighting.interface';
@@ -27,14 +28,15 @@ const createLightingIntoDB = async (
   payload: Partial<ILighting>,
   files: Request['files'],
 ) => {
+  const safePayload = sanitizeServiceCreatePayload(payload);
   const uploaded = await uploadServiceImages(files, IMAGE_FIELDS);
 
   const newDoc = await LightingModel.create({
-    ...payload,
+    ...safePayload,
     ...uploaded,
     createdBy: user._id.toString(),
     serviceType: 'Lighting Installation',
-    status: payload.status ?? DEFAULT_REQUEST_STATUS,
+    status: safePayload.status ?? DEFAULT_REQUEST_STATUS,
   });
 
   const { createdAt, updatedAt, ...sanitizedData } = newDoc.toObject();

@@ -220,6 +220,9 @@ const serviceCallSchema = new Schema<IServiceCall>(
 );
 
 serviceCallSchema.index({ createdBy: 1, status: 1 });
+// admin/quotes fan-out (status != draft) + trend, and per-user lists — both sorted by createdAt
+serviceCallSchema.index({ status: 1, createdAt: -1 });
+serviceCallSchema.index({ createdBy: 1, createdAt: -1 });
 
 serviceCallSchema.plugin(qIdPlugin);
 

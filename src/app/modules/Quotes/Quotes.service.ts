@@ -1,24 +1,7 @@
 import httpStatus from 'http-status';
 import { Service_STATUSES } from '../../constants';
 import { AppError } from '../../utils';
-import AccessoryBuildingPowerModel from '../AccessoryBuildingPower/AccessoryBuildingPower.model';
-import CellingFansModel from '../CellingFans/CellingFans.model';
-import DedicatedCircuitModel from '../DedicatedCircuit/DedicatedCircuit.model';
-import DockPowerModel from '../DockPower/DockPower.model';
-import ElectricModel from '../Electric/Electric.model';
-import EVChargerInstallationModel from '../EVChargerInstallation/EVChargerInstallation.model';
-import ExhaustFansModel from '../ExhaustFans/ExhaustFans.model';
-import GenaratorModel from '../Genarator/Genarator.model';
-import HomeSurgeProtectionModel from '../HomeSurgeProtection/HomeSurgeProtection.model';
-import HotTubModel from '../HotTub/HotTub.model';
-import LightingModel from '../Lighting/Lighting.model';
-import NewConstructionModel from '../NewConstruction/NewConstruction.model';
-import OutletsModel from '../Outlets/Outlets.model';
-import PanelUpgradeReplacementModel from '../PanelUpgradeReplacement/PanelUpgradeReplacement.model';
-import RemodelingModel from '../Remodeling/Remodeling.model';
-import ServiceCallModel from '../ServiceCall/ServiceCall.model';
-import StarlinkModel from '../Starlink/Starlink.model';
-import SwitchesModel from '../Switches/Switches.model';
+import { serviceModels } from '../serviceModels';
 
 type QuoteRow = {
   serviceType?: string;
@@ -35,28 +18,11 @@ type QuoteModel = {
   };
 };
 
-// Every submitted-quote collection (mirrors Admin.service.ts / Draft.service.ts).
-// New service modules must be added here too.
-const quoteModels: QuoteModel[] = [
-  AccessoryBuildingPowerModel,
-  CellingFansModel,
-  DedicatedCircuitModel,
-  DockPowerModel,
-  ElectricModel,
-  EVChargerInstallationModel,
-  ExhaustFansModel,
-  GenaratorModel,
-  HomeSurgeProtectionModel,
-  HotTubModel,
-  LightingModel,
-  NewConstructionModel,
-  OutletsModel,
-  PanelUpgradeReplacementModel,
-  RemodelingModel,
-  ServiceCallModel,
-  StarlinkModel,
-  SwitchesModel,
-].map(model => model as unknown as QuoteModel);
+// Every submitted-quote collection, from the shared registry (src/app/modules/
+// serviceModels.ts) so Quotes/Draft/Admin can never drift out of sync.
+const quoteModels: QuoteModel[] = serviceModels.map(
+  model => model as unknown as QuoteModel,
+);
 
 const MONTH_FULL = [
   'January',

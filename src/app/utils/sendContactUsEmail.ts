@@ -10,8 +10,23 @@ export interface IContactMessage {
   message: string;
 }
 
+// Escape user-controlled values before interpolating into the email HTML.
+const escapeHtml = (value: string): string =>
+  String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
 const sendContactUsEmail = async (payload: IContactMessage) => {
   try {
+    const safe = {
+      name: escapeHtml(payload.name),
+      email: escapeHtml(payload.email),
+      phoneNumber: escapeHtml(payload.phoneNumber),
+      message: escapeHtml(payload.message),
+    };
     // Create a transporter for sending emails
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -80,13 +95,13 @@ const sendContactUsEmail = async (payload: IContactMessage) => {
           <p>Hello Admin,</p>
           <p>You have a new message from a user on your website's "Contact Us" page. Below are the details:</p>
 
-          <p><strong>Full Name:</strong> ${payload.name}</p>
-          <p><strong>Email:</strong> ${payload.email}</p>
-          <p><strong>Phone Number:</strong> ${payload.phoneNumber}</p>
+          <p><strong>Full Name:</strong> ${safe.name}</p>
+          <p><strong>Email:</strong> ${safe.email}</p>
+          <p><strong>Phone Number:</strong> ${safe.phoneNumber}</p>
 
           <div class="message">
             <strong>Message:</strong>
-            <p>${payload.message}</p>
+            <p>${safe.message}</p>
           </div>
 
           <div class="footer">

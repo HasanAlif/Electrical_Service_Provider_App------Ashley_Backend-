@@ -5,6 +5,7 @@ import {
   uploadServiceImages,
   collectImageUrls,
   deleteServiceImages,
+  sanitizeServiceCreatePayload,
 } from '../../utils';
 import { TImageFieldConfig } from '../../utils/serviceImages';
 import { IHomeSurgeProtection } from './HomeSurgeProtection.interface';
@@ -22,14 +23,15 @@ const createHomeSurgeProtectionIntoDB = async (
   payload: Partial<IHomeSurgeProtection>,
   files: Request['files'],
 ) => {
+  const safePayload = sanitizeServiceCreatePayload(payload);
   const uploaded = await uploadServiceImages(files, IMAGE_FIELDS);
 
   const newDoc = await HomeSurgeProtectionModel.create({
-    ...payload,
+    ...safePayload,
     ...uploaded,
     createdBy: user._id.toString(),
     serviceType: 'Home Surge Protection',
-    status: payload.status ?? DEFAULT_REQUEST_STATUS,
+    status: safePayload.status ?? DEFAULT_REQUEST_STATUS,
   });
 
   const { createdAt, updatedAt, ...sanitizedData } = newDoc.toObject();

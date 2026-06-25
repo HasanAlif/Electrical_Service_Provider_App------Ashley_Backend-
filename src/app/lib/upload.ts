@@ -203,8 +203,11 @@
 
 import { v2 as cloudinary, ConfigOptions, UploadApiResponse } from 'cloudinary';
 import multer from 'multer';
+import httpStatus from 'http-status';
 import config from '../config';
 import { Readable } from 'stream';
+// import directly from the file (not ../utils) to avoid a circular import
+import AppError from '../utils/AppError';
 
 /* ------------------------------------------------------- */
 /*                Cloudinary Configuration                 */
@@ -294,10 +297,35 @@ export const deleteImageFromCloudinary = async (
 
 const storage = multer.memoryStorage();
 
+// Accept only images and PDFs (e.g. the hot-tub manual). SVG is intentionally
+// excluded (can carry script); executables/other types are rejected.
+const ALLOWED_MIMETYPES = new Set([
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+  'image/heic',
+  'image/heif',
+  'application/pdf',
+]);
+
 const multerUpload = multer({
   storage,
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB
+  },
+  fileFilter: (_req, file, cb) => {
+    if (ALLOWED_MIMETYPES.has(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(
+        new AppError(
+          httpStatus.BAD_REQUEST,
+          'Only image or PDF files are allowed!',
+        ),
+      );
+    }
   },
 });
 

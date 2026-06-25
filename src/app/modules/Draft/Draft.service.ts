@@ -1,69 +1,14 @@
 import { Service_STATUSES } from '../../constants';
-import AccessoryBuildingPowerModel from '../AccessoryBuildingPower/AccessoryBuildingPower.model';
-import DedicatedCircuitModel from '../DedicatedCircuit/DedicatedCircuit.model';
-import DockPowerModel from '../DockPower/DockPower.model';
-import CellingFansModel from '../CellingFans/CellingFans.model';
-import ElectricModel from '../Electric/Electric.model';
-import EVChargerInstallationModel from '../EVChargerInstallation/EVChargerInstallation.model';
-import ExhaustFansModel from '../ExhaustFans/ExhaustFans.model';
-import LightingModel from '../Lighting/Lighting.model';
-import GenaratorModel from '../Genarator/Genarator.model';
-import HomeSurgeProtectionModel from '../HomeSurgeProtection/HomeSurgeProtection.model';
-import HotTubModel from '../HotTub/HotTub.model';
-import NewConstructionModel from '../NewConstruction/NewConstruction.model';
-import OutletsModel from '../Outlets/Outlets.model';
-import PanelUpgradeReplacementModel from '../PanelUpgradeReplacement/PanelUpgradeReplacement.model';
-import RemodelingModel from '../Remodeling/Remodeling.model';
-import ServiceCallModel from '../ServiceCall/ServiceCall.model';
-import StarlinkModel from '../Starlink/Starlink.model';
-import SwitchesModel from '../Switches/Switches.model';
-
-type DraftModel = {
-  find: (filter: Record<string, unknown>) => Promise<unknown[]>;
-};
+import { serviceModelEntries } from '../serviceModels';
 
 const getAllMyDraftsFromDB = async (userId: string) => {
-  const models = [
-    {
-      name: 'AccessoryBuildingPower',
-      model: AccessoryBuildingPowerModel as DraftModel,
-    },
-    {
-      name: 'DedicatedCircuit',
-      model: DedicatedCircuitModel as DraftModel,
-    },
-    { name: 'CellingFans', model: CellingFansModel as DraftModel },
-    { name: 'DockPower', model: DockPowerModel as DraftModel },
-    { name: 'Electric', model: ElectricModel as DraftModel },
-    {
-      name: 'EVChargerInstallation',
-      model: EVChargerInstallationModel as DraftModel,
-    },
-    { name: 'ExhaustFans', model: ExhaustFansModel as DraftModel },
-    { name: 'Generator', model: GenaratorModel as DraftModel },
-    {
-      name: 'HomeSurgeProtection',
-      model: HomeSurgeProtectionModel as DraftModel,
-    },
-    { name: 'HotTub', model: HotTubModel as DraftModel },
-    { name: 'Lighting', model: LightingModel as DraftModel },
-    { name: 'NewConstruction', model: NewConstructionModel as DraftModel },
-    { name: 'Outlets', model: OutletsModel as DraftModel },
-    {
-      name: 'PanelUpgradeReplacement',
-      model: PanelUpgradeReplacementModel as DraftModel,
-    },
-    { name: 'Remodeling', model: RemodelingModel as DraftModel },
-    { name: 'ServiceCall', model: ServiceCallModel as DraftModel },
-    { name: 'Starlink', model: StarlinkModel as DraftModel },
-    { name: 'Switches', model: SwitchesModel as DraftModel },
-  ];
-
-  const draftPromises = models.map(async ({ name, model }) => {
-    const drafts = await model.find({
-      createdBy: userId,
-      status: Service_STATUSES.DRAFT,
-    });
+  const draftPromises = serviceModelEntries.map(async ({ name, model }) => {
+    const drafts = await model
+      .find({
+        createdBy: userId,
+        status: Service_STATUSES.DRAFT,
+      })
+      .lean();
 
     return {
       serviceName: name,

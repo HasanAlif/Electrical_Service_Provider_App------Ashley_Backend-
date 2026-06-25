@@ -11,12 +11,14 @@ import {
   collectImageUrls,
   deleteServiceImages,
 } from './serviceImages';
+import { sanitizeServiceCreatePayload } from './serviceCreate';
+import config from '../config';
 
-// JWT configuration
+// cookie options (read env via the central config, never process.env directly)
 const options = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+  secure: config.NODE_ENV === 'production',
+  sameSite: config.NODE_ENV === 'production' ? 'none' : 'strict',
   maxAge: 365 * 24 * 60 * 60 * 1000,
 };
 
@@ -33,4 +35,5 @@ export {
   uploadServiceImages,
   collectImageUrls,
   deleteServiceImages,
+  sanitizeServiceCreatePayload,
 };

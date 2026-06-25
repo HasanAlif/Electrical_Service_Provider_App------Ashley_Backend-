@@ -46,6 +46,7 @@ export const ServiceCallController = {
   // getSingleServiceCall
   getSingleServiceCall: asyncHandler(async (req: Request, res: Response) => {
     const data = await ServiceCallService.getSingleServiceCallFromDB(
+      req.user._id.toString(),
       req.params.id as string,
     );
 

@@ -85,6 +85,11 @@ web_modules/
 .env.production.local
 .env.local
 
+
+# Docs
+*docs
+CLAUDE.md
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache

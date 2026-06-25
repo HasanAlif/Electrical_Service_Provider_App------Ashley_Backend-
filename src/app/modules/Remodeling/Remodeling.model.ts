@@ -191,6 +191,9 @@ const remodelingSchema = new Schema<IRemodeling>(
 );
 
 remodelingSchema.index({ createdBy: 1, status: 1 });
+// admin/quotes fan-out (status != draft) + trend, and per-user lists — both sorted by createdAt
+remodelingSchema.index({ status: 1, createdAt: -1 });
+remodelingSchema.index({ createdBy: 1, createdAt: -1 });
 
 remodelingSchema.plugin(qIdPlugin);
 

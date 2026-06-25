@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { auth, validateRequest } from '../../middlewares';
+import { auth, validateRequest, authLimiter } from '../../middlewares';
 import { UserValidation } from './user.validation';
 import { UserController } from './user.controller';
 import { multerUpload } from '../../lib';
@@ -11,6 +11,7 @@ const router = Router();
 router
   .route('/signup')
   .post(
+    authLimiter,
     validateRequest(UserValidation.createUserSchema),
     UserController.createUser,
   );
@@ -19,6 +20,7 @@ router
 router
   .route('/send-signup-otp-again')
   .post(
+    authLimiter,
     validateRequest(UserValidation.sendSignupOtpAgainSchema),
     UserController.sendSignupOtpAgain,
   );
@@ -27,6 +29,7 @@ router
 router
   .route('/verify-signup-otp')
   .post(
+    authLimiter,
     validateRequest(UserValidation.verifySignupOtpSchema),
     UserController.verifySignupOtp,
   );
@@ -34,12 +37,17 @@ router
 // 4. signin
 router
   .route('/signin')
-  .post(validateRequest(UserValidation.signinSchema), UserController.signin);
+  .post(
+    authLimiter,
+    validateRequest(UserValidation.signinSchema),
+    UserController.signin,
+  );
 
 // 5. social signin
 router
   .route('/social-signin')
   .post(
+    authLimiter,
     validateRequest(UserValidation.socialSigninSchema),
     UserController.socialSignin,
   );
@@ -75,6 +83,7 @@ router
 router
   .route('/forgot-password')
   .post(
+    authLimiter,
     validateRequest(UserValidation.forgotPasswordSchema),
     UserController.forgotPassword,
   );
@@ -83,6 +92,7 @@ router
 router
   .route('/send-forgot-password-otp-again')
   .post(
+    authLimiter,
     validateRequest(UserValidation.sendForgotPasswordOtpAgainSchema),
     UserController.sendForgotPasswordOtpAgain,
   );
@@ -91,6 +101,7 @@ router
 router
   .route('/verify-forgot-password-otp')
   .post(
+    authLimiter,
     validateRequest(UserValidation.verifyOtpForForgotPasswordSchema),
     UserController.verifyOtpForForgotPassword,
   );
@@ -99,6 +110,7 @@ router
 router
   .route('/reset-password')
   .post(
+    authLimiter,
     validateRequest(UserValidation.resetPasswordSchema),
     UserController.resetPassword,
   );

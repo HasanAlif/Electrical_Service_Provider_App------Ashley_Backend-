@@ -81,6 +81,15 @@ const sendOtpEmail = async ({
 
 export default sendOtpEmail;
 
+// Escape user-controlled values before interpolating into the email HTML.
+const escapeHtml = (value: string): string =>
+  String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
 // Utility function to generate the email HTML content dynamically
 const generateEmailHTML = (
   otp: string,
@@ -88,6 +97,8 @@ const generateEmailHTML = (
   logoCid: string,
   customMessage: string = '',
 ) => {
+  const safeName = escapeHtml(name);
+  const safeCustomMessage = customMessage ? escapeHtml(customMessage) : '';
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -173,7 +184,7 @@ const generateEmailHTML = (
       <p>We're excited to have you with us.</p>
     </div>
 
-    <p>Hello ${name},</p>
+    <p>Hello ${safeName},</p>
     <p>We received a request to verify your email address. Your one-time password (OTP) is:</p>
 
     <div class="otp">
@@ -187,8 +198,8 @@ const generateEmailHTML = (
 
     <!-- Optional Custom Message Section -->
     ${
-      customMessage
-        ? `<p><strong>Additional Info:</strong> ${customMessage}</p>`
+      safeCustomMessage
+        ? `<p><strong>Additional Info:</strong> ${safeCustomMessage}</p>`
         : ''
     }
 

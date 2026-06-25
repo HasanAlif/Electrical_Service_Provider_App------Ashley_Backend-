@@ -38,6 +38,7 @@ router
 router
   .route('/:id')
   .get(
+    auth(ROLE.USER),
     validateRequest(ServiceCallValidation.serviceCallIdParamsSchema),
     ServiceCallController.getSingleServiceCall,
   )
@@ -48,7 +49,7 @@ router
     ServiceCallController.updateServiceCall,
   )
   .delete(
-    auth(ROLE.ADMIN, ROLE.SUPER_ADMIN),
+    auth(ROLE.USER),
     validateRequest(ServiceCallValidation.serviceCallIdParamsSchema),
     ServiceCallController.deleteServiceCall,
   );

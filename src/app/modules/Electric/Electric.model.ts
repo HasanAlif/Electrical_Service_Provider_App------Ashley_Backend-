@@ -178,6 +178,9 @@ const electricSchema = new Schema<IElectric>(
 );
 
 electricSchema.index({ createdBy: 1, status: 1 });
+// admin/quotes fan-out (status != draft) + trend, and per-user lists — both sorted by createdAt
+electricSchema.index({ status: 1, createdAt: -1 });
+electricSchema.index({ createdBy: 1, createdAt: -1 });
 
 electricSchema.plugin(qIdPlugin);
 

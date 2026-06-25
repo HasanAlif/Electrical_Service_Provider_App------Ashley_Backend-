@@ -57,11 +57,14 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, _next) => {
       },
     ];
   } else if (err instanceof Error) {
-    message = err.message;
+    // Don't leak internal/driver messages in production for unhandled errors.
+    const safeMessage =
+      config.NODE_ENV === 'production' ? 'Something went wrong!' : err.message;
+    message = safeMessage;
     errorSources = [
       {
         path: '',
-        message: err?.message,
+        message: safeMessage,
       },
     ];
   }

@@ -211,6 +211,9 @@ const evChargerInstallationSchema = new Schema<IEVChargerInstallation>(
 );
 
 evChargerInstallationSchema.index({ createdBy: 1, status: 1 });
+// admin/quotes fan-out (status != draft) + trend, and per-user lists — both sorted by createdAt
+evChargerInstallationSchema.index({ status: 1, createdAt: -1 });
+evChargerInstallationSchema.index({ createdBy: 1, createdAt: -1 });
 
 evChargerInstallationSchema.plugin(qIdPlugin);
 

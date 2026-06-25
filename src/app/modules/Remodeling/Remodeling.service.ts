@@ -6,6 +6,7 @@ import {
   uploadServiceImages,
   collectImageUrls,
   deleteServiceImages,
+  sanitizeServiceCreatePayload,
 } from '../../utils';
 import { TImageFieldConfig } from '../../utils/serviceImages';
 import { IRemodeling } from './Remodeling.interface';
@@ -25,8 +26,9 @@ const createRemodelingIntoDB = async (
   payload: Partial<IRemodeling>,
   files: Request['files'],
 ) => {
+  const safePayload = sanitizeServiceCreatePayload(payload);
   const uploaded = await uploadServiceImages(files, IMAGE_FIELDS);
-  const merged: Record<string, any> = { ...payload, ...uploaded };
+  const merged: Record<string, any> = { ...safePayload, ...uploaded };
   const status = merged.status ?? DEFAULT_REQUEST_STATUS;
 
   const newDoc = await RemodelingModel.create({

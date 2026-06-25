@@ -200,6 +200,9 @@ const DedicatedCircuitSchema = new Schema<IDedicatedCircuit>(
 );
 
 DedicatedCircuitSchema.index({ createdBy: 1, status: 1 });
+// admin/quotes fan-out (status != draft) + trend, and per-user lists — both sorted by createdAt
+DedicatedCircuitSchema.index({ status: 1, createdAt: -1 });
+DedicatedCircuitSchema.index({ createdBy: 1, createdAt: -1 });
 
 DedicatedCircuitSchema.plugin(qIdPlugin);
 

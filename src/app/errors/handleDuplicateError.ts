@@ -9,12 +9,14 @@ const handleDuplicateError = (err: any): TGenericErrorResponse => {
   const match = err.message.match(/"([^"]*)"/);
 
   // The extracted value will be in the first capturing group
-  const extractedMessage = match && match[1];
+  const extractedMessage = match?.[1];
 
   const errorSources: TErrorSources = [
     {
       path: '',
-      message: `${extractedMessage} is already exists!`,
+      message: extractedMessage
+        ? `${extractedMessage} is already exists!`
+        : 'Duplicate field value already exists!',
     },
   ];
 

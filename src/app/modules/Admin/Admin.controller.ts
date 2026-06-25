@@ -3,13 +3,18 @@ import { Request, Response } from 'express';
 import { asyncHandler, sendResponse } from '../../utils';
 import { AdminService } from './Admin.service';
 
+// Accept a query-string filter only if it is actually a string; an object/array
+// (e.g. ?serviceType[$ne]=x) is dropped so it can never reach a Mongo filter.
+const asString = (value: unknown): string | undefined =>
+  typeof value === 'string' ? value : undefined;
+
 const getAllQuotes = asyncHandler(async (req: Request, res: Response) => {
   const { status, serviceType, searchQuery, page, limit } = req.query;
 
   const result = await AdminService.getAllQuotes({
-    status: status as string | undefined,
-    serviceType: serviceType as string | undefined,
-    searchQuery: searchQuery as string | undefined,
+    status: asString(status),
+    serviceType: asString(serviceType),
+    searchQuery: asString(searchQuery),
     page: page ? Number(page) : undefined,
     limit: limit ? Number(limit) : undefined,
   });
@@ -134,9 +139,9 @@ const getAllPartner = asyncHandler(async (req: Request, res: Response) => {
   const { searchQuery, category, status } = req.query;
 
   const data = await AdminService.getAllPartner({
-    searchQuery: searchQuery as string | undefined,
-    category: category as string | undefined,
-    status: status as string | undefined,
+    searchQuery: asString(searchQuery),
+    category: asString(category),
+    status: asString(status),
   });
 
   sendResponse(res, {
@@ -214,7 +219,7 @@ const createAdminUserBySuperAdmin = asyncHandler(
 const getAllAdmins = asyncHandler(async (req: Request, res: Response) => {
   const { status } = req.query;
 
-  const result = await AdminService.getAllAdmins(status as string | undefined);
+  const result = await AdminService.getAllAdmins(asString(status));
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

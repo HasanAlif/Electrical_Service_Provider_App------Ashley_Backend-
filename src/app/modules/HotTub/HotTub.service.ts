@@ -6,6 +6,7 @@ import {
   uploadServiceImages,
   collectImageUrls,
   deleteServiceImages,
+  sanitizeServiceCreatePayload,
 } from '../../utils';
 import { TImageFieldConfig } from '../../utils/serviceImages';
 import { IHotTub } from './HotTub.interface';
@@ -26,8 +27,9 @@ const createHotTubIntoDB = async (
   payload: Partial<IHotTub>,
   files: Request['files'],
 ) => {
+  const safePayload = sanitizeServiceCreatePayload(payload);
   const uploaded = await uploadServiceImages(files, IMAGE_FIELDS);
-  const merged: Record<string, any> = { ...payload, ...uploaded };
+  const merged: Record<string, any> = { ...safePayload, ...uploaded };
   const status = merged.status ?? DEFAULT_REQUEST_STATUS;
 
   const newDoc = await HotTubModel.create({

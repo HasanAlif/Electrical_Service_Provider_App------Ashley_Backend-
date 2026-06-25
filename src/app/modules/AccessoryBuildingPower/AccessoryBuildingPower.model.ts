@@ -241,6 +241,9 @@ const accessoryBuildingPowerSchema = new Schema<IAccessoryBuildingPower>(
 );
 
 accessoryBuildingPowerSchema.index({ createdBy: 1, status: 1 });
+// admin/quotes fan-out (status != draft) + trend, and per-user lists — both sorted by createdAt
+accessoryBuildingPowerSchema.index({ status: 1, createdAt: -1 });
+accessoryBuildingPowerSchema.index({ createdBy: 1, createdAt: -1 });
 
 accessoryBuildingPowerSchema.plugin(qIdPlugin);
 

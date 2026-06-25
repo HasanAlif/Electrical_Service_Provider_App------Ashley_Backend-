@@ -164,6 +164,9 @@ const HomeSurgeProtectionSchema = new Schema<IHomeSurgeProtection>(
 );
 
 HomeSurgeProtectionSchema.index({ createdBy: 1, status: 1 });
+// admin/quotes fan-out (status != draft) + trend, and per-user lists — both sorted by createdAt
+HomeSurgeProtectionSchema.index({ status: 1, createdAt: -1 });
+HomeSurgeProtectionSchema.index({ createdBy: 1, createdAt: -1 });
 
 HomeSurgeProtectionSchema.plugin(qIdPlugin);
 

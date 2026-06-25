@@ -270,7 +270,39 @@ const getMySingleQuoteActivityDetails = async (
   };
 };
 
+const getUserRecntActivity = async (userId: string) => {
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+  // The only user action is submitting a quote, so recent activity = this user's
+  // non-draft quotes created within the last 7 days, newest first.
+  const rowsPerModel = await Promise.all(
+    quoteModels.map(model =>
+      model
+        .find({
+          createdBy: userId,
+          status: { $ne: Service_STATUSES.DRAFT },
+          createdAt: { $gte: sevenDaysAgo },
+        })
+        .select('serviceType status createdAt')
+        .lean(),
+    ),
+  );
+
+  return rowsPerModel
+    .flat()
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )
+    .map(row => ({
+      serviceType: row.serviceType,
+      status: row.status,
+      Submitted: formatRelative(row.createdAt),
+    }));
+};
+
 export const QuotesService = {
   getAllMyQuotes,
   getMySingleQuoteActivityDetails,
+  getUserRecntActivity,
 };

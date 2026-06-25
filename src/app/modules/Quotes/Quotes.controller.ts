@@ -38,7 +38,22 @@ const getMySingleQuoteActivityDetails = asyncHandler(
   },
 );
 
+const getUserRecntActivity = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = await QuotesService.getUserRecntActivity(
+      req.user._id.toString(),
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      message: 'Recent activity retrieved successfully!',
+      data,
+    });
+  },
+);
+
 export const QuotesController = {
   getAllMyQuotes,
   getMySingleQuoteActivityDetails,
+  getUserRecntActivity,
 };

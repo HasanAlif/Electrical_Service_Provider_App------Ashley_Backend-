@@ -398,10 +398,40 @@ const getAllCategoriesDetails = async () => {
   }));
 };
 
+const getAllPartnerDetailsInSingleCategory = async (categoryId: string) => {
+  if (!isValidObjectId(categoryId)) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Category not found!');
+  }
+
+  const category = await CategoryModel.findById(categoryId).lean();
+  if (!category) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Category not found!');
+  }
+
+  const partners = await PartnerModel.find({
+    category: category.name,
+    isActive: true,
+  }).lean();
+
+  return partners.map(partner => ({
+    id: String(partner._id),
+    companyName: partner.companyName,
+    category: partner.category,
+    description: partner.description ?? null,
+    phoneNumber: partner.phoneNumber ?? null,
+    websiteUrl: partner.websiteUrl ?? null,
+    isVerified: partner.isVerified,
+    isActive: partner.isActive,
+    createdAt: partner.createdAt,
+    updatedAt: partner.updatedAt,
+  }));
+};
+
 export const QuotesService = {
   getAllMyQuotes,
   getMySingleQuoteActivityDetails,
   getUserRecntActivity,
   searchQuoteAndPartners,
   getAllCategoriesDetails,
+  getAllPartnerDetailsInSingleCategory,
 };

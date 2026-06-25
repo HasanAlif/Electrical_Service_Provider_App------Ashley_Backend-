@@ -21,6 +21,10 @@ router
   .get(auth(ROLE.USER), QuotesController.getAllCategoriesDetails);
 
 router
+  .route('/categories/:id/partners')
+  .get(auth(ROLE.USER), QuotesController.getAllPartnerDetailsInSingleCategory);
+
+router
   .route('/:id')
   .get(auth(ROLE.USER), QuotesController.getMySingleQuoteActivityDetails);
 

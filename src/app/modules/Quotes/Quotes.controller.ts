@@ -81,10 +81,25 @@ const getAllCategoriesDetails = asyncHandler(
   },
 );
 
+const getAllPartnerDetailsInSingleCategory = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = await QuotesService.getAllPartnerDetailsInSingleCategory(
+      req.params.id as string,
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      message: 'Partners retrieved successfully!',
+      data,
+    });
+  },
+);
+
 export const QuotesController = {
   getAllMyQuotes,
   getMySingleQuoteActivityDetails,
   getUserRecntActivity,
   searchQuoteAndPartners,
   getAllCategoriesDetails,
+  getAllPartnerDetailsInSingleCategory,
 };

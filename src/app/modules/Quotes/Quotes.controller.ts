@@ -52,8 +52,26 @@ const getUserRecntActivity = asyncHandler(
   },
 );
 
+const searchQuoteAndPartners = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { searchQuery } = req.query;
+
+    const data = await QuotesService.searchQuoteAndPartners(
+      req.user._id.toString(),
+      asString(searchQuery) ?? '',
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      message: 'Search results retrieved successfully!',
+      data,
+    });
+  },
+);
+
 export const QuotesController = {
   getAllMyQuotes,
   getMySingleQuoteActivityDetails,
   getUserRecntActivity,
+  searchQuoteAndPartners,
 };

@@ -7,10 +7,14 @@ const router = Router();
 
 router.route('/').get(auth(ROLE.USER), QuotesController.getAllMyQuotes);
 
-// Literal path must precede '/:id' so it isn't captured as an id.
+// Literal paths must precede '/:id' so they aren't captured as an id.
 router
   .route('/recent-activity')
   .get(auth(ROLE.USER), QuotesController.getUserRecntActivity);
+
+router
+  .route('/search')
+  .get(auth(ROLE.USER), QuotesController.searchQuoteAndPartners);
 
 router
   .route('/:id')

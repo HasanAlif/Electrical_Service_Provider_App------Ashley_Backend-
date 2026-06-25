@@ -3,6 +3,7 @@ import { isValidObjectId } from 'mongoose';
 import { Service_STATUSES } from '../../constants';
 import { AppError } from '../../utils';
 import { serviceModels } from '../serviceModels';
+import PartnerModel from '../Admin/Partner.model';
 
 type QuoteRow = {
   _id: unknown;
@@ -301,8 +302,81 @@ const getUserRecntActivity = async (userId: string) => {
     }));
 };
 
+// Relevance of one field against the (lowercased) query: exact > starts-with >
+// contains. Used to rank quotes and partners on a single scale.
+const fieldScore = (q: string, value?: string) => {
+  if (!value) return 0;
+  const v = value.toLowerCase();
+  if (v === q) return 3;
+  if (v.startsWith(q)) return 2;
+  if (v.includes(q)) return 1;
+  return 0;
+};
+
+const searchQuoteAndPartners = async (userId: string, rawQuery: string) => {
+  const searchQuery = (rawQuery ?? '').trim();
+  if (!searchQuery) return [];
+
+  const regex = { $regex: escapeRegex(searchQuery), $options: 'i' };
+  const q = searchQuery.toLowerCase();
+
+  // This user's quotes (matched on serviceType) + active partners (matched on
+  // companyName/category), fetched in parallel.
+  const [quoteRowsPerModel, partners] = await Promise.all([
+    Promise.all(
+      quoteModels.map(model =>
+        model
+          .find({
+            createdBy: userId,
+            status: { $ne: Service_STATUSES.DRAFT },
+            serviceType: regex,
+          })
+          .select('qId serviceType status createdAt')
+          .lean(),
+      ),
+    ),
+    PartnerModel.find({
+      isActive: true,
+      $or: [{ companyName: regex }, { category: regex }],
+    }).lean(),
+  ]);
+
+  const quoteResults = quoteRowsPerModel.flat().map(row => ({
+    type: 'quote' as const,
+    id: String(row._id),
+    qId: row.qId ?? null,
+    serviceType: row.serviceType,
+    status: row.status,
+    _score: fieldScore(q, row.serviceType),
+    _createdAt: new Date(row.createdAt).getTime(),
+  }));
+
+  const partnerResults = partners.map(partner => ({
+    type: 'partner' as const,
+    id: String(partner._id),
+    companyName: partner.companyName,
+    category: partner.category,
+    phoneNumber: partner.phoneNumber ?? null,
+    websiteUrl: partner.websiteUrl ?? null,
+    description: partner.description ?? null,
+    isVerified: partner.isVerified,
+    _score: Math.max(
+      fieldScore(q, partner.companyName),
+      fieldScore(q, partner.category),
+    ),
+    _createdAt: new Date(partner.createdAt).getTime(),
+  }));
+
+  // Most relevant first (exact > starts-with > contains), newest as tiebreak;
+  // strip the internal sort keys from the response.
+  return [...quoteResults, ...partnerResults]
+    .sort((a, b) => b._score - a._score || b._createdAt - a._createdAt)
+    .map(({ _score, _createdAt, ...rest }) => rest);
+};
+
 export const QuotesService = {
   getAllMyQuotes,
   getMySingleQuoteActivityDetails,
   getUserRecntActivity,
+  searchQuoteAndPartners,
 };

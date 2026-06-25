@@ -4,6 +4,7 @@ import { Service_STATUSES } from '../../constants';
 import { AppError } from '../../utils';
 import { serviceModels } from '../serviceModels';
 import PartnerModel from '../Admin/Partner.model';
+import CategoryModel from '../Admin/Category.model';
 
 type QuoteRow = {
   _id: unknown;
@@ -374,9 +375,33 @@ const searchQuoteAndPartners = async (userId: string, rawQuery: string) => {
     .map(({ _score, _createdAt, ...rest }) => rest);
 };
 
+const getAllCategoriesDetails = async () => {
+  const [categories, partnerCounts] = await Promise.all([
+    CategoryModel.find({ isActive: true }).sort({ name: 1 }).lean(),
+    PartnerModel.aggregate<{ _id: string; count: number }>([
+      { $match: { isActive: true } },
+      { $group: { _id: '$category', count: { $sum: 1 } } },
+    ]),
+  ]);
+
+  // Partners reference a category by its (unique) name.
+  const countByCategory = new Map(
+    partnerCounts.map(item => [item._id, item.count]),
+  );
+
+  return categories.map(category => ({
+    id: String(category._id),
+    name: category.name,
+    description: category.description ?? null,
+    isActive: category.isActive,
+    partnerCount: countByCategory.get(category.name) ?? 0,
+  }));
+};
+
 export const QuotesService = {
   getAllMyQuotes,
   getMySingleQuoteActivityDetails,
   getUserRecntActivity,
   searchQuoteAndPartners,
+  getAllCategoriesDetails,
 };

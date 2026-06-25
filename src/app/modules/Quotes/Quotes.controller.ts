@@ -95,6 +95,52 @@ const getAllPartnerDetailsInSingleCategory = asyncHandler(
   },
 );
 
+const togglePartnerFavorite = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = await QuotesService.togglePartnerFavorite(
+      req.user._id.toString(),
+      req.params.partnerId as string,
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      message: data.favorited
+        ? 'Partner added to favorites!'
+        : 'Partner removed from favorites!',
+      data,
+    });
+  },
+);
+
+const getAllMyFavoritePartners = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = await QuotesService.getAllMyFavoritePartners(
+      req.user._id.toString(),
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      message: 'Favorite partners retrieved successfully!',
+      data,
+    });
+  },
+);
+
+const getMySingleFavoritePartnerDetails = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = await QuotesService.getMySingleFavoritePartnerDetails(
+      req.user._id.toString(),
+      req.params.partnerId as string,
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      message: 'Favorite partner retrieved successfully!',
+      data,
+    });
+  },
+);
+
 export const QuotesController = {
   getAllMyQuotes,
   getMySingleQuoteActivityDetails,
@@ -102,4 +148,7 @@ export const QuotesController = {
   searchQuoteAndPartners,
   getAllCategoriesDetails,
   getAllPartnerDetailsInSingleCategory,
+  togglePartnerFavorite,
+  getAllMyFavoritePartners,
+  getMySingleFavoritePartnerDetails,
 };

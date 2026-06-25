@@ -25,6 +25,15 @@ router
   .get(auth(ROLE.USER), QuotesController.getAllPartnerDetailsInSingleCategory);
 
 router
+  .route('/favorites')
+  .get(auth(ROLE.USER), QuotesController.getAllMyFavoritePartners);
+
+router
+  .route('/favorites/:partnerId')
+  .post(auth(ROLE.USER), QuotesController.togglePartnerFavorite)
+  .get(auth(ROLE.USER), QuotesController.getMySingleFavoritePartnerDetails);
+
+router
   .route('/:id')
   .get(auth(ROLE.USER), QuotesController.getMySingleQuoteActivityDetails);
 

@@ -5,6 +5,7 @@ import { AppError } from '../../utils';
 import { serviceModels } from '../serviceModels';
 import PartnerModel from '../Admin/Partner.model';
 import CategoryModel from '../Admin/Category.model';
+import FavoriteModel from './Favorite.model';
 
 type QuoteRow = {
   _id: unknown;
@@ -398,6 +399,33 @@ const getAllCategoriesDetails = async () => {
   }));
 };
 
+// Shared partner-detail shape for the user-facing partner views.
+type PartnerDetailsDoc = {
+  _id: unknown;
+  companyName: string;
+  category: string;
+  description?: string;
+  phoneNumber?: string;
+  websiteUrl?: string;
+  isVerified: boolean;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+const formatPartnerDetails = (partner: PartnerDetailsDoc) => ({
+  id: String(partner._id),
+  companyName: partner.companyName,
+  category: partner.category,
+  description: partner.description ?? null,
+  phoneNumber: partner.phoneNumber ?? null,
+  websiteUrl: partner.websiteUrl ?? null,
+  isVerified: partner.isVerified,
+  isActive: partner.isActive,
+  createdAt: partner.createdAt,
+  updatedAt: partner.updatedAt,
+});
+
 const getAllPartnerDetailsInSingleCategory = async (categoryId: string) => {
   if (!isValidObjectId(categoryId)) {
     throw new AppError(httpStatus.NOT_FOUND, 'Category not found!');
@@ -413,18 +441,88 @@ const getAllPartnerDetailsInSingleCategory = async (categoryId: string) => {
     isActive: true,
   }).lean();
 
-  return partners.map(partner => ({
-    id: String(partner._id),
-    companyName: partner.companyName,
-    category: partner.category,
-    description: partner.description ?? null,
-    phoneNumber: partner.phoneNumber ?? null,
-    websiteUrl: partner.websiteUrl ?? null,
-    isVerified: partner.isVerified,
-    isActive: partner.isActive,
-    createdAt: partner.createdAt,
-    updatedAt: partner.updatedAt,
-  }));
+  return partners.map(formatPartnerDetails);
+};
+
+// Toggle: one click saves the partner, clicking again removes it.
+const togglePartnerFavorite = async (userId: string, partnerId: string) => {
+  if (!isValidObjectId(partnerId)) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Partner not found!');
+  }
+
+  const existing = await FavoriteModel.findOne({
+    user: userId,
+    partner: partnerId,
+  });
+
+  if (existing) {
+    await existing.deleteOne();
+    return { favorited: false, partnerId };
+  }
+
+  // Only an existing, active partner can be saved.
+  const partner = await PartnerModel.findOne({
+    _id: partnerId,
+    isActive: true,
+  }).lean();
+  if (!partner) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Partner not found!');
+  }
+
+  await FavoriteModel.create({ user: userId, partner: partnerId });
+  return { favorited: true, partnerId };
+};
+
+const getAllMyFavoritePartners = async (userId: string) => {
+  const favorites = await FavoriteModel.find({ user: userId })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  // When the partner was saved, keyed by partner id.
+  const favoritedAtById = new Map(
+    favorites.map(fav => [String(fav.partner), fav.createdAt]),
+  );
+
+  // Only partners that still exist and are active are shown.
+  const partners = await PartnerModel.find({
+    _id: { $in: favorites.map(fav => fav.partner) },
+    isActive: true,
+  }).lean();
+
+  return partners
+    .sort(
+      (a, b) =>
+        new Date(favoritedAtById.get(String(b._id)) as Date).getTime() -
+        new Date(favoritedAtById.get(String(a._id)) as Date).getTime(),
+    )
+    .map(partner => ({
+      ...formatPartnerDetails(partner),
+      favoritedAt: favoritedAtById.get(String(partner._id)),
+    }));
+};
+
+const getMySingleFavoritePartnerDetails = async (
+  userId: string,
+  partnerId: string,
+) => {
+  if (!isValidObjectId(partnerId)) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Favorite partner not found!');
+  }
+
+  const favorite = await FavoriteModel.findOne({
+    user: userId,
+    partner: partnerId,
+  }).lean();
+
+  const partner = favorite
+    ? await PartnerModel.findOne({ _id: partnerId, isActive: true }).lean()
+    : null;
+
+  if (!favorite || !partner) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Favorite partner not found!');
+  }
+
+  return { ...formatPartnerDetails(partner), favoritedAt: favorite.createdAt };
 };
 
 export const QuotesService = {
@@ -434,4 +532,7 @@ export const QuotesService = {
   searchQuoteAndPartners,
   getAllCategoriesDetails,
   getAllPartnerDetailsInSingleCategory,
+  togglePartnerFavorite,
+  getAllMyFavoritePartners,
+  getMySingleFavoritePartnerDetails,
 };

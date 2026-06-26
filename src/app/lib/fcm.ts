@@ -64,8 +64,6 @@ export const initFirebase = (): void => {
   console.log('FCM initialized.');
 };
 
-export const isFcmEnabled = (): boolean => fcmEnabled;
-
 // Send one notification to many device tokens. No-op (returns zeros) when FCM is
 // disabled or there are no tokens. Returns counts + the tokens that are dead and
 // should be removed from the user. Never throws on a partial/total send failure.

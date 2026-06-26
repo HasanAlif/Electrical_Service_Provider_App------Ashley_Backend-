@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { UserRoutes } from '../modules/User/user.route';
-// import { AddressRoutes } from '../modules/Address/address.route';
 import { ServiceCallRoutes } from '../modules/ServiceCall/ServiceCall.routes';
 import { EVChargerInstallationRoutes } from '../modules/EVChargerInstallation/EVChargerInstallation.routes';
 import { PanelUpgradeReplacementRoutes } from '../modules/PanelUpgradeReplacement/PanelUpgradeReplacement.routes';
@@ -33,10 +32,6 @@ const moduleRoutes = [
     path: '/user',
     route: UserRoutes,
   },
-  // {
-  //   path: '/addresses',
-  //   route: AddressRoutes,
-  // },
   {
     path: '/service-calls',
     route: ServiceCallRoutes,

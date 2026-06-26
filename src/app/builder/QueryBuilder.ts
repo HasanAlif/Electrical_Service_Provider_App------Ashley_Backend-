@@ -79,29 +79,6 @@ class QueryBuilder<T> {
       totalPage,
     };
   }
-
-  priceRange() {
-    const minPrice = this?.query?.minPrice
-      ? Number(this?.query?.minPrice)
-      : undefined;
-    const maxPrice = this?.query?.maxPrice
-      ? Number(this?.query?.maxPrice)
-      : undefined;
-
-    if (minPrice !== undefined || maxPrice !== undefined) {
-      const priceFilter: Record<string, unknown> = {};
-      if (minPrice !== undefined) priceFilter.$gte = minPrice;
-      if (maxPrice !== undefined) priceFilter.$lte = maxPrice;
-
-      this.modelQuery = this?.modelQuery?.find({
-        price: priceFilter,
-      } as Record<string, unknown>);
-    }
-
-    return this;
-  }
 }
 
 export default QueryBuilder;
-
-// ?searchTerm=javascript&minPrice=100&maxPrice=1000&sort=price,-rating&page=2&limit=10&fields=title,author,price,tag,status&category=programming&language=english

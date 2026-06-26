@@ -38,7 +38,6 @@
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:all": "prettier --write .",
-    "generate": "node generate",
     "create-module": "ts-node src/scripts/createModule.ts",
     "deploy": "pnpm build && vercel && vercel --prod",
     "lint": "eslint .",
@@ -59,11 +58,8 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.6.3",
     "multer": "^2.2.0",
-    "node-fetch": "^3.3.2",
     "nodemailer": "^9.0.1",
     "otp-generator": "^4.0.1",
-    "socket.io": "^4.8.3",
-    "stripe": "^22.2.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {

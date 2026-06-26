@@ -2,7 +2,7 @@ import { createAccessToken, createRefreshToken, verifyToken } from './token';
 import generateOtp from './generateOtp';
 import multerUpload from './upload';
 import { sendImageToCloudinary, deleteImageFromCloudinary } from './upload';
-import { initFirebase, sendPushToTokens, isFcmEnabled } from './fcm';
+import { initFirebase, sendPushToTokens } from './fcm';
 
 export {
   createAccessToken,
@@ -14,5 +14,4 @@ export {
   deleteImageFromCloudinary,
   initFirebase,
   sendPushToTokens,
-  isFcmEnabled,
 };

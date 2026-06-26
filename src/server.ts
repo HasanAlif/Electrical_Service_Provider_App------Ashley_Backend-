@@ -9,8 +9,6 @@ import { createServer } from 'http';
 import { initFirebase } from './app/lib';
 import 'dotenv/config';
 
-// import { initSocket } from './app/socket';
-
 let server: Server | null = null;
 
 // Database connection function
@@ -53,7 +51,6 @@ async function main() {
     }
 
     const httpServer = createServer(app);
-    // initSocket(httpServer);
 
     server = httpServer.listen(config.port, () => {
       console.log(

@@ -22,9 +22,6 @@ import {
 } from './user.constant';
 import { UserValidation } from './user.validation';
 import jwt, { JwtPayload, SignOptions } from 'jsonwebtoken';
-// import { startVerificationWithVERIFF } from '../BackgroundCheck/backgroundCheck.util';
-// import BookModel from '../Book/book.model';
-// import { OrderModel } from '../Order/order.model';
 import { deleteImageFromCloudinary, sendImageToCloudinary } from '../../lib';
 import { PipelineStage } from 'mongoose';
 import { createPublicKey } from 'crypto';

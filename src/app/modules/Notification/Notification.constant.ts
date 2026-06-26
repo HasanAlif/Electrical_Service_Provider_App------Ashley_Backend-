@@ -5,10 +5,6 @@ import { Service_STATUSES } from '../../constants';
 // (pending / in_review / send / closed). `send` means the team has reached out
 // ("Contacted" in admin analytics).
 
-export type TNotificationEvent =
-  | 'submitted'
-  | (typeof Service_STATUSES)[keyof typeof Service_STATUSES];
-
 type TContentInput = {
   serviceType?: string;
   qId?: string;

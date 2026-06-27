@@ -118,7 +118,7 @@ const userSchema = new Schema<IUser, IUserModel>(
       type: String,
     },
 
-    // Registered device tokens for FCM push (a user may have several devices).
+    // The user's single active FCM device token (array holds only the latest; replaced on each login/registration).
     fcmTokens: {
       type: [String],
       default: [],

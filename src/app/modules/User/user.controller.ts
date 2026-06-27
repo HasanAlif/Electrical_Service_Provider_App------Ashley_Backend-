@@ -31,7 +31,11 @@ const sendSignupOtpAgain = asyncHandler(async (req, res) => {
 const verifySignupOtp = asyncHandler(async (req, res) => {
   const userEmail = req.body.userEmail;
   const otp = req.body.otp;
-  const result = await UserService.verifySignupOtpIntoDB(userEmail, otp);
+  const result = await UserService.verifySignupOtpIntoDB(
+    userEmail,
+    otp,
+    req.body.fcmToken,
+  );
 
   sendResponse(res, {
     statusCode: httpStatus.CREATED,

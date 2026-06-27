@@ -41,7 +41,7 @@ export interface IUser extends Document {
   isDeleted: boolean;
   deactivationReason?: string;
 
-  fcmTokens?: string[]; // registered device tokens for push notifications
+  fcmTokens?: string[]; // the user's single active FCM token (latest only; replaced on each login/registration)
 
   createdAt: Date;
   updatedAt: Date;

@@ -38,6 +38,9 @@ const createUserSchema = z.object({
       .min(8, { message: 'Password must be at least 8 characters long' })
       .max(20, { message: 'Password cannot exceed 20 characters' }),
 
+    // Optional device token to register at signup.
+    fcmToken: z.string().min(1).optional(),
+
     // role: zodEnumFromObject(ROLE),
   }),
 });
@@ -78,6 +81,9 @@ const verifySignupOtpSchema = z.object({
       })
       .regex(/^\d+$/, { message: 'OTP must be a number!' })
       .length(6, { message: 'OTP must be exactly 6 digits' }),
+
+    // Optional device token to register when verification completes.
+    fcmToken: z.string().min(1).optional(),
   }),
 });
 

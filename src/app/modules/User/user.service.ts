@@ -190,7 +190,7 @@ const buildAuthResponse = (user: IUser) => {
 };
 
 // 1. createUserIntoDB
-const createUserIntoDB = async (payload: IUser) => {
+const createUserIntoDB = async (payload: IUser & { fcmToken?: string }) => {
   // if (payload.role === ROLE.ADMIN || payload.role === ROLE.SUPER_ADMIN) {
   //   throw new AppError(
   //     httpStatus.BAD_REQUEST,
@@ -246,6 +246,7 @@ const createUserIntoDB = async (payload: IUser) => {
     const now = new Date();
     const newUser = await UserModel.create({
       ...payload,
+      fcmTokens: payload.fcmToken ? [payload.fcmToken] : [],
       otp,
       otpExpiry: new Date(now.getTime() + otpExpiryMinutes * 60 * 1000),
       isVerifiedByOTP: false,
@@ -303,7 +304,11 @@ const sendSignupOtpAgainIntoDB = async (userEmail: string) => {
 };
 
 // 3. verifySignupOtpIntoDB
-const verifySignupOtpIntoDB = async (userEmail: string, otp: string) => {
+const verifySignupOtpIntoDB = async (
+  userEmail: string,
+  otp: string,
+  fcmToken?: string,
+) => {
   const now = new Date();
   const user = await UserModel.isUserExistsByEmailWithPassword(userEmail);
 
@@ -334,6 +339,12 @@ const verifySignupOtpIntoDB = async (userEmail: string, otp: string) => {
 
   // Mark user as verified
   user.isVerifiedByOTP = true;
+
+  // Replace the stored device token with the one sent at verification (single active token).
+  if (fcmToken) {
+    user.fcmTokens = [fcmToken];
+  }
+
   await user.save();
 
   // Prepare user data for token generation
@@ -418,11 +429,11 @@ const signinIntoDB = async (payload: {
     throw new AppError(httpStatus.BAD_REQUEST, 'Password not matched!');
   }
 
-  // Register the device token sent at login (idempotent; response shape unchanged).
+  // Replace the user's stored device token with the one sent at login (single active token).
   if (payload.fcmToken) {
     await UserModel.updateOne(
       { _id: user._id },
-      { $addToSet: { fcmTokens: payload.fcmToken } },
+      { $set: { fcmTokens: [payload.fcmToken] } },
     );
   }
 
@@ -1563,11 +1574,11 @@ const deleteImageFromDB = async (imageUrl: string) => {
   }
 };
 
-// 21. addFcmTokenIntoDB — register a device token (idempotent via $addToSet).
+// 21. addFcmTokenIntoDB — set the user's single active device token (replaces any previous).
 const addFcmTokenIntoDB = async (userId: string, fcmToken: string) => {
   await UserModel.updateOne(
     { _id: userId },
-    { $addToSet: { fcmTokens: fcmToken } },
+    { $set: { fcmTokens: [fcmToken] } },
   );
   return { fcmToken };
 };

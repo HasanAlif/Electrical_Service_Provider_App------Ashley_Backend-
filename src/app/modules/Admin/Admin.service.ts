@@ -296,25 +296,29 @@ const updateQuoteStatus = async (
     payload.status !== undefined &&
     payload.status !== previousStatus
   ) {
-    await NotificationService.notifyStatusChanged({
-      recipientId: currentMatch.doc?.createdBy as Types.ObjectId,
-      serviceModel: currentMatch.model.modelName,
-      serviceId: updated._id as Types.ObjectId,
-      qId: updated.qId,
-      serviceType: updated.serviceType,
-      status: updated.status as string,
-    });
+    const ownerExists = await User.exists({ _id: currentMatch.doc?.createdBy });
 
-    // Refresh this quote's Recent Activity row (resurfaces for send/closed). Isolated.
-    await RecentActivityService.recordQuoteActivity({
-      user: currentMatch.doc?.createdBy as Types.ObjectId,
-      refId: updated._id as Types.ObjectId,
-      refModel: currentMatch.model.modelName,
-      title: updated.serviceType,
-      status: updated.status as string,
-      createdAt: updated.createdAt,
-      statusChangedAt: new Date(),
-    });
+    if (ownerExists) {
+      await NotificationService.notifyStatusChanged({
+        recipientId: currentMatch.doc?.createdBy as Types.ObjectId,
+        serviceModel: currentMatch.model.modelName,
+        serviceId: updated._id as Types.ObjectId,
+        qId: updated.qId,
+        serviceType: updated.serviceType,
+        status: updated.status as string,
+      });
+
+      // Refresh this quote's Recent Activity row (resurfaces for send/closed). Isolated.
+      await RecentActivityService.recordQuoteActivity({
+        user: currentMatch.doc?.createdBy as Types.ObjectId,
+        refId: updated._id as Types.ObjectId,
+        refModel: currentMatch.model.modelName,
+        title: updated.serviceType,
+        status: updated.status as string,
+        createdAt: updated.createdAt,
+        statusChangedAt: new Date(),
+      });
+    }
   }
 
   return updated;

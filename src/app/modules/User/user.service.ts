@@ -13,10 +13,12 @@ import UserModel from './user.model';
 import {
   AUTH_PROVIDER,
   defaultUserImage,
+  DELETE_ACCOUNT_CONFIRM_TEXT,
   otpExpiryMinutes,
   ROLE,
   TAuthProvider,
   TDeactiveAccountPayload,
+  TDeleteAccountPayload,
   TUpdateUserPayload,
 } from './user.constant';
 import { UserValidation } from './user.validation';
@@ -29,8 +31,11 @@ import {
 import { PipelineStage } from 'mongoose';
 import { createPublicKey } from 'crypto';
 import { Service_STATUSES } from '../../constants';
-import { serviceModels } from '../serviceModels';
+import { serviceModelEntries, serviceModels } from '../serviceModels';
 import FavoriteModel from '../Quotes/Favorite.model';
+import NotificationModel from '../Notification/Notification.model';
+import RecentActivityModel from '../RecentActivity/RecentActivity.model';
+import SavedGuideModel from '../Guide/savedGuide.model';
 import { MAINTENANCE_FIELD_KEYS } from '../MaintenanceAlerts/maintenanceAlerts.constant';
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 import { OAuth2Client } from 'google-auth-library';
@@ -1013,19 +1018,136 @@ const deactivateAccountIntoDB = async (
   return result;
 };
 
-// 15. deleteSpecificUserAccountIntoDB
-const deleteSpecificUserAccountIntoDB = async (userData: IUser) => {
-  const result = await UserModel.findByIdAndUpdate(
-    userData._id,
-    {
-      $set: {
-        isDeleted: true,
-      },
-    },
-    { returnDocument: 'after', select: 'email name address isDeleted' },
+// 15. deleteSpecificUserAccountIntoDB — PERMANENT (hard) delete.
+const deleteSpecificUserAccountIntoDB = async (
+  userData: IUser,
+  payload: TDeleteAccountPayload,
+) => {
+  const userId = userData._id;
+
+  const user = await UserModel.findById(userId).select('+password');
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
+  }
+
+  if (user.role !== ROLE.USER) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      'Admin accounts cannot be deleted through this endpoint!',
+    );
+  }
+
+  if (user.password) {
+    if (!payload?.password) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Password is required!');
+    }
+
+    const isPasswordCorrect = await user.isPasswordMatched(payload.password);
+
+    if (!isPasswordCorrect) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Password not matched!');
+    }
+  } else if (payload?.confirmText?.trim() !== DELETE_ACCOUNT_CONFIRM_TEXT) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `Type "${DELETE_ACCOUNT_CONFIRM_TEXT}" to confirm account deletion!`,
+    );
+  }
+
+  const { email, name, address } = user;
+
+  const failures: string[] = [];
+
+  const removeMany = async (
+    label: string,
+    run: () => PromiseLike<{ deletedCount?: number }>,
+  ): Promise<number> => {
+    try {
+      const result = await run();
+      return result.deletedCount ?? 0;
+    } catch (err) {
+      failures.push(label);
+      console.error(
+        `[account-deletion] ${label} failed for user ${String(userId)}:`,
+        err,
+      );
+      return 0;
+    }
+  };
+
+  const [notifications, recentActivity, savedGuides, favorites] =
+    await Promise.all([
+      removeMany('notifications', () =>
+        NotificationModel.deleteMany({ user: userId }),
+      ),
+      removeMany('recentActivity', () =>
+        RecentActivityModel.deleteMany({ user: userId }),
+      ),
+      removeMany('savedGuides', () =>
+        SavedGuideModel.deleteMany({ user: userId }),
+      ),
+      removeMany('favorites', () => FavoriteModel.deleteMany({ user: userId })),
+    ]);
+
+  let drafts = 0;
+
+  if (!failures.length) {
+    const draftCounts = await Promise.all(
+      serviceModelEntries.map(({ name: serviceName, model }) =>
+        removeMany(`drafts:${serviceName}`, () =>
+          model.deleteMany({
+            createdBy: userId,
+            status: Service_STATUSES.DRAFT,
+          }),
+        ),
+      ),
+    );
+    drafts = draftCounts.reduce((sum, count) => sum + count, 0);
+  }
+
+  if (failures.length) {
+    console.error(
+      `[account-deletion] aborted for user ${String(userId)} — User document kept. Failed: ${failures.join(', ')}`,
+    );
+
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Account deletion failed. Please try again.',
+    );
+  }
+
+  try {
+    await UserModel.deleteOne({ _id: userId });
+  } catch (err) {
+    console.error(
+      `[account-deletion] removing the User document failed for ${String(userId)}:`,
+      err,
+    );
+
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Account deletion failed. Please try again.',
+    );
+  }
+
+  console.log(
+    `[account-deletion] user ${String(userId)} removed: notifications=${notifications} recentActivity=${recentActivity} savedGuides=${savedGuides} favorites=${favorites} drafts=${drafts}`,
   );
 
-  return result;
+  return {
+    email,
+    name,
+    address,
+    isDeleted: true,
+    deletedCounts: {
+      notifications,
+      recentActivity,
+      savedGuides,
+      favorites,
+      drafts,
+    },
+  };
 };
 
 // 16. adminGetAllUsersFromDB (using MongoDB aggregation)

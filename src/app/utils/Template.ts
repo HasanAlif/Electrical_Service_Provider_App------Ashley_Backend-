@@ -1,6 +1,6 @@
 import config from '../config';
 
-const BRAND = config.preffered_website_name || 'Four Elements Electric App';
+const BRAND = config.preffered_website_name || 'Four Elements Electric';
 
 export const LANDING_PAGE_TEMPLATE = `
 <!DOCTYPE html>

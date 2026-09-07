@@ -427,6 +427,12 @@ const signinIntoDB = async (payload: {
     throw new AppError(httpStatus.BAD_REQUEST, 'Password not matched!');
   }
 
+  void UserModel.rehashPasswordIfOutdated(
+    user._id,
+    user.password,
+    payload.password,
+  );
+
   // Replace the user's stored device token with the one sent at login (single active token).
   if (payload.fcmToken) {
     await UserModel.updateOne(
@@ -995,7 +1001,7 @@ const deactivateAccountIntoDB = async (
     throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
   }
 
-  const isPasswordCorrect = currentUser.isPasswordMatched(password);
+  const isPasswordCorrect = await currentUser.isPasswordMatched(password);
 
   if (!isPasswordCorrect) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Password not matched!');

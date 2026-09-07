@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { Aggregate, model, Query, Schema } from 'mongoose';
+import { Aggregate, model, Query, Schema, Types } from 'mongoose';
 import config from '../../config';
 import { AUTH_PROVIDER, defaultUserImage, ROLE } from './user.constant';
 import { IUser, IUserModel, TUserAddress } from './user.interface';
@@ -214,6 +214,49 @@ userSchema.statics.isUserExistsByEmailWithPassword = async function (
   return await UserModel.findOne({ email }).select('+password');
 };
 
+// Opportunistic rehash. A stored hash carries the cost factor it was created with,
+// so lowering the configured cost does nothing for existing users — their logins stay
+// as slow as the day they signed up until the hash itself is replaced. The plaintext
+// is only ever in hand at the moment of a successful verification, so that is where
+// the upgrade has to happen.
+//
+// Deliberately writes through updateOne rather than doc.save(): the pre('save') hook
+// re-hashes on isModified('password'), which would hash this already-hashed value a
+// second time and lock the account out permanently, and it stamps passwordChangedAt,
+// which would make isJWTIssuedBeforePasswordChanged reject the token issued moments
+// earlier by the very signin that triggered this. A query update runs neither.
+userSchema.statics.rehashPasswordIfOutdated = async function (
+  userId: Types.ObjectId,
+  storedHash: string | undefined,
+  plainTextPassword: string,
+): Promise<void> {
+  try {
+    if (!storedHash) return;
+
+    const targetCost = Number(config.bcrypt_salt_rounds);
+    if (!Number.isFinite(targetCost)) return;
+
+    // Only ever lowers cost. A hash already at or below target is left alone, so a
+    // second login never triggers another rehash.
+    const currentCost = bcrypt.getRounds(storedHash);
+    if (currentCost <= targetCost) return;
+
+    const rehashed = await bcrypt.hash(plainTextPassword, targetCost);
+
+    await UserModel.updateOne(
+      { _id: userId },
+      { $set: { password: rehashed } },
+    );
+
+    console.log(
+      `[password-rehash] user ${String(userId)}: cost ${currentCost} -> ${targetCost}`,
+    );
+  } catch (err) {
+    // Never allowed to surface: this runs detached from the signin response.
+    console.error(`[password-rehash] failed for user ${String(userId)}:`, err);
+  }
+};
+
 userSchema.methods.isPasswordMatched = async function (
   plainTextPassword: string,
 ): Promise<boolean> {
@@ -225,7 +268,9 @@ userSchema.methods.isJWTIssuedBeforePasswordChanged = function (
 ): boolean {
   if (!this.passwordChangedAt) return false;
 
-  const passwordChangedTime = new Date(this.passwordChangedAt).getTime() / 1000;
+  const passwordChangedTime = Math.floor(
+    new Date(this.passwordChangedAt).getTime() / 1000,
+  );
 
   return passwordChangedTime > jwtIssuedTimestamp;
 };

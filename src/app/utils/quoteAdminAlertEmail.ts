@@ -189,7 +189,7 @@ const buildQuoteAlertEmail = (input: {
 }): { subject: string; html: string } => {
   const { serviceType, qId, status, submitter, detailRows, imgTags, logoCid } =
     input;
-  const brand = config.preffered_website_name || 'Four Elements Electric App';
+  const brand = config.preffered_website_name || 'Four Elements Electric';
   const accent = config.emailColor || '#01a1ff';
 
   const subject = `New Quote: ${serviceType} (#${qId}) — ${submitter.name}`;
@@ -321,7 +321,7 @@ export const dispatchQuoteAdminAlertEmail = async (
     });
 
     const info = await transporter.sendMail({
-      from: `${config.preffered_website_name || 'Four Elements Electric App'} <${config.mailtrap.sender_email}>`,
+      from: `${config.preffered_website_name || 'Four Elements Electric'} <${config.mailtrap.sender_email}>`,
       to: recipients.join(', '),
       subject,
       html,

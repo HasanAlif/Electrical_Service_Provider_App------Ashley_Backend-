@@ -38,7 +38,7 @@ const sendOtpEmail = async ({
 
     // Email options: from, to, subject, and HTML body
     const mailOptions = {
-      from: `${config.preffered_website_name || 'Four Elements Electric App'} <${config.mailtrap.sender_email}>`,
+      from: `${config.preffered_website_name || 'Four Elements Electric'} <${config.mailtrap.sender_email}>`,
       to: email,
       subject: subject,
       html: htmlTemplate,

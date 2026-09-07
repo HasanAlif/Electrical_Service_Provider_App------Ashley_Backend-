@@ -65,4 +65,9 @@ export interface IUser extends Document {
 
 export interface IUserModel extends Model<IUser> {
   isUserExistsByEmailWithPassword(email: string): Promise<IUser | null>;
+  rehashPasswordIfOutdated(
+    userId: Types.ObjectId,
+    storedHash: string | undefined,
+    plainTextPassword: string,
+  ): Promise<void>;
 }

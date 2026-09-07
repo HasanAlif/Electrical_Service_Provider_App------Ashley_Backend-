@@ -15,7 +15,7 @@ export default {
   cloudinary_folder_name: process.env.CLOUDINARY_FOLDER_NAME,
   emailColor: process.env.EMAIL_COLOR,
 
-  bcrypt_salt_rounds: process.env.BCRYPT_SALT_ROUNDS,
+  bcrypt_salt_rounds: process.env.BCRYPT_SALT_ROUNDS ?? '10',
   otp_expiry_minutes: process.env.OTP_EXPIRY_MINUTES,
   stripe_secret_key: process.env.STRIPE_SECRET_KEY,
   stripe_webhook_secret: process.env.STRIPE_WEBHOOK_SECRET,

@@ -23,7 +23,7 @@ deactivation and admin listing.
 - POST `/reset-password` – Set new password.
 - GET `/profile` – Auth. Current profile.
 - PATCH `/deactive-account` – Auth. Deactivate account.
-- DELETE `/delete-account` – Auth. Hard delete account.
+- DELETE `/delete-account` – Auth. Hard delete account (no body required).
 - GET `/access-token` – Refresh access token.
 - PATCH `/update-user-data` – Auth. Update `{ name, phone }`.
 - GET `/admin-get-all` – Admin only, list users.

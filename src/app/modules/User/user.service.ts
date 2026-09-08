@@ -13,12 +13,10 @@ import UserModel from './user.model';
 import {
   AUTH_PROVIDER,
   defaultUserImage,
-  DELETE_ACCOUNT_CONFIRM_TEXT,
   otpExpiryMinutes,
   ROLE,
   TAuthProvider,
   TDeactiveAccountPayload,
-  TDeleteAccountPayload,
   TUpdateUserPayload,
 } from './user.constant';
 import { UserValidation } from './user.validation';
@@ -1025,13 +1023,10 @@ const deactivateAccountIntoDB = async (
 };
 
 // 15. deleteSpecificUserAccountIntoDB — PERMANENT (hard) delete.
-const deleteSpecificUserAccountIntoDB = async (
-  userData: IUser,
-  payload: TDeleteAccountPayload,
-) => {
+const deleteSpecificUserAccountIntoDB = async (userData: IUser) => {
   const userId = userData._id;
 
-  const user = await UserModel.findById(userId).select('+password');
+  const user = await UserModel.findById(userId);
 
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
@@ -1041,23 +1036,6 @@ const deleteSpecificUserAccountIntoDB = async (
     throw new AppError(
       httpStatus.FORBIDDEN,
       'Admin accounts cannot be deleted through this endpoint!',
-    );
-  }
-
-  if (user.password) {
-    if (!payload?.password) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Password is required!');
-    }
-
-    const isPasswordCorrect = await user.isPasswordMatched(payload.password);
-
-    if (!isPasswordCorrect) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Password not matched!');
-    }
-  } else if (payload?.confirmText?.trim() !== DELETE_ACCOUNT_CONFIRM_TEXT) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      `Type "${DELETE_ACCOUNT_CONFIRM_TEXT}" to confirm account deletion!`,
     );
   }
 

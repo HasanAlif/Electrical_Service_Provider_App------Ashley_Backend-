@@ -158,14 +158,10 @@ router
     UserController.deactivateUserAccount,
   );
 
-// 15. deleteSpecificUserAccount — permanent (hard) delete of the caller's own account
+// 15. deleteSpecificUserAccount — permanent (hard) delete of the caller's own account.
 router
   .route('/delete-account')
-  .delete(
-    auth(ROLE.USER),
-    validateRequest(UserValidation.deleteAccountSchema),
-    UserController.deleteSpecificUserAccount,
-  );
+  .delete(auth(ROLE.USER), UserController.deleteSpecificUserAccount);
 
 // 16. adminGetAllUsers
 router

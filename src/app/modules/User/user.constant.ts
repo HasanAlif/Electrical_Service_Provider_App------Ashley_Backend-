@@ -31,13 +31,6 @@ export type TDeactiveAccountPayload = {
   deactivationReason: string;
 };
 
-export type TDeleteAccountPayload = {
-  password?: string;
-  confirmText?: string;
-};
-
-export const DELETE_ACCOUNT_CONFIRM_TEXT = 'DELETE';
-
 export type TUpdateUserPayload = {
   name: string;
   address?: string;

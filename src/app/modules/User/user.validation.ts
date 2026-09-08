@@ -319,27 +319,6 @@ const googleSigninSchema = z.object({
   }),
 });
 
-// 20. deleteAccountSchema — permanent (hard) account deletion.
-// Which field is REQUIRED depends on the account's authProvider, which the schema
-// cannot see, so both are optional here and the service enforces the right one:
-//   EMAIL          -> password (verified with isPasswordMatched)
-//   GOOGLE / APPLE -> confirmText === 'DELETE' (these accounts have no password)
-// .strict() rejects any other key, so a caller cannot smuggle in a userId — the
-// account deleted is always the token's own (req.user._id).
-const deleteAccountSchema = z.object({
-  body: z
-    .object({
-      password: z
-        .string()
-        .min(8, { message: 'Password must be at least 8 characters long!' })
-        .max(20, { message: 'Password cannot exceed 20 characters!' })
-        .optional(),
-
-      confirmText: z.string().optional(),
-    })
-    .strict(),
-});
-
 export const UserValidation = {
   createUserSchema,
   sendSignupOtpAgainSchema,
@@ -354,7 +333,6 @@ export const UserValidation = {
   resetPasswordSchema,
   getNewAccessTokenSchema,
   deactivateUserAccountSchema,
-  deleteAccountSchema,
   deleteImageSchema,
   fcmTokenSchema,
   appleSigninSchema,
